@@ -2,17 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NewBehaviourScript : MonoBehaviour
+public class Singleton<T> : MonoBehaviour where T : MonoBehaviour 
 {
-    // Start is called before the first frame update
-    void Start()
+    private static Singleton<T> instance;
+    public static Singleton<T> Instance
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        get
+        {
+            if (instance == null)
+            {
+                var obj = FindObjectOfType<Singleton<T>>();
+                if (obj != null)
+                {
+                    instance = obj;
+                }
+                else
+                {
+                    Debug.Assert(false);
+                }
+            }
+            return instance;
+        }
     }
 }

@@ -901,6 +901,7 @@ GameObject:
   - component: {fileID: 427319666}
   - component: {fileID: 427319665}
   - component: {fileID: 427319664}
+  - component: {fileID: 427319668}
   m_Layer: 5
   m_Name: UI
   m_TagString: Untagged
@@ -991,6 +992,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &427319668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 427319663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7785db8780f8d4428cd307b6136e346, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &439208598
 GameObject:
   m_ObjectHideFlags: 0
@@ -1979,7 +1992,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &740994502
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3181,7 +3194,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1062798878
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4185,7 +4198,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1461064988
 RectTransform:
   m_ObjectHideFlags: 0
