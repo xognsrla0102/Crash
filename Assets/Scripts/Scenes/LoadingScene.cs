@@ -10,9 +10,11 @@ public class LoadingScene : MonoBehaviour
     // 로딩 텍스트 애니메이션 반복 주기
     private const float LOADING_TEXT_ANIMATION_TIME = 3f;
     // 로딩이 너무 빨리 끝나는 것을 방지하기 위한 패딩 시간
-    private const float LOADING_PADDING_TIME = LOADING_TEXT_ANIMATION_TIME * 2f;
+    private const float LOADING_PADDING_TIME = LOADING_TEXT_ANIMATION_TIME;
     // 밀리 초 단위를 초로 변환 시켜주는 매직넘버
     private const float MILLISEC_TO_SEC = 0.001f;
+
+    private static string loadSceneName;
 
     [Header("로딩 상태를 보여주는 개체들")]
     public TextMeshProUGUI loadingText;
@@ -21,8 +23,6 @@ public class LoadingScene : MonoBehaviour
     [Header("테스트 변수")]
     // 로드씬에서부터 시작하는 경우, 타이틀 씬으로 제대로 이동하는지 확인하는 변수
     public bool isStartInLoadScene;
-
-    private static string loadSceneName;
 
     // 로딩 패팅 시간을 체크할 타이머
     private readonly Stopwatch stopWatch = new Stopwatch();

@@ -4,10 +4,15 @@ using UnityEngine;
 
 public class InitScene : MonoBehaviour
 {
+    [SerializeField] private GameObject[] dontdestroyObjs;
+
     private void Start()
     {
-        // 전역 매니저 DonDestroy 개체로 만듬
-        DontDestroyOnLoad(NetworkManager.Instance.gameObject);
-        DontDestroyOnLoad(SoundManager.Instance.gameObject);
+        foreach (var obj in dontdestroyObjs)
+        {
+            DontDestroyOnLoad(obj);
+        }
+
+        LoadingScene.LoadScene("TitleScene");
     }
 }
