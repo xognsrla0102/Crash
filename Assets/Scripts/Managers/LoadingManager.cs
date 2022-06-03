@@ -5,7 +5,7 @@ using UnityEngine;
 using TMPro; 
 using DG.Tweening;
 
-public class LoadingScene : MonoBehaviour
+public class LoadingManager : MonoBehaviour
 {
     // 로딩 텍스트 애니메이션 반복 주기
     private const float LOADING_TEXT_ANIMATION_TIME = 3f;
@@ -20,10 +20,6 @@ public class LoadingScene : MonoBehaviour
     public TextMeshProUGUI loadingText;
     public Transform loadingObjRoot;
 
-    [Header("테스트 변수")]
-    // 로드씬에서부터 시작하는 경우, 타이틀 씬으로 제대로 이동하는지 확인하는 변수
-    public bool isStartInLoadScene;
-
     // 로딩 패팅 시간을 체크할 타이머
     private readonly Stopwatch stopWatch = new Stopwatch();
 
@@ -36,7 +32,7 @@ public class LoadingScene : MonoBehaviour
     private void Start()
     {
         // 로드씬에서부터 시작하는 경우, 타이틀 씬으로 제대로 이동하는지 확인
-        if (isStartInLoadScene)
+        if (TestManager.Instance.goTitleSceneWhenStartAtLoadScene)
         {
             loadSceneName = "TitleScene";
         }

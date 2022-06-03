@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class InitScene : MonoBehaviour
 {
@@ -8,11 +6,16 @@ public class InitScene : MonoBehaviour
 
     private void Start()
     {
+        if (TestManager.Instance.deleteAllPrefs)
+        {
+            EncryptPlayerPrefs.DeleteAll();
+        }
+
         foreach (var obj in dontdestroyObjs)
         {
             DontDestroyOnLoad(obj);
         }
 
-        LoadingScene.LoadScene("TitleScene");
+        LoadingManager.LoadScene("TitleScene");
     }
 }

@@ -28,8 +28,7 @@ public class LoginManager : MonoBehaviour
     [SerializeField] private GameObject registerUI;
     [SerializeField] private GameObject loginUI;
 
-    private bool IsAutoLogin => string.IsNullOrEmpty(autoLoginKey) == false;
-    private string autoLoginKey = string.Empty;
+    private bool isAutoLogin;
 
     private void Start()
     {
@@ -41,11 +40,26 @@ public class LoginManager : MonoBehaviour
         loginToggle.onValueChanged.AddListener(OnClickLoginToggle);
 
         // 이전에 로그인 한 적 있으면 자동 로그인
-        autoLoginKey = PlayerPrefs.GetString("autoLoginKey", string.Empty);
-        if (IsAutoLogin)
+        isAutoLogin = EncryptPlayerPrefs.GetBool(PrefsKeys.IS_AUTO_LOGIN);
+        if (isAutoLogin)
         {
             AutoLogin();
         }
+    }
+
+    private void AutoLogin()
+    {
+        print("자동 로그인 시도");
+
+        // 로그인 탭 활성화
+        loginToggle.isOn = true;
+
+        // 이전에 입력한 계정 정보 받음
+        loginNickNameInputField.text = EncryptPlayerPrefs.GetString(PrefsKeys.NICK_NAME);
+        loginPW_InputField.text = EncryptPlayerPrefs.GetString(PrefsKeys.PW);
+
+        // 로그인 시도
+        OnClickLoginBtn();
     }
 
     private void OnDestroy()
@@ -139,6 +153,12 @@ public class LoginManager : MonoBehaviour
             return false;
         }
 
+        if (registerPW_InputField.text.Equals(registerPW_CheckInputField.text) == false)
+        {
+            print("비밀번호가 다릅니다.");
+            return false;
+        }
+
         return true;
     }
 
@@ -181,7 +201,7 @@ public class LoginManager : MonoBehaviour
         }
 
         var request = new LoginWithPlayFabRequest { Username = loginNickNameInputField.text, Password = loginPW_InputField.text };
-        PlayFabClientAPI.LoginWithPlayFab(request, OnSuccessLogin, (error) => print($"로그인 실패 이유 : {error}"));
+        PlayFabClientAPI.LoginWithPlayFab(request, OnSuccessLogin, OnFailedLogin);
     }
 
     private void OnSuccessRegister(RegisterPlayFabUserResult result)
@@ -191,6 +211,9 @@ public class LoginManager : MonoBehaviour
         loginNickNameInputField.text = registerNickNameInputField.text;
         loginPW_InputField.text = registerPW_InputField.text;
 
+        // 로그인 탭 활성화
+        loginToggle.isOn = true;
+
         OnClickLoginBtn();
     }
 
@@ -198,37 +221,29 @@ public class LoginManager : MonoBehaviour
     {
         print($"로그인 성공! : {result}");
 
-        if (IsAutoLogin == false)
+        if (isAutoLogin == false)
         {
-            // 오토 로그인 키 최초 설정 시에는 "key" 문자열을 개인 키로하여 닉네임을 암호화한 값을 오토 로그인 키로 만듬
-            PlayerPrefs.SetString(GlobalStatic.PrefsKeys.AUTO_LOGIN_KEY, GlobalStatic.Encrypt(loginNickNameInputField.text, "key"));
-            print("개인 키 설정 완료!");
+            EncryptPlayerPrefs.SetBool(PrefsKeys.IS_AUTO_LOGIN, true);
+            isAutoLogin = true;
+            print("자동 로그인 세팅");
         }
 
-        string encryptedName = GlobalStatic.Encrypt(loginNickNameInputField.text, autoLoginKey);
-        string encryptedPW = GlobalStatic.Encrypt(loginPW_InputField.text, autoLoginKey);
+        EncryptPlayerPrefs.SetString(PrefsKeys.NICK_NAME, loginNickNameInputField.text);
+        EncryptPlayerPrefs.SetString(PrefsKeys.PW, loginPW_InputField.text);
 
-        PlayerPrefs.SetString(GlobalStatic.PrefsKeys.NICK_NAME, encryptedName);
-        PlayerPrefs.SetString(GlobalStatic.PrefsKeys.PW, encryptedPW);
+        // 타이틀 UI 활성화
     }
     
-    private void AutoLogin()
+    private void OnFailedLogin(PlayFabError error)
     {
-        print("자동 로그인 시도");
+        print($"로그인 실패 이유 : {error}");
 
-        // 회원가입 탭에서 로그인 탭으로 바꾸고
-        registerUI.SetActive(false);
-        loginUI.SetActive(true);
-
-        // 이전에 입력한 계정 정보 받아서
-        string encryptedName = PlayerPrefs.GetString(GlobalStatic.PrefsKeys.NICK_NAME, string.Empty);
-        string encryptedPW = PlayerPrefs.GetString(GlobalStatic.PrefsKeys.PW, string.Empty);
-
-        // 복호화 후에 넣어줌
-        loginNickNameInputField.text = GlobalStatic.Decrypt(encryptedName, autoLoginKey);
-        loginPW_InputField.text = GlobalStatic.Decrypt(encryptedPW, autoLoginKey);
-
-        // 로그인 시도
-        OnClickLoginBtn();
+        // 자동 로그인 키가 활성화되어서 자동로그인 했지만 실패한 경우, 계정 정보가 바뀌었다는 뜻이므로 취소
+        if (isAutoLogin)
+        {
+            EncryptPlayerPrefs.DeleteKey(PrefsKeys.IS_AUTO_LOGIN);
+            isAutoLogin = false;
+            print("자동 로그인 실패했으므로 키 삭제");
+        }
     }
 }
