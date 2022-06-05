@@ -1,18 +1,38 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TitleScene : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private Button gameStartBtn;
+    [SerializeField] private Button gameExitBtn;
+
+    private void Start()
     {
-        
+        gameStartBtn.onClick.AddListener(OnClickGameStartBtn);
+        gameExitBtn.onClick.AddListener(OnClickGameExitBtn);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDestroy()
     {
-        
+        gameStartBtn.onClick.RemoveAllListeners();
+        gameExitBtn.onClick.RemoveAllListeners();
+    }
+
+    private void OnClickGameStartBtn()
+    {
+        // NetworkManager.Instance.
+    }
+
+    private void OnClickGameExitBtn()
+    {
+        print("종료 버튼을 통한 게임 종료");
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 }

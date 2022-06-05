@@ -11,6 +11,7 @@ public class LoginManager : MonoBehaviour
     [Header("버튼 및 토글")]
     [SerializeField] private Button registerBtn;
     [SerializeField] private Button loginBtn;
+    [SerializeField] private Button logoutBtn;
 
     [SerializeField] private Toggle registerToggle;
     [SerializeField] private Toggle loginToggle;
@@ -25,8 +26,10 @@ public class LoginManager : MonoBehaviour
     [SerializeField] private TMP_InputField loginPW_InputField;
 
     [Header("UI 오브젝트")]
+    [SerializeField] private GameObject tabUI;
     [SerializeField] private GameObject registerUI;
     [SerializeField] private GameObject loginUI;
+    [SerializeField] private GameObject titleUI;
 
     private bool isAutoLogin;
 
@@ -35,6 +38,7 @@ public class LoginManager : MonoBehaviour
         // 리스너들 등록
         registerBtn.onClick.AddListener(OnClickRegisterBtn);
         loginBtn.onClick.AddListener(OnClickLoginBtn);
+        logoutBtn.onClick.AddListener(OnClickLogoutBtn);
 
         registerToggle.onValueChanged.AddListener(OnClickRegisterToggle);
         loginToggle.onValueChanged.AddListener(OnClickLoginToggle);
@@ -67,6 +71,7 @@ public class LoginManager : MonoBehaviour
         // 리스너들 삭제
         registerBtn.onClick.RemoveAllListeners();
         loginBtn.onClick.RemoveAllListeners();
+        logoutBtn.onClick.RemoveAllListeners();
 
         registerToggle.onValueChanged.RemoveAllListeners();
         loginToggle.onValueChanged.RemoveAllListeners();
@@ -232,6 +237,8 @@ public class LoginManager : MonoBehaviour
         EncryptPlayerPrefs.SetString(PrefsKeys.PW, loginPW_InputField.text);
 
         // 타이틀 UI 활성화
+        tabUI.SetActive(false);
+        titleUI.SetActive(true);
     }
     
     private void OnFailedLogin(PlayFabError error)
@@ -245,5 +252,20 @@ public class LoginManager : MonoBehaviour
             isAutoLogin = false;
             print("자동 로그인 실패했으므로 키 삭제");
         }
+    }
+
+    private void OnClickLogoutBtn()
+    {
+        // 로그인 API 사용을 허용하는 클라이언트 세션 토큰 삭제
+        PlayFabClientAPI.ForgetAllCredentials();
+
+        // 로그인 UI 활성화
+        titleUI.SetActive(false);
+        tabUI.SetActive(true);
+
+        // 로그아웃 시에는 자동 로그인 해제
+        EncryptPlayerPrefs.DeleteKey(PrefsKeys.IS_AUTO_LOGIN);
+        isAutoLogin = false;
+        print("로그아웃으로 인한 자동 로그인 키 삭제");
     }
 }

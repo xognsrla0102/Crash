@@ -6,7 +6,7 @@ using UnityEngine;
 public static class CryptoGraphy
 {
     // 암호화, 복호화시에 사용되는 개인 키
-    private static string privateKey = "key";
+    private const string PRIVATE_KEY = "key";
 
     // AES 암호화 알고리즘을 사용
     public static string Encrypt(string textToEncrypt)
@@ -17,7 +17,7 @@ public static class CryptoGraphy
         rijndaelCipher.KeySize = 128;
         rijndaelCipher.BlockSize = 128;
 
-        byte[] pwdBytes = Encoding.UTF8.GetBytes(privateKey);
+        byte[] pwdBytes = Encoding.UTF8.GetBytes(PRIVATE_KEY);
         byte[] keyBytes = new byte[16];
 
         int len = pwdBytes.Length;
@@ -44,7 +44,7 @@ public static class CryptoGraphy
         rijndaelCipher.BlockSize = 128;
 
         byte[] encryptedData = Convert.FromBase64String(textToDecrypt);
-        byte[] pwdBytes = Encoding.UTF8.GetBytes(privateKey);
+        byte[] pwdBytes = Encoding.UTF8.GetBytes(PRIVATE_KEY);
         byte[] keyBytes = new byte[16];
 
         int len = pwdBytes.Length;

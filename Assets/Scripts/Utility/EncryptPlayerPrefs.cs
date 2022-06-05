@@ -3,7 +3,7 @@
 // PlayerPrefs에 사용되는 키들
 public struct PrefsKeys
 {
-    public const string PRIVATE_KEY = "privateKey";
+    public const string PRIVATE_KEY = "PRIVATE_KEY";
     public const string IS_AUTO_LOGIN = "isAutoLogin";
     public const string NICK_NAME = "nickName";
     public const string PW = "pw";
