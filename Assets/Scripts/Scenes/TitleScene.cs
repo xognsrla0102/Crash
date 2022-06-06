@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class TitleScene : MonoBehaviour
@@ -12,6 +10,8 @@ public class TitleScene : MonoBehaviour
     {
         gameStartBtn.onClick.AddListener(OnClickGameStartBtn);
         gameExitBtn.onClick.AddListener(OnClickGameExitBtn);
+
+        SoundManager.Instance.PlayBGM(ESoundName.TITLE);
     }
 
     private void OnDestroy()

@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+﻿using System.Text;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 using PlayFab;
 using PlayFab.ClientModels;
-
 
 public class LoginManager : MonoBehaviour
 {
@@ -35,6 +35,10 @@ public class LoginManager : MonoBehaviour
 
     private void Start()
     {
+        // 회원가입/로그인 탭 활성화
+        titleUI.SetActive(false);
+        tabUI.SetActive(true);
+
         // 리스너들 등록
         registerBtn.onClick.AddListener(OnClickRegisterBtn);
         loginBtn.onClick.AddListener(OnClickLoginBtn);
@@ -142,25 +146,25 @@ public class LoginManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(registerNickNameInputField.text) || string.IsNullOrWhiteSpace(registerNickNameInputField.text))
         {
-            print("닉네임 인풋필드 유효성 검사 실패");
+            Popup.CreatePopup("회원가입 실패", "닉네임을 입력해주세요.");
             return false;
         }
 
         if (string.IsNullOrEmpty(registerPW_InputField.text) || string.IsNullOrWhiteSpace(registerPW_InputField.text))
         {
-            print("비밀번호 인풋필드 유효성 검사 실패");
+            Popup.CreatePopup("회원가입 실패", "비밀번호를 입력해주세요.");
             return false;
         }
 
         if (string.IsNullOrEmpty(registerPW_CheckInputField.text) || string.IsNullOrWhiteSpace(registerPW_CheckInputField.text))
         {
-            print("비밀번호 확인 인풋필드 유효성 검사 실패");
+            Popup.CreatePopup("회원가입 실패", "비밀번호를 재입력해주세요.");
             return false;
         }
 
         if (registerPW_InputField.text.Equals(registerPW_CheckInputField.text) == false)
         {
-            print("비밀번호가 다릅니다.");
+            Popup.CreatePopup("회원가입 실패", "비밀번호가 올바르지 않습니다.");
             return false;
         }
 
@@ -172,25 +176,26 @@ public class LoginManager : MonoBehaviour
         // 인풋필드 유효성 검사
         if (CheckRegisterInputField() == false)
         {
+            print("회원가입 인풋필드 유효성 검사 실패");
             return;
         }
 
         // 닉네임, 비번만으로 회원가입 요청
         var request = new RegisterPlayFabUserRequest { Username = registerNickNameInputField.text, Password = registerPW_InputField.text, RequireBothUsernameAndEmail = false };
-        PlayFabClientAPI.RegisterPlayFabUser(request, OnSuccessRegister, (error) => print($"회원가입 실패 이유 : {error}"));
+        PlayFabClientAPI.RegisterPlayFabUser(request, OnSuccessRegister, OnFailedRegister);
     }
 
     private bool CheckLoginInputField()
     {
         if (string.IsNullOrEmpty(loginNickNameInputField.text) || string.IsNullOrWhiteSpace(loginNickNameInputField.text))
         {
-            print("닉네임 인풋필드 유효성 검사 실패");
+            Popup.CreatePopup("로그인 실패", "닉네임을 입력해주세요.");
             return false;
         }
 
         if (string.IsNullOrEmpty(loginPW_InputField.text) || string.IsNullOrWhiteSpace(loginPW_InputField.text))
         {
-            print("비밀번호 인풋필드 유효성 검사 실패");
+            Popup.CreatePopup("로그인 실패", "비밀번호를 입력해주세요.");
             return false;
         }
 
@@ -202,6 +207,7 @@ public class LoginManager : MonoBehaviour
         // 인풋필드 유효성 검사
         if (CheckLoginInputField() == false)
         {
+            print("로그인 인풋필드 유효성 검사 실패");
             return;
         }
 
@@ -220,6 +226,13 @@ public class LoginManager : MonoBehaviour
         loginToggle.isOn = true;
 
         OnClickLoginBtn();
+    }
+
+    private void OnFailedRegister(PlayFabError error)
+    {
+        string bodyText = GetPlayFabErrorString(error);
+        Popup.CreatePopup("회원가입 실패", $"실패 원인\n{bodyText}");
+        print($"회원가입 실패 이유 : {error}");
     }
 
     private void OnSuccessLogin(LoginResult result)
@@ -243,6 +256,8 @@ public class LoginManager : MonoBehaviour
     
     private void OnFailedLogin(PlayFabError error)
     {
+        string bodyText = GetPlayFabErrorString(error); 
+        Popup.CreatePopup("로그인 실패", $"실패 원인\n{bodyText}");
         print($"로그인 실패 이유 : {error}");
 
         // 자동 로그인 키가 활성화되어서 자동로그인 했지만 실패한 경우, 계정 정보가 바뀌었다는 뜻이므로 취소
@@ -267,5 +282,30 @@ public class LoginManager : MonoBehaviour
         EncryptPlayerPrefs.DeleteKey(PrefsKeys.IS_AUTO_LOGIN);
         isAutoLogin = false;
         print("로그아웃으로 인한 자동 로그인 키 삭제");
+    }
+
+    private string GetPlayFabErrorString(PlayFabError error)
+    {
+        StringBuilder sb = new StringBuilder(100);
+
+        if (error.ErrorDetails != null)
+        {
+            int i = 1;
+            foreach (var errorDetail in error.ErrorDetails)
+            {
+                sb.Append($"{i}. [{errorDetail.Key}] ");
+                foreach (var errorValue in errorDetail.Value)
+                {
+                    sb.AppendLine($"\"{errorValue}\"");
+                }
+                i++;
+            }
+        }
+        else
+        {
+            sb.AppendLine(error.ErrorMessage);
+        }
+
+        return $"{sb}";
     }
 }

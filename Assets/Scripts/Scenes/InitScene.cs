@@ -2,11 +2,13 @@
 
 public class InitScene : MonoBehaviour
 {
+    public static string loadSceneName = ESceneName.TITLE_SCENE;
+
     [SerializeField] private GameObject[] dontdestroyObjs;
 
     private void Start()
     {
-        if (TestManager.Instance.deleteAllPrefs)
+        if (TestManager.deleteAllPrefs)
         {
             EncryptPlayerPrefs.DeleteAll();
         }
@@ -16,6 +18,6 @@ public class InitScene : MonoBehaviour
             DontDestroyOnLoad(obj);
         }
 
-        LoadingManager.LoadScene("TitleScene");
+        LoadingManager.LoadScene(loadSceneName);
     }
 }

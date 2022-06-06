@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text;
 using System.Security.Cryptography;
-using UnityEngine;
 
 public static class CryptoGraphy
 {

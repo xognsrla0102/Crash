@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro; 
 using DG.Tweening;
 
@@ -20,26 +20,22 @@ public class LoadingManager : MonoBehaviour
     public TextMeshProUGUI loadingText;
     public Transform loadingObjRoot;
 
-    // 로딩 패팅 시간을 체크할 타이머
+    // 로딩 패딩 시간을 체크할 타이머
     private readonly Stopwatch stopWatch = new Stopwatch();
 
     public static void LoadScene(string sceneName)
     {
         loadSceneName = sceneName;
-        UnityEngine.SceneManagement.SceneManager.LoadScene("LoadingScene");
+        SceneManager.LoadScene(ESceneName.LOADING_SCENE);
     }
 
     private void Start()
     {
-        // 로드씬에서부터 시작하는 경우, 타이틀 씬으로 제대로 이동하는지 확인
-        if (TestManager.Instance.goTitleSceneWhenStartAtLoadScene)
-        {
-            loadSceneName = "TitleScene";
-        }
-
-        loadingObjRoot.DOLocalRotate(new Vector3(0, 0, 90), LOADING_TEXT_ANIMATION_TIME).SetEase(Ease.OutExpo).SetLoops(-1, LoopType.Incremental);
+        // 왼쪽으로 90도씩 돌아가는 트윈과 1.3배 스케일 변형하는 트윈
+        loadingObjRoot.DOLocalRotate(new Vector3(0f, 0f, 90f), LOADING_TEXT_ANIMATION_TIME).SetEase(Ease.OutExpo).SetLoops(-1, LoopType.Incremental);
         loadingObjRoot.DOScale(new Vector3(1.3f, 1.3f, 1f), LOADING_TEXT_ANIMATION_TIME / 2f).SetEase(Ease.OutElastic).SetLoops(-1, LoopType.Yoyo);
         
+        // 한 글자씩 나오는 트윈과 1.2배 스케일 변형하는 트윈 
         DOTween.To(x => loadingText.maxVisibleCharacters = (int)x, 0f, loadingText.text.Length + 1, LOADING_TEXT_ANIMATION_TIME).SetLoops(-1);
         loadingText.transform.DOScale(new Vector3(1.2f, 1.2f, 1f), LOADING_TEXT_ANIMATION_TIME).SetEase(Ease.OutElastic).SetLoops(-1);
 
@@ -49,7 +45,7 @@ public class LoadingManager : MonoBehaviour
     private IEnumerator LoadSceneCoroutine()
     {
         // 로드할 씬을 비동기로 로드 시작
-        AsyncOperation asyncOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(loadSceneName);
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(loadSceneName);
 
         // 로드할 씬이 준비된 경우 바로 이동하지 않고, 우리가 원하는 타임에 씬을 이동하도록 false로 만듬
         asyncOperation.allowSceneActivation = false;

@@ -1,12 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class TestManager : Singleton<TestManager>
+public static class TestManager
 {
-    [Header("테스트 변수")]
-    // 로드씬에서부터 시작하는 경우, 타이틀 씬으로 제대로 이동하는지 확인하는 변수
-    public bool goTitleSceneWhenStartAtLoadScene;
     // 모든 PlayerPrefs 키 삭제하는 변수
-    public bool deleteAllPrefs;
+    public static bool deleteAllPrefs;
+    // 싱글턴 개체가 없으면 잠깐 InitScene 갔다가 돌아오는 변수
+    public static bool isNullSingletonObjGoInitScene = true;
 }
