@@ -1,15 +1,22 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using DG.Tweening;
 
 public class TitleScene : MonoBehaviour
 {
     [SerializeField] private Button gameStartBtn;
     [SerializeField] private Button gameExitBtn;
 
+    [SerializeField] private RectTransform titleText;
+
     private void Start()
     {
         gameStartBtn.onClick.AddListener(OnClickGameStartBtn);
         gameExitBtn.onClick.AddListener(OnClickGameExitBtn);
+
+        titleText.DOAnchorPosX(50f, 3f).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
+        titleText.DOAnchorPosY(260f, 2f).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
 
         SoundManager.Instance.PlayBGM(ESoundName.TITLE);
     }
@@ -18,6 +25,8 @@ public class TitleScene : MonoBehaviour
     {
         gameStartBtn.onClick.RemoveAllListeners();
         gameExitBtn.onClick.RemoveAllListeners();
+
+        DOTween.KillAll();
     }
 
     private void OnClickGameStartBtn()

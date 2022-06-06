@@ -82,6 +82,17 @@ public class LoginManager : MonoBehaviour
 
     private void Update()
     {
+        InputKeyboard();
+    }
+
+    private void InputKeyboard()
+    {
+        // 팝업 활성화된 상태라면 입력 무시
+        if (FindObjectOfType<Popup>() != null)
+        {
+            return;
+        }
+
         // Tab 키로 현재 인풋필드에서 다음 인풋필드로 넘어가도록 설정
         if (Input.GetKeyDown(KeyCode.Tab))
         {
@@ -181,6 +192,8 @@ public class LoginManager : MonoBehaviour
         if (CheckRegisterInputField() == false)
         {
             print("회원가입 인풋필드 유효성 검사 실패");
+            // 현재 활성화된 인풋 모듈(버튼, 인풋 필드) 비활성화
+            EventSystem.current.currentInputModule.DeactivateModule();
             return;
         }
 
@@ -219,6 +232,8 @@ public class LoginManager : MonoBehaviour
         if (CheckLoginInputField() == false)
         {
             print("로그인 인풋필드 유효성 검사 실패");
+            // 현재 활성화된 인풋 모듈(버튼, 인풋 필드) 비활성화
+            EventSystem.current.currentInputModule.DeactivateModule();
             return;
         }
 
