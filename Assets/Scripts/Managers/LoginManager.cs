@@ -1,5 +1,4 @@
-﻿using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
@@ -173,12 +172,19 @@ public class LoginManager : MonoBehaviour
 
     private void OnClickRegisterBtn()
     {
+        if (registerBtn.interactable == false)
+        {
+            return;
+        }
+
         // 인풋필드 유효성 검사
         if (CheckRegisterInputField() == false)
         {
             print("회원가입 인풋필드 유효성 검사 실패");
             return;
         }
+
+        registerBtn.interactable = false;
 
         // 닉네임, 비번만으로 회원가입 요청
         var request = new RegisterPlayFabUserRequest { Username = registerNickNameInputField.text, Password = registerPW_InputField.text, RequireBothUsernameAndEmail = false };
@@ -204,6 +210,11 @@ public class LoginManager : MonoBehaviour
 
     private void OnClickLoginBtn()
     {
+        if (loginBtn.interactable == false)
+        {
+            return;
+        }
+
         // 인풋필드 유효성 검사
         if (CheckLoginInputField() == false)
         {
@@ -211,12 +222,16 @@ public class LoginManager : MonoBehaviour
             return;
         }
 
+        loginBtn.interactable = false;
+
         var request = new LoginWithPlayFabRequest { Username = loginNickNameInputField.text, Password = loginPW_InputField.text };
         PlayFabClientAPI.LoginWithPlayFab(request, OnSuccessLogin, OnFailedLogin);
     }
 
     private void OnSuccessRegister(RegisterPlayFabUserResult result)
     {
+        registerBtn.interactable = true;
+
         print($"회원가입 성공! : {result}");
 
         loginNickNameInputField.text = registerNickNameInputField.text;
@@ -230,14 +245,15 @@ public class LoginManager : MonoBehaviour
 
     private void OnFailedRegister(PlayFabError error)
     {
-        string bodyText = GetPlayFabErrorString(error);
-        Popup.CreatePopup("회원가입 실패", $"실패 원인\n{bodyText}");
+        registerBtn.interactable = true;
+        Popup.CreateErrorPopup("회원가입 실패", error);
         print($"회원가입 실패 이유 : {error}");
     }
 
     private void OnSuccessLogin(LoginResult result)
     {
         print($"로그인 성공! : {result}");
+        loginBtn.interactable = true;
 
         if (isAutoLogin == false)
         {
@@ -256,8 +272,9 @@ public class LoginManager : MonoBehaviour
     
     private void OnFailedLogin(PlayFabError error)
     {
-        string bodyText = GetPlayFabErrorString(error); 
-        Popup.CreatePopup("로그인 실패", $"실패 원인\n{bodyText}");
+        loginBtn.interactable = true;
+
+        Popup.CreateErrorPopup("로그인 실패", error);
         print($"로그인 실패 이유 : {error}");
 
         // 자동 로그인 키가 활성화되어서 자동로그인 했지만 실패한 경우, 계정 정보가 바뀌었다는 뜻이므로 취소
@@ -282,30 +299,5 @@ public class LoginManager : MonoBehaviour
         EncryptPlayerPrefs.DeleteKey(PrefsKeys.IS_AUTO_LOGIN);
         isAutoLogin = false;
         print("로그아웃으로 인한 자동 로그인 키 삭제");
-    }
-
-    private string GetPlayFabErrorString(PlayFabError error)
-    {
-        StringBuilder sb = new StringBuilder(100);
-
-        if (error.ErrorDetails != null)
-        {
-            int i = 1;
-            foreach (var errorDetail in error.ErrorDetails)
-            {
-                sb.Append($"{i}. [{errorDetail.Key}] ");
-                foreach (var errorValue in errorDetail.Value)
-                {
-                    sb.AppendLine($"\"{errorValue}\"");
-                }
-                i++;
-            }
-        }
-        else
-        {
-            sb.AppendLine(error.ErrorMessage);
-        }
-
-        return $"{sb}";
     }
 }
