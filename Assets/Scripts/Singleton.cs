@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Singleton<T> : MonoBehaviour where T : MonoBehaviour 
 {
@@ -17,7 +18,15 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Assert(false, "싱글턴 개체가 없습니다. InitScene에서 시작하세요.");
+                    Scene scene = SceneManager.GetActiveScene();
+                    if (scene.name.Equals(ESceneName.INIT_SCENE))
+                    {
+                        Debug.Assert(false, $"싱글턴 {typeof(T)} 개체가 없습니다.");
+                    }
+                    else
+                    {
+                        Debug.Assert(false, "InitScene에서 시작하세요.");
+                    }
                 }
             }
             return instance;

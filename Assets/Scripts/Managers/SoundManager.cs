@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public enum ESoundType
@@ -18,9 +17,15 @@ public class SoundManager : Singleton<SoundManager>
     // 실제로 쓰일 소리들
     private Dictionary<string, AudioClip> clips = new Dictionary<string, AudioClip>();
 
-    // 볼륨 값들
-    private float bgmVolume;
-    private float sfxVolume;
+    public float BgmVolume
+    {
+        set => sources[(int)ESoundType.BGM].volume = value;
+    }
+
+    public float SfxVolume
+    {
+        set => sources[(int)ESoundType.BGM].volume = value;
+    }
 
     private void Start()
     {
@@ -31,16 +36,15 @@ public class SoundManager : Singleton<SoundManager>
                 clips.Add(sound.name, sound);
             }
         }
-
-        bgmVolume = OptionManager.Instance.BgmVolume;
-        sfxVolume = OptionManager.Instance.SfxVolume;
-
-        sources[(int)ESoundType.BGM].volume = bgmVolume;
-        sources[(int)ESoundType.SFX].volume = sfxVolume;
     }
 
     public void PlayBGM(string name)
     {
+        if (OptionManager.Instance.isMuteBgm)
+        {
+            return;
+        }
+
         AudioSource bgmSource = sources[(int)ESoundType.BGM];
 
         if (bgmSource.isPlaying)
@@ -54,6 +58,11 @@ public class SoundManager : Singleton<SoundManager>
 
     public void PlaySND(string name)
     {
+        if (OptionManager.Instance.isMuteSfx)
+        {
+            return;
+        }
+
         AudioSource sfxSource = sources[(int)ESoundType.SFX];
         sfxSource.clip = clips[name];
         sfxSource.PlayOneShot(sfxSource.clip);

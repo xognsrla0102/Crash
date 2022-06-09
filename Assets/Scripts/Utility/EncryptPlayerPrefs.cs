@@ -33,8 +33,8 @@ public static class EncryptPlayerPrefs
 
         if (float.TryParse(decryptedRes, out float res) == false)
         {
-            Debug.Assert(false);
             Debug.Log($"GetFloat({key}, {defaultValue}) 실패");
+            Debug.Assert(false);
             return defaultValue;
         }
 
@@ -54,8 +54,8 @@ public static class EncryptPlayerPrefs
 
         if (int.TryParse(decryptedRes, out int res) == false)
         {
-            Debug.Assert(false);
             Debug.Log($"GetInt({key}, {defaultValue}) 실패");
+            Debug.Assert(false);
             return defaultValue;
         }
 
@@ -75,8 +75,8 @@ public static class EncryptPlayerPrefs
 
         if (bool.TryParse(decryptRes, out bool res) == false)
         {
-            Debug.Assert(false);
             Debug.Log($"GetBool({key}, {defaultValue}) 실패");
+            Debug.Assert(false);
             return defaultValue;
         }
 

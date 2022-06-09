@@ -16,6 +16,9 @@ public struct PrefsKeys
 
     public const string BGM_VOLUME = "bgmVolume";
     public const string SOUND_VOLUME = "soundVolume";
+
+    public const string IS_BGM_MUTE = "isBgmMute";
+    public const string IS_SFX_MUTE = "isSfxMute";
 }
 
 public struct ESoundName
