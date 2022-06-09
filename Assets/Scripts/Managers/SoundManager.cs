@@ -20,7 +20,7 @@ public class SoundManager : Singleton<SoundManager>
 
     // 볼륨 값들
     private float bgmVolume;
-    private float soundVolume;
+    private float sfxVolume;
 
     private void Start()
     {
@@ -32,11 +32,11 @@ public class SoundManager : Singleton<SoundManager>
             }
         }
 
-        bgmVolume = EncryptPlayerPrefs.GetFloat(PrefsKeys.BGM_VOLUME, 0.1f);
-        soundVolume = EncryptPlayerPrefs.GetFloat(PrefsKeys.SOUND_VOLUME, 0.1f);
+        bgmVolume = OptionManager.Instance.BgmVolume;
+        sfxVolume = OptionManager.Instance.SfxVolume;
 
         sources[(int)ESoundType.BGM].volume = bgmVolume;
-        sources[(int)ESoundType.SFX].volume = soundVolume;
+        sources[(int)ESoundType.SFX].volume = sfxVolume;
     }
 
     public void PlayBGM(string name)
