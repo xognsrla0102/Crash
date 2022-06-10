@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using PlayFab;
 
@@ -7,76 +8,53 @@ public enum EPopupType
 {
     OK_POPUP,
     YES_NO_POPUP,
+    OPTION_POPUP,
     NUMS
 }
 
 public abstract class Popup : MonoBehaviour
 {
+    [SerializeField] private Button closeBtn;
+
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI bodyText;
 
-    public static void CreatePopup(string titleText, string bodyText, EPopupType popupType = EPopupType.OK_POPUP)
+    public static void CreatePopup(string titleText, EPopupType popupType)
     {
         Popup obj;
 
         switch (popupType)
         {
-            case EPopupType.OK_POPUP:
-                obj = Resources.Load<OKPopup>("Prefabs/OKPopup");
-                break;
-            case EPopupType.YES_NO_POPUP:
-                obj = Resources.Load<YesNoPopup>("Prefabs/YesNoPopup");
-                break;
-            default:
-                Debug.Assert(false);
-                obj = null;
-                break;
+            case EPopupType.OPTION_POPUP: obj = Resources.Load<OptionPopup>("Prefabs/OptionPopup"); break;
+            default: Debug.Assert(false); obj = null; break;
         }
 
         Popup popup = Instantiate(obj, GameObject.Find("UI").transform);
-        popup.InitPopup(titleText, bodyText);
+        popup.InitPopup(titleText);
     }
 
-    public static void CreateErrorPopup(string titleText, PlayFabError error, EPopupType popupType = EPopupType.OK_POPUP)
+    public static void CreateInfoPopup(string titleText, string bodyText, EPopupType popupType = EPopupType.OK_POPUP)
     {
         Popup obj;
 
         switch (popupType)
         {
-            case EPopupType.OK_POPUP:
-                obj = Resources.Load<OKPopup>("Prefabs/OKPopup");
-                break;
-            case EPopupType.YES_NO_POPUP:
-                obj = Resources.Load<YesNoPopup>("Prefabs/YesNoPopup");
-                break;
-            default:
-                Debug.Assert(false);
-                obj = null;
-                break;
+            case EPopupType.OK_POPUP:     obj = Resources.Load<OKPopup>("Prefabs/OKPopup"); break;
+            case EPopupType.YES_NO_POPUP: obj = Resources.Load<YesNoPopup>("Prefabs/YesNoPopup"); break;
+            default: Debug.Assert(false); obj = null; break;
         }
 
         Popup popup = Instantiate(obj, GameObject.Find("UI").transform);
-        popup.InitErrorPopup(titleText, error);
+        popup.InitInfoPopup(titleText, bodyText);
     }
 
-    public void InitPopup(string titleText, string bodyText)
+    public static void CreateInfoPopup(string titleText, PlayFabError error, EPopupType popupType = EPopupType.OK_POPUP)
     {
-        this.titleText.text = titleText;
-        this.bodyText.text = bodyText;
+        string errorString = SetBodyTextPlayFabErrorString(error);
+        CreateInfoPopup(titleText, errorString, popupType);
     }
 
-    public void InitErrorPopup(string titleText, PlayFabError error)
-    {
-        this.titleText.text = titleText;
-        bodyText.text = SetBodyTextPlayFabErrorString(error);
-    }
-
-    public void ClosePopup()
-    {
-        Destroy(gameObject);
-    }
-
-    private string SetBodyTextPlayFabErrorString(PlayFabError error)
+    private static string SetBodyTextPlayFabErrorString(PlayFabError error)
     {
         StringBuilder sb = new StringBuilder(100);
 
@@ -99,5 +77,31 @@ public abstract class Popup : MonoBehaviour
         }
 
         return $"실패 원인\n{sb}";
+    }
+
+    public void InitPopup(string titleText)
+    {
+        this.titleText.text = titleText;
+    }
+
+    public void InitInfoPopup(string titleText, string bodyText)
+    {
+        this.titleText.text = titleText;
+        this.bodyText.text = bodyText;
+    }
+
+    private void Start()
+    {
+        closeBtn.onClick.AddListener(ClosePopup);
+    }
+
+    private void OnDestroy()
+    {
+        closeBtn.onClick.RemoveAllListeners();
+    }
+
+    public void ClosePopup()
+    {
+        Destroy(gameObject);
     }
 }

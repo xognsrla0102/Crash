@@ -17,15 +17,8 @@ public class SoundManager : Singleton<SoundManager>
     // 실제로 쓰일 소리들
     private Dictionary<string, AudioClip> clips = new Dictionary<string, AudioClip>();
 
-    public float BgmVolume
-    {
-        set => sources[(int)ESoundType.BGM].volume = value;
-    }
-
-    public float SfxVolume
-    {
-        set => sources[(int)ESoundType.BGM].volume = value;
-    }
+    public float BgmSourceVolume { set => sources[(int)ESoundType.BGM].volume = value; }
+    public float SfxSourceVolume { set => sources[(int)ESoundType.BGM].volume = value; }
 
     private void Start()
     {

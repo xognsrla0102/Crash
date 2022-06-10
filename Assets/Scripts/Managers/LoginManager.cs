@@ -156,25 +156,25 @@ public class LoginManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(registerNickNameInputField.text) || string.IsNullOrWhiteSpace(registerNickNameInputField.text))
         {
-            Popup.CreatePopup("회원가입 실패", "닉네임을 입력해주세요.");
+            Popup.CreateInfoPopup("회원가입 실패", "닉네임을 입력해주세요.");
             return false;
         }
 
         if (string.IsNullOrEmpty(registerPW_InputField.text) || string.IsNullOrWhiteSpace(registerPW_InputField.text))
         {
-            Popup.CreatePopup("회원가입 실패", "비밀번호를 입력해주세요.");
+            Popup.CreateInfoPopup("회원가입 실패", "비밀번호를 입력해주세요.");
             return false;
         }
 
         if (string.IsNullOrEmpty(registerPW_CheckInputField.text) || string.IsNullOrWhiteSpace(registerPW_CheckInputField.text))
         {
-            Popup.CreatePopup("회원가입 실패", "비밀번호를 재입력해주세요.");
+            Popup.CreateInfoPopup("회원가입 실패", "비밀번호를 재입력해주세요.");
             return false;
         }
 
         if (registerPW_InputField.text.Equals(registerPW_CheckInputField.text) == false)
         {
-            Popup.CreatePopup("회원가입 실패", "비밀번호가 올바르지 않습니다.");
+            Popup.CreateInfoPopup("회원가입 실패", "비밀번호가 올바르지 않습니다.");
             return false;
         }
 
@@ -208,13 +208,13 @@ public class LoginManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(loginNickNameInputField.text) || string.IsNullOrWhiteSpace(loginNickNameInputField.text))
         {
-            Popup.CreatePopup("로그인 실패", "닉네임을 입력해주세요.");
+            Popup.CreateInfoPopup("로그인 실패", "닉네임을 입력해주세요.");
             return false;
         }
 
         if (string.IsNullOrEmpty(loginPW_InputField.text) || string.IsNullOrWhiteSpace(loginPW_InputField.text))
         {
-            Popup.CreatePopup("로그인 실패", "비밀번호를 입력해주세요.");
+            Popup.CreateInfoPopup("로그인 실패", "비밀번호를 입력해주세요.");
             return false;
         }
 
@@ -261,7 +261,7 @@ public class LoginManager : MonoBehaviour
     private void OnFailedRegister(PlayFabError error)
     {
         registerBtn.interactable = true;
-        Popup.CreateErrorPopup("회원가입 실패", error);
+        Popup.CreateInfoPopup("회원가입 실패", error);
         print($"회원가입 실패 이유 : {error}");
     }
 
@@ -289,7 +289,7 @@ public class LoginManager : MonoBehaviour
     {
         loginBtn.interactable = true;
 
-        Popup.CreateErrorPopup("로그인 실패", error);
+        Popup.CreateInfoPopup("로그인 실패", error);
         print($"로그인 실패 이유 : {error}");
 
         // 자동 로그인 키가 활성화되어서 자동로그인 했지만 실패한 경우, 계정 정보가 바뀌었다는 뜻이므로 취소
