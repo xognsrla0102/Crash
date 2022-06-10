@@ -11,8 +11,6 @@ public class OptionPopup : Popup
 
     private void Start()
     {
-        
-
         muteBgmToggle.onValueChanged.AddListener(OnClickMuteBgmToggle);
         muteSfxToggle.onValueChanged.AddListener(OnClickMuteSfxToggle);
 

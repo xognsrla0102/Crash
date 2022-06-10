@@ -23,5 +23,5 @@ public struct PrefsKeys
 
 public struct ESoundName
 {
-    public const string TITLE = "Title";
+    public const string TITLE_BGM = "Title";
 }

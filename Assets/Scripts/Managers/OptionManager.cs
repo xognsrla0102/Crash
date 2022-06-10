@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 
-// 버튼을 누르면 그냥 옵션 매니저에 있는 옵션 팝업을 생성하는 함수를 호출하게?
-// 왜냐면 옵션 매니저에서 버튼과 슬라이더 개체를 받지 못하고 있으니... 그냥 씬마다 다 복붙해서 일일이 넣어줘야하나?
+// 버튼을 누르면 그냥 옵션 매니저에 있는 옵션 팝업을 생성하는 함수를 호출하도록
 
 public class OptionManager : Singleton<OptionManager>
 {

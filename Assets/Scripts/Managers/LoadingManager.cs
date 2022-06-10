@@ -17,8 +17,8 @@ public class LoadingManager : MonoBehaviour
     private static string loadSceneName;
 
     [Header("로딩 상태를 보여주는 개체들")]
-    public TextMeshProUGUI loadingText;
-    public Transform loadingObjRoot;
+    [SerializeField] private TextMeshProUGUI loadingText;
+    [SerializeField] private Transform loadingObjRoot;
 
     // 로딩 패딩 시간을 체크할 타이머
     private readonly Stopwatch stopWatch = new Stopwatch();
