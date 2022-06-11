@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
 
 public class TitleScene : MonoBehaviour
 {
@@ -14,9 +13,6 @@ public class TitleScene : MonoBehaviour
         gameStartBtn.onClick.AddListener(OnClickGameStartBtn);
         gameExitBtn.onClick.AddListener(OnClickGameExitBtn);
 
-        titleText.DOAnchorPosX(30f, 3f).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
-        titleText.DOAnchorPosY(180f, 2f).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
-
         SoundManager.Instance.PlayBGM(EBgmName.TITLE_BGM);
     }
 
@@ -24,8 +20,6 @@ public class TitleScene : MonoBehaviour
     {
         gameStartBtn.onClick.RemoveAllListeners();
         gameExitBtn.onClick.RemoveAllListeners();
-
-        DOTween.KillAll();
     }
 
     private void OnClickGameStartBtn()

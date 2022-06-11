@@ -5,12 +5,12 @@ public class OKPopup : Popup
 {
     [SerializeField] private Button okBtn;
 
-    private void Start()
+    protected override void Start()
     {
         okBtn.onClick.AddListener(ClosePopup);
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
         okBtn.onClick.RemoveAllListeners();        
     }
