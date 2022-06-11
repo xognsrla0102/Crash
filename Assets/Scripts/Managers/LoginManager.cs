@@ -16,13 +16,13 @@ public class LoginManager : MonoBehaviour
     [SerializeField] private Toggle loginToggle;
 
     [Header("회원가입 UI 요소")]
-    [SerializeField] private TMP_InputField registerNickNameInputField;
-    [SerializeField] private TMP_InputField registerPW_InputField;
-    [SerializeField] private TMP_InputField registerPW_CheckInputField;
+    [SerializeField] private TMP_InputField registerUserNameInputField;
+    [SerializeField] private TMP_InputField registerPwInputField;
+    [SerializeField] private TMP_InputField registerPwCheckInputField;
 
     [Header("로그인 UI 요소")]
-    [SerializeField] private TMP_InputField loginNickNameInputField;
-    [SerializeField] private TMP_InputField loginPW_InputField;
+    [SerializeField] private TMP_InputField loginUserNameInputField;
+    [SerializeField] private TMP_InputField loginPwInputField;
 
     [Header("UI 오브젝트")]
     [SerializeField] private GameObject tabUI;
@@ -62,8 +62,8 @@ public class LoginManager : MonoBehaviour
         loginToggle.isOn = true;
 
         // 이전에 입력한 계정 정보 받음
-        loginNickNameInputField.text = EncryptPlayerPrefs.GetString(PrefsKeys.NICK_NAME);
-        loginPW_InputField.text = EncryptPlayerPrefs.GetString(PrefsKeys.PW);
+        loginUserNameInputField.text = EncryptPlayerPrefs.GetString(PrefsKeys.USER_NAME);
+        loginPwInputField.text = EncryptPlayerPrefs.GetString(PrefsKeys.PW);
 
         // 로그인 시도
         OnClickLoginBtn();
@@ -154,25 +154,25 @@ public class LoginManager : MonoBehaviour
 
     private bool CheckRegisterInputField()
     {
-        if (string.IsNullOrEmpty(registerNickNameInputField.text) || string.IsNullOrWhiteSpace(registerNickNameInputField.text))
+        if (string.IsNullOrEmpty(registerUserNameInputField.text) || string.IsNullOrWhiteSpace(registerUserNameInputField.text))
         {
-            Popup.CreateInfoPopup("회원가입 실패", "닉네임을 입력해주세요.");
+            Popup.CreateInfoPopup("회원가입 실패", "유저 이름[ID]을 입력해주세요.");
             return false;
         }
 
-        if (string.IsNullOrEmpty(registerPW_InputField.text) || string.IsNullOrWhiteSpace(registerPW_InputField.text))
+        if (string.IsNullOrEmpty(registerPwInputField.text) || string.IsNullOrWhiteSpace(registerPwInputField.text))
         {
             Popup.CreateInfoPopup("회원가입 실패", "비밀번호를 입력해주세요.");
             return false;
         }
 
-        if (string.IsNullOrEmpty(registerPW_CheckInputField.text) || string.IsNullOrWhiteSpace(registerPW_CheckInputField.text))
+        if (string.IsNullOrEmpty(registerPwCheckInputField.text) || string.IsNullOrWhiteSpace(registerPwCheckInputField.text))
         {
             Popup.CreateInfoPopup("회원가입 실패", "비밀번호를 재입력해주세요.");
             return false;
         }
 
-        if (registerPW_InputField.text.Equals(registerPW_CheckInputField.text) == false)
+        if (registerPwInputField.text.Equals(registerPwCheckInputField.text) == false)
         {
             Popup.CreateInfoPopup("회원가입 실패", "비밀번호가 올바르지 않습니다.");
             return false;
@@ -199,20 +199,20 @@ public class LoginManager : MonoBehaviour
 
         registerBtn.interactable = false;
 
-        // 닉네임, 비번만으로 회원가입 요청
-        var request = new RegisterPlayFabUserRequest { Username = registerNickNameInputField.text, Password = registerPW_InputField.text, RequireBothUsernameAndEmail = false };
+        // 닉네임(ID으로 쓰임), 비번만으로 회원가입 요청
+        var request = new RegisterPlayFabUserRequest { Username = registerUserNameInputField.text, Password = registerPwInputField.text, RequireBothUsernameAndEmail = false };
         PlayFabClientAPI.RegisterPlayFabUser(request, OnSuccessRegister, OnFailedRegister);
     }
 
     private bool CheckLoginInputField()
     {
-        if (string.IsNullOrEmpty(loginNickNameInputField.text) || string.IsNullOrWhiteSpace(loginNickNameInputField.text))
+        if (string.IsNullOrEmpty(loginUserNameInputField.text) || string.IsNullOrWhiteSpace(loginUserNameInputField.text))
         {
-            Popup.CreateInfoPopup("로그인 실패", "닉네임을 입력해주세요.");
+            Popup.CreateInfoPopup("로그인 실패", "유저 이름[ID]을 입력해주세요.");
             return false;
         }
 
-        if (string.IsNullOrEmpty(loginPW_InputField.text) || string.IsNullOrWhiteSpace(loginPW_InputField.text))
+        if (string.IsNullOrEmpty(loginPwInputField.text) || string.IsNullOrWhiteSpace(loginPwInputField.text))
         {
             Popup.CreateInfoPopup("로그인 실패", "비밀번호를 입력해주세요.");
             return false;
@@ -239,7 +239,7 @@ public class LoginManager : MonoBehaviour
 
         loginBtn.interactable = false;
 
-        var request = new LoginWithPlayFabRequest { Username = loginNickNameInputField.text, Password = loginPW_InputField.text };
+        var request = new LoginWithPlayFabRequest { Username = loginUserNameInputField.text, Password = loginPwInputField.text };
         PlayFabClientAPI.LoginWithPlayFab(request, OnSuccessLogin, OnFailedLogin);
     }
 
@@ -249,8 +249,8 @@ public class LoginManager : MonoBehaviour
 
         print($"회원가입 성공! : {result}");
 
-        loginNickNameInputField.text = registerNickNameInputField.text;
-        loginPW_InputField.text = registerPW_InputField.text;
+        loginUserNameInputField.text = registerUserNameInputField.text;
+        loginPwInputField.text = registerPwInputField.text;
 
         // 로그인 탭 활성화
         loginToggle.isOn = true;
@@ -277,8 +277,8 @@ public class LoginManager : MonoBehaviour
             print("자동 로그인 세팅");
         }
 
-        EncryptPlayerPrefs.SetString(PrefsKeys.NICK_NAME, loginNickNameInputField.text);
-        EncryptPlayerPrefs.SetString(PrefsKeys.PW, loginPW_InputField.text);
+        EncryptPlayerPrefs.SetString(PrefsKeys.USER_NAME, loginUserNameInputField.text);
+        EncryptPlayerPrefs.SetString(PrefsKeys.PW, loginPwInputField.text);
 
         // 타이틀 UI 활성화
         tabUI.SetActive(false);
