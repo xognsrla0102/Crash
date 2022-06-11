@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
-
-// 버튼을 누르면 그냥 옵션 매니저에 있는 옵션 팝업을 생성하는 함수를 호출하도록
+using UnityEngine.UI;
 
 public class OptionManager : Singleton<OptionManager>
 {
@@ -19,7 +18,7 @@ public class OptionManager : Singleton<OptionManager>
             }
 
             EncryptPlayerPrefs.SetFloat(PrefsKeys.BGM_VOLUME, value);
-            SoundManager.Instance.BgmSourceVolume = value;
+            SoundManager.Instance.BgmSource.volume = value;
             bgmVolume = value;
         }
     }
@@ -36,11 +35,65 @@ public class OptionManager : Singleton<OptionManager>
             }
 
             EncryptPlayerPrefs.SetFloat(PrefsKeys.SOUND_VOLUME, value);
-            SoundManager.Instance.SfxSourceVolume = value;
+            SoundManager.Instance.SfxSource.volume = value;
             sfxVolume = value;
         }
     }
 
-    [HideInInspector] public bool isMuteBgm;
-    [HideInInspector] public bool isMuteSfx;
+    private bool isMuteBgm;
+    public bool IsMuteBgm
+    {
+        get => isMuteBgm;
+        set
+        {
+            EncryptPlayerPrefs.SetBool(PrefsKeys.IS_BGM_MUTE, value);
+            SoundManager.Instance.BgmSource.mute = value;
+            isMuteBgm = value;
+        }
+    }
+
+    private bool isMuteSfx;
+    public bool IsMuteSfx
+    {
+        get => isMuteSfx;
+        set
+        {
+            EncryptPlayerPrefs.SetBool(PrefsKeys.IS_SFX_MUTE, value);
+            SoundManager.Instance.SfxSource.mute = value;
+            isMuteSfx = value;
+        }
+    }
+
+    private void Start()
+    {
+        // 볼륨 값들 로드
+        BgmVolume = EncryptPlayerPrefs.GetFloat(PrefsKeys.BGM_VOLUME, DEFAULT_BGM_VOLUME);
+        SfxVolume = EncryptPlayerPrefs.GetFloat(PrefsKeys.SOUND_VOLUME, DEFAULT_SFX_VOLUME);
+
+        // 무음 여부 로드
+        IsMuteBgm = EncryptPlayerPrefs.GetBool(PrefsKeys.IS_BGM_MUTE);
+        IsMuteSfx = EncryptPlayerPrefs.GetBool(PrefsKeys.IS_SFX_MUTE);
+    }
+
+    private void Update()
+    {
+        // ESC 키 누르면 옵션 열림
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            OnClickOptionBtn();
+        }
+    }
+
+    public void OnClickOptionBtn()
+    {
+        // 이미 게임 설정 창이 켜져있다면 끔
+        if (Popup.Exists(EPopupType.OPTION_POPUP))
+        {
+            Popup.GetPopup(EPopupType.OPTION_POPUP).ClosePopup();
+            return;
+        }
+
+        // 없다면 띄움
+        Popup.CreatePopup(EPopupType.OPTION_POPUP);
+    }
 }

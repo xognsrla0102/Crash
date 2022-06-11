@@ -17,8 +17,8 @@ public class SoundManager : Singleton<SoundManager>
     // 실제로 쓰일 소리들
     private Dictionary<string, AudioClip> clips = new Dictionary<string, AudioClip>();
 
-    public float BgmSourceVolume { set => sources[(int)ESoundType.BGM].volume = value; }
-    public float SfxSourceVolume { set => sources[(int)ESoundType.BGM].volume = value; }
+    public AudioSource BgmSource => sources[(int)ESoundType.BGM];
+    public AudioSource SfxSource => sources[(int)ESoundType.SFX];
 
     private void Start()
     {
@@ -33,12 +33,7 @@ public class SoundManager : Singleton<SoundManager>
 
     public void PlayBGM(string name)
     {
-        if (OptionManager.Instance.isMuteBgm)
-        {
-            return;
-        }
-
-        AudioSource bgmSource = sources[(int)ESoundType.BGM];
+        AudioSource bgmSource = BgmSource;
 
         if (bgmSource.isPlaying)
         {
@@ -51,12 +46,7 @@ public class SoundManager : Singleton<SoundManager>
 
     public void PlaySND(string name)
     {
-        if (OptionManager.Instance.isMuteSfx)
-        {
-            return;
-        }
-
-        AudioSource sfxSource = sources[(int)ESoundType.SFX];
+        AudioSource sfxSource = SfxSource;
         sfxSource.clip = clips[name];
         sfxSource.PlayOneShot(sfxSource.clip);
     }

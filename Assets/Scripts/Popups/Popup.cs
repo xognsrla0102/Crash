@@ -19,14 +19,22 @@ public abstract class Popup : MonoBehaviour
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI bodyText;
 
-    public static void CreatePopup(string titleText, EPopupType popupType)
+    public static void CreatePopup(EPopupType popupType)
     {
+        string titleText;
         Popup obj;
 
         switch (popupType)
         {
-            case EPopupType.OPTION_POPUP: obj = Resources.Load<OptionPopup>("Prefabs/OptionPopup"); break;
-            default: Debug.Assert(false); obj = null; break;
+            case EPopupType.OPTION_POPUP:
+                obj = Resources.Load<OptionPopup>("Prefabs/OptionPopup");
+                titleText = "게임 설정";
+                break;
+            default:
+                Debug.Assert(false);
+                obj = null;
+                titleText = string.Empty;
+                break;
         }
 
         Popup popup = Instantiate(obj, GameObject.Find("UI").transform);
@@ -79,6 +87,21 @@ public abstract class Popup : MonoBehaviour
         return $"실패 원인\n{sb}";
     }
 
+    public static Popup GetPopup(EPopupType popupType)
+    {
+        switch (popupType)
+        {
+            case EPopupType.OPTION_POPUP:
+                return FindObjectOfType<OptionPopup>();
+            default:
+                Debug.Assert(false);
+                break;
+        }
+        return null;
+    }
+
+    public static bool Exists(EPopupType popupType) => GetPopup(popupType) != null;
+
     public void InitPopup(string titleText)
     {
         this.titleText.text = titleText;
@@ -90,12 +113,12 @@ public abstract class Popup : MonoBehaviour
         this.bodyText.text = bodyText;
     }
 
-    private void Start()
+    protected virtual void Start()
     {
         closeBtn.onClick.AddListener(ClosePopup);
     }
 
-    private void OnDestroy()
+    protected virtual void OnDestroy()
     {
         closeBtn.onClick.RemoveAllListeners();
     }
