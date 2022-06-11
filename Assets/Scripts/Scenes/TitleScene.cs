@@ -17,7 +17,7 @@ public class TitleScene : MonoBehaviour
         titleText.DOAnchorPosX(30f, 3f).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
         titleText.DOAnchorPosY(180f, 2f).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
 
-        SoundManager.Instance.PlayBGM(ESoundName.TITLE_BGM);
+        SoundManager.Instance.PlayBGM(EBgmName.TITLE_BGM);
     }
 
     private void OnDestroy()

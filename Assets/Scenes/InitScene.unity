@@ -407,8 +407,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4770312e9dceb5f41924b03d9e381bdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isMuteBgm: 0
-  isMuteSfx: 0
 --- !u!4 &1804924998
 Transform:
   m_ObjectHideFlags: 0
@@ -473,6 +471,8 @@ MonoBehaviour:
   - {fileID: 1974057857}
   sounds:
   - {fileID: 8300000, guid: ec09f659139208a4cb8d8dcc19408a1d, type: 3}
+  - {fileID: 8300000, guid: 84b599025c2714c41988c393645bafa6, type: 3}
+  - {fileID: 8300000, guid: 24574c16bd50df44ea97c9d5c2a62757, type: 3}
 --- !u!1 &1824729866
 GameObject:
   m_ObjectHideFlags: 0

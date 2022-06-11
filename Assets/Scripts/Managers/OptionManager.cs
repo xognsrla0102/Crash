@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class OptionManager : Singleton<OptionManager>
 {
@@ -86,6 +86,13 @@ public class OptionManager : Singleton<OptionManager>
 
     public void OnClickOptionBtn()
     {
+        // 현재 씬이 Init, Loading 씬이라면 무시
+        Scene scene = SceneManager.GetActiveScene();
+        if (scene.name.Equals(ESceneName.INIT_SCENE) || scene.name.Equals(ESceneName.LOADING_SCENE))
+        {
+            return;
+        }
+
         // 이미 게임 설정 창이 켜져있다면 끔
         if (Popup.Exists(EPopupType.OPTION_POPUP))
         {
