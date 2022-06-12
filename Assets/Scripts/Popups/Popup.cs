@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 using PlayFab;
 
@@ -9,36 +8,34 @@ public enum EPopupType
     OK_POPUP,
     YES_NO_POPUP,
     OPTION_POPUP,
+    GAME_NAME_POPUP,
     NUMS
 }
 
 public abstract class Popup : MonoBehaviour
 {
-    [SerializeField] private Button closeBtn;
-
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI bodyText;
 
     public static void CreatePopup(EPopupType popupType)
     {
-        string titleText;
         Popup obj;
 
         switch (popupType)
         {
             case EPopupType.OPTION_POPUP:
                 obj = Resources.Load<OptionPopup>("Prefabs/OptionPopup");
-                titleText = "게임 설정";
+                break;
+            case EPopupType.GAME_NAME_POPUP:
+                obj = Resources.Load<GameNamePopup>("Prefabs/GameNamePopup");
                 break;
             default:
                 Debug.Assert(false);
                 obj = null;
-                titleText = string.Empty;
                 break;
         }
 
-        Popup popup = Instantiate(obj, GameObject.Find("UI").transform);
-        popup.InitPopup(titleText);
+        Instantiate(obj, GameObject.Find("UI").transform);
     }
 
     public static void CreateInfoPopup(string titleText, string bodyText, EPopupType popupType = EPopupType.OK_POPUP)
@@ -84,7 +81,7 @@ public abstract class Popup : MonoBehaviour
             sb.AppendLine(error.ErrorMessage);
         }
 
-        return $"실패 원인\n{sb}";
+        return $"Failed Reason\n{sb}";
     }
 
     public static Popup GetPopup(EPopupType popupType)
@@ -102,25 +99,10 @@ public abstract class Popup : MonoBehaviour
 
     public static bool Exists(EPopupType popupType) => GetPopup(popupType) != null;
 
-    public void InitPopup(string titleText)
-    {
-        this.titleText.text = titleText;
-    }
-
     public void InitInfoPopup(string titleText, string bodyText)
     {
         this.titleText.text = titleText;
         this.bodyText.text = bodyText;
-    }
-
-    protected virtual void Start()
-    {
-        closeBtn.onClick.AddListener(ClosePopup);
-    }
-
-    protected virtual void OnDestroy()
-    {
-        closeBtn.onClick.RemoveAllListeners();
     }
 
     public void ClosePopup()

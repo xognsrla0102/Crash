@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using TMPro;
 using PlayFab;
 using PlayFab.ClientModels;
 
@@ -16,13 +15,13 @@ public class LoginManager : MonoBehaviour
     [SerializeField] private Toggle loginToggle;
 
     [Header("회원가입 UI 요소")]
-    [SerializeField] private TMP_InputField registerUserNameInputField;
-    [SerializeField] private TMP_InputField registerPwInputField;
-    [SerializeField] private TMP_InputField registerPwCheckInputField;
+    [SerializeField] private InputField registerUserNameInputField;
+    [SerializeField] private InputField registerPwInputField;
+    [SerializeField] private InputField registerPwCheckInputField;
 
     [Header("로그인 UI 요소")]
-    [SerializeField] private TMP_InputField loginUserNameInputField;
-    [SerializeField] private TMP_InputField loginPwInputField;
+    [SerializeField] private InputField loginUserNameInputField;
+    [SerializeField] private InputField loginPwInputField;
 
     [Header("UI 오브젝트")]
     [SerializeField] private GameObject tabUI;
@@ -156,25 +155,25 @@ public class LoginManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(registerUserNameInputField.text) || string.IsNullOrWhiteSpace(registerUserNameInputField.text))
         {
-            Popup.CreateInfoPopup("회원가입 실패", "유저 이름[ID]을 입력해주세요.");
+            Popup.CreateInfoPopup("Register Failed", "Please Input Username[ID].");
             return false;
         }
 
         if (string.IsNullOrEmpty(registerPwInputField.text) || string.IsNullOrWhiteSpace(registerPwInputField.text))
         {
-            Popup.CreateInfoPopup("회원가입 실패", "비밀번호를 입력해주세요.");
+            Popup.CreateInfoPopup("Register Failed", "Please Input Password.");
             return false;
         }
 
         if (string.IsNullOrEmpty(registerPwCheckInputField.text) || string.IsNullOrWhiteSpace(registerPwCheckInputField.text))
         {
-            Popup.CreateInfoPopup("회원가입 실패", "비밀번호를 재입력해주세요.");
+            Popup.CreateInfoPopup("Register Failed", "Please Input Password Check.");
             return false;
         }
 
         if (registerPwInputField.text.Equals(registerPwCheckInputField.text) == false)
         {
-            Popup.CreateInfoPopup("회원가입 실패", "비밀번호가 올바르지 않습니다.");
+            Popup.CreateInfoPopup("Register Failed", "It's not match Password Check.");
             return false;
         }
 
@@ -208,13 +207,13 @@ public class LoginManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(loginUserNameInputField.text) || string.IsNullOrWhiteSpace(loginUserNameInputField.text))
         {
-            Popup.CreateInfoPopup("로그인 실패", "유저 이름[ID]을 입력해주세요.");
+            Popup.CreateInfoPopup("Login Failed", "Please Input Username[ID].");
             return false;
         }
 
         if (string.IsNullOrEmpty(loginPwInputField.text) || string.IsNullOrWhiteSpace(loginPwInputField.text))
         {
-            Popup.CreateInfoPopup("로그인 실패", "비밀번호를 입력해주세요.");
+            Popup.CreateInfoPopup("Login Failed", "Please Input Password.");
             return false;
         }
 
@@ -261,7 +260,7 @@ public class LoginManager : MonoBehaviour
     private void OnFailedRegister(PlayFabError error)
     {
         registerBtn.interactable = true;
-        Popup.CreateInfoPopup("회원가입 실패", error);
+        Popup.CreateInfoPopup("Register Failed", error);
         print($"회원가입 실패 이유 : {error}");
     }
 
@@ -289,7 +288,7 @@ public class LoginManager : MonoBehaviour
     {
         loginBtn.interactable = true;
 
-        Popup.CreateInfoPopup("로그인 실패", error);
+        Popup.CreateInfoPopup("Login Failed", error);
         print($"로그인 실패 이유 : {error}");
 
         // 자동 로그인 키가 활성화되어서 자동로그인 했지만 실패한 경우, 계정 정보가 바뀌었다는 뜻이므로 취소

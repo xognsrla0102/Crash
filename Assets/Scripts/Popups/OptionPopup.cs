@@ -3,15 +3,17 @@ using UnityEngine.UI;
 
 public class OptionPopup : Popup
 {
+    [SerializeField] private Button closeBtn;
+
     [SerializeField] private Toggle muteBgmToggle;
     [SerializeField] private Toggle muteSfxToggle;
 
     [SerializeField] private Slider bgmVolumeSlider;
     [SerializeField] private Slider sfxVolumeSlider;
 
-    protected override void Start()
+    private void Start()
     {
-        base.Start();
+        closeBtn.onClick.AddListener(ClosePopup);
 
         muteBgmToggle.onValueChanged.AddListener(OnClickMuteBgmToggle);
         muteSfxToggle.onValueChanged.AddListener(OnClickMuteSfxToggle);
@@ -33,9 +35,9 @@ public class OptionPopup : Popup
         muteSfxToggle.isOn = OptionManager.Instance.IsMuteSfx;
     }
 
-    protected override void OnDestroy()
+    private void OnDestroy()
     {
-        base.OnDestroy();
+        closeBtn.onClick.RemoveAllListeners();
 
         muteBgmToggle.onValueChanged.RemoveAllListeners();
         muteSfxToggle.onValueChanged.RemoveAllListeners();

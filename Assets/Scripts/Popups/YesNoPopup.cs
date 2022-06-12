@@ -6,13 +6,13 @@ public class YesNoPopup : Popup
     [SerializeField] private Button yesBtn;
     [SerializeField] private Button noBtn;
 
-    protected override void Start()
+    protected virtual void Start()
     {
         yesBtn.onClick.AddListener(ClosePopup);
         noBtn.onClick.AddListener(ClosePopup);
     }
 
-    protected override void OnDestroy()
+    protected virtual void OnDestroy()
     {
         yesBtn.onClick.RemoveAllListeners();
         noBtn.onClick.RemoveAllListeners();
