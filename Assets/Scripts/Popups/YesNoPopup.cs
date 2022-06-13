@@ -3,8 +3,8 @@ using UnityEngine.UI;
 
 public class YesNoPopup : Popup
 {
-    [SerializeField] private Button yesBtn;
-    [SerializeField] private Button noBtn;
+    [SerializeField] protected Button yesBtn;
+    [SerializeField] protected Button noBtn;
 
     protected virtual void Start()
     {

@@ -24,6 +24,7 @@ public class LoginManager : MonoBehaviour
     [SerializeField] private InputField loginPwInputField;
 
     [Header("UI 오브젝트")]
+    [SerializeField] private CanvasGroup canvasGroup;
     [SerializeField] private GameObject tabUI;
     [SerializeField] private GameObject registerUI;
     [SerializeField] private GameObject loginUI;
@@ -182,7 +183,7 @@ public class LoginManager : MonoBehaviour
 
     private void OnClickRegisterBtn()
     {
-        if (registerBtn.interactable == false)
+        if (canvasGroup.interactable == false)
         {
             return;
         }
@@ -196,7 +197,7 @@ public class LoginManager : MonoBehaviour
             return;
         }
 
-        registerBtn.interactable = false;
+        canvasGroup.interactable = false;
 
         // 닉네임(ID으로 쓰임), 비번만으로 회원가입 요청
         var request = new RegisterPlayFabUserRequest { Username = registerUserNameInputField.text, Password = registerPwInputField.text, RequireBothUsernameAndEmail = false };
@@ -222,7 +223,7 @@ public class LoginManager : MonoBehaviour
 
     private void OnClickLoginBtn()
     {
-        if (loginBtn.interactable == false)
+        if (canvasGroup.interactable == false)
         {
             return;
         }
@@ -236,7 +237,7 @@ public class LoginManager : MonoBehaviour
             return;
         }
 
-        loginBtn.interactable = false;
+        canvasGroup.interactable = false;
 
         var request = new LoginWithPlayFabRequest { Username = loginUserNameInputField.text, Password = loginPwInputField.text };
         PlayFabClientAPI.LoginWithPlayFab(request, OnSuccessLogin, OnFailedLogin);
@@ -244,7 +245,7 @@ public class LoginManager : MonoBehaviour
 
     private void OnSuccessRegister(RegisterPlayFabUserResult result)
     {
-        registerBtn.interactable = true;
+        canvasGroup.interactable = true;
 
         print($"회원가입 성공! : {result}");
 
@@ -259,7 +260,7 @@ public class LoginManager : MonoBehaviour
 
     private void OnFailedRegister(PlayFabError error)
     {
-        registerBtn.interactable = true;
+        canvasGroup.interactable = true;
         Popup.CreateInfoPopup("Register Failed", error);
         print($"회원가입 실패 이유 : {error}");
     }
@@ -267,7 +268,7 @@ public class LoginManager : MonoBehaviour
     private void OnSuccessLogin(LoginResult result)
     {
         print($"로그인 성공! : {result}");
-        loginBtn.interactable = true;
+        canvasGroup.interactable = true;
 
         if (isAutoLogin == false)
         {
@@ -282,11 +283,34 @@ public class LoginManager : MonoBehaviour
         // 타이틀 UI 활성화
         tabUI.SetActive(false);
         titleUI.SetActive(true);
+
+        canvasGroup.interactable = false;
+
+        // 디스플레이 이름 존재 유무 확인
+        var request = new GetAccountInfoRequest() { Username = EncryptPlayerPrefs.GetString(PrefsKeys.USER_NAME) };
+        PlayFabClientAPI.GetAccountInfo(request,
+            (accountResult) =>
+            {
+                canvasGroup.interactable = true;
+
+                string displayName = accountResult.AccountInfo.TitleInfo.DisplayName;
+                if (string.IsNullOrEmpty(displayName))
+                {
+                    var popup = Popup.CreatePopup(EPopupType.GAME_NAME_POPUP);
+                }
+            },
+            (error) =>
+            {
+                canvasGroup.interactable = true;
+                print("유저 정보를 받지 못했습니다.");
+                Debug.Assert(false);
+            }
+            );
     }
-    
+
     private void OnFailedLogin(PlayFabError error)
     {
-        loginBtn.interactable = true;
+        canvasGroup.interactable = true;
 
         Popup.CreateInfoPopup("Login Failed", error);
         print($"로그인 실패 이유 : {error}");

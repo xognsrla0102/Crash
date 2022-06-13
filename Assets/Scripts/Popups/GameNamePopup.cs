@@ -1,16 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
+using PlayFab;
+using PlayFab.ClientModels;
 
-public class GameNamePopup : YesNoPopup
+public class GameNamePopup : OKPopup
 {
-    protected override void Start()
-    {
-        base.Start();
-    }
+    [SerializeField] private InputField gameNameInputField;
 
-    protected override void OnDestroy()
+    private void Start()
     {
-        base.OnDestroy();
+        SetOKBtnAction(() =>
+        {
+            // 디스플레이 네임 설정
+            var request = new UpdateUserTitleDisplayNameRequest { DisplayName = gameNameInputField.text };
+            PlayFabClientAPI.UpdateUserTitleDisplayName(request,
+                (result) =>
+                {
+                    // 유저 네임 캐싱해야할듯
+                    ClosePopup();
+                },
+                (error) => CreateInfoPopup("SettingGameName Failed", error)
+                );
+        });
     }
 }

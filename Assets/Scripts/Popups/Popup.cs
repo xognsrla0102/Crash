@@ -17,7 +17,7 @@ public abstract class Popup : MonoBehaviour
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI bodyText;
 
-    public static void CreatePopup(EPopupType popupType)
+    public static Popup CreatePopup(EPopupType popupType)
     {
         Popup obj;
 
@@ -35,7 +35,7 @@ public abstract class Popup : MonoBehaviour
                 break;
         }
 
-        Instantiate(obj, GameObject.Find("UI").transform);
+        return Instantiate(obj, GameObject.Find("UI").transform);
     }
 
     public static void CreateInfoPopup(string titleText, string bodyText, EPopupType popupType = EPopupType.OK_POPUP)

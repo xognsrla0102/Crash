@@ -3,14 +3,14 @@ using UnityEngine.UI;
 
 public class OKPopup : Popup
 {
-    [SerializeField] private Button okBtn;
+    [SerializeField] protected Button okBtn;
 
-    protected virtual void Start()
+    private void Start()
     {
         okBtn.onClick.AddListener(ClosePopup);
     }
 
-    protected virtual void OnDestroy()
+    private void OnDestroy()
     {
         okBtn.onClick.RemoveAllListeners();        
     }
