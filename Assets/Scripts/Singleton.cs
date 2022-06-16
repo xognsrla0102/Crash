@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
+using Photon.Pun;
 
-public class Singleton<T> : MonoBehaviour where T : MonoBehaviour 
+public class Singleton<T> : MonoBehaviourPunCallbacks where T : MonoBehaviourPunCallbacks
 {
     private static T instance;
     public static T Instance
@@ -18,15 +18,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
                 }
                 else
                 {
-                    Scene scene = SceneManager.GetActiveScene();
-                    if (scene.name.Equals(ESceneName.INIT_SCENE))
-                    {
-                        Debug.Assert(false, $"싱글턴 {typeof(T)} 개체가 없습니다.");
-                    }
-                    else
-                    {
-                        Debug.Assert(false, "InitScene에서 시작하세요.");
-                    }
+                    Debug.Assert(false, $"싱글턴 {typeof(T)} 개체가 없습니다.\nInitScene에 개체가 있는지 확인하세요.");
                 }
             }
             return instance;

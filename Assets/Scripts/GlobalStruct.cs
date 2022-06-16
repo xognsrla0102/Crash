@@ -3,6 +3,7 @@
     public const string INIT_SCENE = "InitScene";
     public const string LOADING_SCENE = "LoadingScene";
     public const string TITLE_SCENE = "TitleScene";
+    public const string LOBBY_SCENE = "LobbyScene";
 }
 
 // PlayerPrefs에 사용되는 키들

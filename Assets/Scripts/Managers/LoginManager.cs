@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using PlayFab;
-using PlayFab.ClientModels;
 
 public class LoginManager : MonoBehaviour
 {
@@ -24,7 +22,6 @@ public class LoginManager : MonoBehaviour
     [SerializeField] private InputField loginPwInputField;
 
     [Header("UI 오브젝트")]
-    [SerializeField] private CanvasGroup canvasGroup;
     [SerializeField] private GameObject tabUI;
     [SerializeField] private GameObject registerUI;
     [SerializeField] private GameObject loginUI;
@@ -183,7 +180,7 @@ public class LoginManager : MonoBehaviour
 
     private void OnClickRegisterBtn()
     {
-        if (canvasGroup.interactable == false)
+        if (NetworkManager.Instance.CanvasGroup.interactable == false)
         {
             return;
         }
@@ -197,11 +194,17 @@ public class LoginManager : MonoBehaviour
             return;
         }
 
-        canvasGroup.interactable = false;
+        NetworkManager.Instance.RegisterAccount(registerUserNameInputField.text, registerPwInputField.text);
+    }
 
-        // 닉네임(ID으로 쓰임), 비번만으로 회원가입 요청
-        var request = new RegisterPlayFabUserRequest { Username = registerUserNameInputField.text, Password = registerPwInputField.text, RequireBothUsernameAndEmail = false };
-        PlayFabClientAPI.RegisterPlayFabUser(request, OnSuccessRegister, OnFailedRegister);
+    public void SuccessRegister()
+    {
+        loginUserNameInputField.text = registerUserNameInputField.text;
+        loginPwInputField.text = registerPwInputField.text;
+
+        // 로그인 탭 활성화
+        loginToggle.isOn = true;
+        OnClickLoginBtn();
     }
 
     private bool CheckLoginInputField()
@@ -223,7 +226,7 @@ public class LoginManager : MonoBehaviour
 
     private void OnClickLoginBtn()
     {
-        if (canvasGroup.interactable == false)
+        if (NetworkManager.Instance.CanvasGroup.interactable == false)
         {
             return;
         }
@@ -237,39 +240,11 @@ public class LoginManager : MonoBehaviour
             return;
         }
 
-        canvasGroup.interactable = false;
-
-        var request = new LoginWithPlayFabRequest { Username = loginUserNameInputField.text, Password = loginPwInputField.text };
-        PlayFabClientAPI.LoginWithPlayFab(request, OnSuccessLogin, OnFailedLogin);
+        NetworkManager.Instance.LoginAccount(loginUserNameInputField.text, loginPwInputField.text);
     }
 
-    private void OnSuccessRegister(RegisterPlayFabUserResult result)
+    public void SuccessLogin()
     {
-        canvasGroup.interactable = true;
-
-        print($"회원가입 성공! : {result}");
-
-        loginUserNameInputField.text = registerUserNameInputField.text;
-        loginPwInputField.text = registerPwInputField.text;
-
-        // 로그인 탭 활성화
-        loginToggle.isOn = true;
-
-        OnClickLoginBtn();
-    }
-
-    private void OnFailedRegister(PlayFabError error)
-    {
-        canvasGroup.interactable = true;
-        Popup.CreateInfoPopup("Register Failed", error);
-        print($"회원가입 실패 이유 : {error}");
-    }
-
-    private void OnSuccessLogin(LoginResult result)
-    {
-        print($"로그인 성공! : {result}");
-        canvasGroup.interactable = true;
-
         if (isAutoLogin == false)
         {
             EncryptPlayerPrefs.SetBool(PrefsKeys.IS_AUTO_LOGIN, true);
@@ -284,37 +259,11 @@ public class LoginManager : MonoBehaviour
         tabUI.SetActive(false);
         titleUI.SetActive(true);
 
-        canvasGroup.interactable = false;
-
-        // 디스플레이 이름 존재 유무 확인
-        var request = new GetAccountInfoRequest() { Username = EncryptPlayerPrefs.GetString(PrefsKeys.USER_NAME) };
-        PlayFabClientAPI.GetAccountInfo(request,
-            (accountResult) =>
-            {
-                canvasGroup.interactable = true;
-
-                string displayName = accountResult.AccountInfo.TitleInfo.DisplayName;
-                if (string.IsNullOrEmpty(displayName))
-                {
-                    var popup = Popup.CreatePopup(EPopupType.GAME_NAME_POPUP);
-                }
-            },
-            (error) =>
-            {
-                canvasGroup.interactable = true;
-                print("유저 정보를 받지 못했습니다.");
-                Debug.Assert(false);
-            }
-            );
+        NetworkManager.Instance.CheckUserGameName();
     }
 
-    private void OnFailedLogin(PlayFabError error)
+    public void FailedLogin()
     {
-        canvasGroup.interactable = true;
-
-        Popup.CreateInfoPopup("Login Failed", error);
-        print($"로그인 실패 이유 : {error}");
-
         // 자동 로그인 키가 활성화되어서 자동로그인 했지만 실패한 경우, 계정 정보가 바뀌었다는 뜻이므로 취소
         if (isAutoLogin)
         {
@@ -326,8 +275,7 @@ public class LoginManager : MonoBehaviour
 
     private void OnClickLogoutBtn()
     {
-        // 로그인 API 사용을 허용하는 클라이언트 세션 토큰 삭제
-        PlayFabClientAPI.ForgetAllCredentials();
+        NetworkManager.Instance.LogoutAccount();
 
         // 로그인 UI 활성화
         titleUI.SetActive(false);

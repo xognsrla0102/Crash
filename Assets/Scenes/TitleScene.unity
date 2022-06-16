@@ -690,7 +690,7 @@ GameObject:
   - component: {fileID: 195563078}
   - component: {fileID: 195563081}
   m_Layer: 5
-  m_Name: StartBtn
+  m_Name: LobbyBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3091,7 +3091,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.38041884, y: -0.30291644, z: 0.13344368, w: 0.8635485}
+  m_LocalRotation: {x: 0.38041884, y: -0.30291644, z: 0.13344371, w: 0.8635485}
   m_LocalPosition: {x: 14, y: 27, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -4053,7 +4053,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1215979090}
-  m_LocalRotation: {x: 0.38041884, y: -0.30291644, z: 0.13344368, w: 0.8635485}
+  m_LocalRotation: {x: 0.38041884, y: -0.30291644, z: 0.13344371, w: 0.8635485}
   m_LocalPosition: {x: 4, y: 7, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -4152,7 +4152,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Start
+  m_text: Lobby
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e039b27da0e0e6641bf4dbf6202e74b4, type: 2}
   m_sharedMaterial: {fileID: -4136223298500013209, guid: e039b27da0e0e6641bf4dbf6202e74b4,
@@ -5334,7 +5334,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b0520f0098e7c747a5e87f0c7b5c5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameStartBtn: {fileID: 195563078}
+  lobbyBtn: {fileID: 195563078}
   gameExitBtn: {fileID: 1293229440}
   titleText: {fileID: 1301330983}
 --- !u!4 &1718788367

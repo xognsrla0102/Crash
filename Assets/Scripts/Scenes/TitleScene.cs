@@ -3,14 +3,14 @@ using UnityEngine.UI;
 
 public class TitleScene : MonoBehaviour
 {
-    [SerializeField] private Button gameStartBtn;
+    [SerializeField] private Button lobbyBtn;
     [SerializeField] private Button gameExitBtn;
 
     [SerializeField] private RectTransform titleText;
 
     private void Start()
     {
-        gameStartBtn.onClick.AddListener(OnClickGameStartBtn);
+        lobbyBtn.onClick.AddListener(OnClickLobbyBtn);
         gameExitBtn.onClick.AddListener(OnClickGameExitBtn);
 
         SoundManager.Instance.PlayBGM(EBgmName.TITLE_BGM);
@@ -18,13 +18,14 @@ public class TitleScene : MonoBehaviour
 
     private void OnDestroy()
     {
-        gameStartBtn.onClick.RemoveAllListeners();
+        lobbyBtn.onClick.RemoveAllListeners();
         gameExitBtn.onClick.RemoveAllListeners();
     }
 
-    private void OnClickGameStartBtn()
+    private void OnClickLobbyBtn()
     {
-        // NetworkManager.Instance.
+        // 서버 연결
+        NetworkManager.Instance.ConnectMasterServer();
     }
 
     private void OnClickGameExitBtn()

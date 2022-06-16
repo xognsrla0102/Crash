@@ -16,7 +16,8 @@ public class GameNamePopup : OKPopup
             PlayFabClientAPI.UpdateUserTitleDisplayName(request,
                 (result) =>
                 {
-                    // 유저 네임 캐싱해야할듯
+                    // 유저 네임[게임에서 표시되는 이름] 캐싱
+                    UserManager.userName = gameNameInputField.text;
                     ClosePopup();
                 },
                 (error) => CreateInfoPopup("SettingGameName Failed", error)
