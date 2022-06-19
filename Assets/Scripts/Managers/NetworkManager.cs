@@ -25,6 +25,13 @@ public class NetworkManager : Singleton<NetworkManager>
 
     private LoginManager loginManager => FindObjectOfType<LoginManager>();
 
+    private void Start()
+    {
+        // 호스트가 씬을 이동할 때, 다른 클라이언트들도 씬을 이동하게 하면서 동시에, 씬을 동기화시켜줌.
+        // (서로 씬이 달라서 같은 포톤 뷰 개체를 못 찾아서 RPC함수 호출이 씹히는 문제를 막을 수 있음[RPC 손실 방지])
+        PhotonNetwork.AutomaticallySyncScene = true;
+    }
+
     #region 플레이팹 코드
     private void SendRequest<RequestType, ResultType>(
         Action<RequestType, Action<ResultType>, Action<PlayFabError>, object, Dictionary<string, string>> playFabAPI,

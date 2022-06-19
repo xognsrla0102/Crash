@@ -17,6 +17,6 @@ public class LobbyScene : MonoBehaviour
 
     private void OnClickTitleBtn()
     {
-        LoadingManager.LoadScene(ESceneName.TITLE_SCENE);
+        NetworkManager.Instance.LeaveLobby();
     }
 }
