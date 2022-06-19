@@ -153,25 +153,25 @@ public class LoginManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(registerUserNameInputField.text) || string.IsNullOrWhiteSpace(registerUserNameInputField.text))
         {
-            Popup.CreateInfoPopup("Register Failed", "Please Input Username[ID].");
+            Popup.CreateErrorPopup("Register Failed", "Please Input Username[ID].");
             return false;
         }
 
         if (string.IsNullOrEmpty(registerPwInputField.text) || string.IsNullOrWhiteSpace(registerPwInputField.text))
         {
-            Popup.CreateInfoPopup("Register Failed", "Please Input Password.");
+            Popup.CreateErrorPopup("Register Failed", "Please Input Password.");
             return false;
         }
 
         if (string.IsNullOrEmpty(registerPwCheckInputField.text) || string.IsNullOrWhiteSpace(registerPwCheckInputField.text))
         {
-            Popup.CreateInfoPopup("Register Failed", "Please Input Password Check.");
+            Popup.CreateErrorPopup("Register Failed", "Please Input Password Check.");
             return false;
         }
 
         if (registerPwInputField.text.Equals(registerPwCheckInputField.text) == false)
         {
-            Popup.CreateInfoPopup("Register Failed", "It's not match Password Check.");
+            Popup.CreateErrorPopup("Register Failed", "It's not match Password Check.");
             return false;
         }
 
@@ -211,13 +211,13 @@ public class LoginManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(loginUserNameInputField.text) || string.IsNullOrWhiteSpace(loginUserNameInputField.text))
         {
-            Popup.CreateInfoPopup("Login Failed", "Please Input Username[ID].");
+            Popup.CreateErrorPopup("Login Failed", "Please Input Username[ID].");
             return false;
         }
 
         if (string.IsNullOrEmpty(loginPwInputField.text) || string.IsNullOrWhiteSpace(loginPwInputField.text))
         {
-            Popup.CreateInfoPopup("Login Failed", "Please Input Password.");
+            Popup.CreateErrorPopup("Login Failed", "Please Input Password.");
             return false;
         }
 

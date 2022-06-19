@@ -23,6 +23,7 @@ public struct PrefsKeys
 public struct EBgmName
 {
     public const string TITLE_BGM = "Title";
+    public const string LOBBY_BGM = "Lobby";
 }
 
 public struct ESfxName

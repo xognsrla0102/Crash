@@ -9,6 +9,7 @@ public enum EPopupType
     YES_NO_POPUP,
     OPTION_POPUP,
     GAME_NAME_POPUP,
+    MAKE_ROOM_POPUP,
     NUMS
 }
 
@@ -53,11 +54,11 @@ public abstract class Popup : MonoBehaviour
         popup.InitInfoPopup(titleText, bodyText);
     }
 
-    public static void CreateInfoPopup(string titleText, PlayFabError error, EPopupType popupType = EPopupType.OK_POPUP)
-    {
-        string errorString = SetBodyTextPlayFabErrorString(error);
-        CreateInfoPopup(titleText, errorString, popupType);
-    }
+    public static void CreateErrorPopup(string titleText, string bodyText, EPopupType popupType = EPopupType.OK_POPUP)
+        => CreateInfoPopup(titleText, bodyText, popupType);
+
+    public static void CreateErrorPopup(string titleText, PlayFabError error, EPopupType popupType = EPopupType.OK_POPUP)
+        => CreateErrorPopup(titleText, SetBodyTextPlayFabErrorString(error), popupType);
 
     private static string SetBodyTextPlayFabErrorString(PlayFabError error)
     {
@@ -97,7 +98,8 @@ public abstract class Popup : MonoBehaviour
         return null;
     }
 
-    public static bool Exists(EPopupType popupType) => GetPopup(popupType) != null;
+    public static bool Exists(EPopupType popupType)
+        => GetPopup(popupType) != null;
 
     public void InitInfoPopup(string titleText, string bodyText)
     {
@@ -105,8 +107,5 @@ public abstract class Popup : MonoBehaviour
         this.bodyText.text = bodyText;
     }
 
-    public void ClosePopup()
-    {
-        Destroy(gameObject);
-    }
+    public void ClosePopup() => Destroy(gameObject);
 }

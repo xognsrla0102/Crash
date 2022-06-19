@@ -20,7 +20,7 @@ public class GameNamePopup : OKPopup
                     UserManager.userName = gameNameInputField.text;
                     ClosePopup();
                 },
-                (error) => CreateInfoPopup("SettingGameName Failed", error)
+                (error) => CreateErrorPopup("SettingGameName Failed", error)
                 );
         });
     }

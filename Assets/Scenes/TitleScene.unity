@@ -1425,7 +1425,7 @@ MonoBehaviour:
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
-  m_ScreenMatchMode: 0
+  m_ScreenMatchMode: 1
   m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
@@ -3091,7 +3091,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.38041884, y: -0.30291644, z: 0.13344371, w: 0.8635485}
+  m_LocalRotation: {x: 0.3804188, y: -0.30291644, z: 0.13344371, w: 0.86354846}
   m_LocalPosition: {x: 14, y: 27, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -4024,7 +4024,6 @@ MonoBehaviour:
   registerPwCheckInputField: {fileID: 130390592}
   loginUserNameInputField: {fileID: 484451282}
   loginPwInputField: {fileID: 437150532}
-  canvasGroup: {fileID: 427319668}
   tabUI: {fileID: 740994501}
   registerUI: {fileID: 1062798877}
   loginUI: {fileID: 633188270}
@@ -4053,7 +4052,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1215979090}
-  m_LocalRotation: {x: 0.38041884, y: -0.30291644, z: 0.13344371, w: 0.8635485}
+  m_LocalRotation: {x: 0.3804188, y: -0.30291644, z: 0.13344371, w: 0.86354846}
   m_LocalPosition: {x: 4, y: 7, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

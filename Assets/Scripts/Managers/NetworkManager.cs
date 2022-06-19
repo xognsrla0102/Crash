@@ -3,7 +3,6 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using PlayFab;
-using PlayFab.SharedModels;
 using PlayFab.ClientModels;
 using System.Collections.Generic;
 
@@ -61,7 +60,7 @@ public class NetworkManager : Singleton<NetworkManager>
             },
             (error) =>
             {
-                Popup.CreateInfoPopup("Register Failed", error);
+                Popup.CreateErrorPopup("Register Failed", error);
                 print($"회원가입 실패 이유 : {error}");
             }
         );
@@ -81,7 +80,7 @@ public class NetworkManager : Singleton<NetworkManager>
             (error) =>
             {
                 print($"로그인 실패 이유 : {error}");
-                Popup.CreateInfoPopup("Login Failed", error);
+                Popup.CreateErrorPopup("Login Failed", error);
                 loginManager.FailedLogin();
             }
         );
@@ -149,6 +148,66 @@ public class NetworkManager : Singleton<NetworkManager>
         PhotonNetwork.Disconnect();
     }
 
+    public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    {
+        LobbyScene lobbyScene = FindObjectOfType<LobbyScene>();
+        int roomCnt = roomList.Count;
+
+        for (int roomIdx = 0; roomIdx < roomCnt; roomIdx++)
+        {
+            // 해당 방이 존재하는 경우
+            if (roomList[roomIdx].RemovedFromList == false)
+            {
+                // 내 실제 방 리스트에도 존재한다면 방 정보 갱신
+                if (lobbyScene.roomInfos.Contains(roomList[roomIdx]))
+                {
+                    int findRoomIdx = lobbyScene.roomInfos.IndexOf(roomList[roomIdx]);
+                    lobbyScene.roomInfos[findRoomIdx] = roomList[roomIdx];
+                }
+                // 내 실제 방 리스트에 존재하지 않으면 추가
+                else
+                {
+                    lobbyScene.roomInfos.Add(roomList[roomIdx]);
+                }
+            }
+            // 해당 방이 삭제됐지만(removedFromList == true), 내 방의 리스트에서 제거되지 않은 경우
+            else if (true)
+            {
+
+            }
+        }
+
+        lobbyScene.UpdateRoomList();
+    }
+
+    public void CreateRoom()
+    {
+
+    }
+
+    public override void OnCreatedRoom()
+    {
+        
+    }
+
+    public override void OnCreateRoomFailed(short returnCode, string message)
+    {
+        Popup.CreateErrorPopup("Failed CreateRoom", $"Error Code : {returnCode}\nMessage : {message}");
+        Debug.Log($"방 생성 실패 :\n코드 : {returnCode}\n메세지 : {message}");
+    }
+
+    public void JoinRandomRoom()
+    {
+        // 아무 방 참가, 없으면 방 생성
+        // PhotonNetwork.JoinRandomOrCreateRoom();
+    }
+
+    public override void OnJoinRandomFailed(short returnCode, string message)
+    {
+        Popup.CreateErrorPopup("Failed Join Random Room", $"Error Code : {returnCode}\nMessage : {message}");
+        Debug.Log($"랜덤으로 방 참가 실패 :\n코드 : {returnCode}\n메세지 : {message}");
+    }
+
     public override void OnDisconnected(DisconnectCause cause)
     {
         print($"연결 끊김. 이유[{cause}]");
@@ -162,7 +221,7 @@ public class NetworkManager : Singleton<NetworkManager>
                 LoadingManager.LoadScene(ESceneName.TITLE_SCENE);
                 break;
             default:
-                Popup.CreateInfoPopup("Disconnected", $"{cause}");
+                Popup.CreateErrorPopup("Server Disconnected", $"{cause}");
                 break;
         }
     }
