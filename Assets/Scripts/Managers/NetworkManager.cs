@@ -196,8 +196,6 @@ public class NetworkManager : Singleton<NetworkManager>
         PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = maxPlayerNum });
     }
 
-    public override void OnCreatedRoom() => MoveRoomScene();
-
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
         Popup.CreateErrorPopup("Failed CreateRoom", $"Error Code : {returnCode}\nMessage : {message}");
