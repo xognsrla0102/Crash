@@ -5,7 +5,7 @@ using Photon.Realtime;
 
 public class LobbyScene : MonoBehaviour
 {
-    [HideInInspector] public List<RoomInfo> roomInfos;
+    [HideInInspector] public List<RoomInfo> roomInfos = new List<RoomInfo>();
     [SerializeField] private List<RoomSlot> roomSlots;
 
     [SerializeField] private Button titleBtn;
@@ -14,23 +14,26 @@ public class LobbyScene : MonoBehaviour
     [SerializeField] private Button prevPageBtn;
     [SerializeField] private Button nextPageBtn;
 
-    private const int MIN_PAGE_NUM = 0;
-    private int nowPageNum;
+    private const int MIN_PAGE_NUM = 1;
+    private int nowPageNum = MIN_PAGE_NUM;
     private int maxPageNum;
 
     private void Start()
     {
+        NetworkManager.Instance.JoinLobby();
+
         titleBtn.onClick.AddListener(OnClickTitleBtn);
         makeRoomBtn.onClick.AddListener(OnClickMakeRoomBtn);
         joinRandomRoomBtn.onClick.AddListener(OnClickJoinRandomRoomBtn);
         prevPageBtn.onClick.AddListener(OnClickPrevPageBtn);
         nextPageBtn.onClick.AddListener(OnClickNextPageBtn);
 
-        for (int slotIdx = 1; slotIdx <= roomSlots.Count; slotIdx++)
+        for (int slotIdx = 0; slotIdx < roomSlots.Count; slotIdx++)
         {
             // 람다 함수라서 매개변수 전달 이상하게 되는 것 방지
             int param = slotIdx;
-            roomSlots[slotIdx].GetComponent<Button>().onClick.AddListener(() => OnClickRoomBtn(param));
+            roomSlots[slotIdx].InitSlot();
+            roomSlots[slotIdx].slotBtn.onClick.AddListener(() => OnClickRoomSlotBtn(param));
         }
 
         SoundManager.Instance.PlayBGM(EBgmName.LOBBY_BGM);
@@ -46,7 +49,7 @@ public class LobbyScene : MonoBehaviour
 
         foreach (var slot in roomSlots)
         {
-            slot.GetComponent<Button>().onClick.RemoveAllListeners();
+            slot.slotBtn.onClick.RemoveAllListeners();
         }
     }
 
@@ -56,46 +59,49 @@ public class LobbyScene : MonoBehaviour
 
     private void OnClickJoinRandomRoomBtn() => NetworkManager.Instance.JoinRandomRoom();
 
-    private void OnClickRoomBtn(int roomNum)
-    {
-        
-
-    }
+    private void OnClickRoomSlotBtn(int slotIdx) => NetworkManager.Instance.JoinRoom(roomSlots[slotIdx].roomInfo.Name);
 
     private void OnClickPrevPageBtn()
     {
         nowPageNum--;
 
-        // 최소 페이지가 되면 이전 페이지 못 가게 설정
-        if (nowPageNum == MIN_PAGE_NUM)
-        {
-            prevPageBtn.interactable = false;
-        }
-        // 현재 페이지가 최대 페이지였다가 이전 페이지로 이동한 상태라면 다음 페이지로 갈 수 있게 설정
-        else if (nowPageNum == maxPageNum - 1)
-        {
-            nextPageBtn.interactable = true;
-        }
+        // 페이지가 바뀌었으므로 슬롯도 갱신
+        UpdateRoomSlot();
     }
 
     private void OnClickNextPageBtn()
     {
         nowPageNum++;
 
-        // 최대 페이지가 되면 다음 페이지 못 가게 설정
-        if (nowPageNum == maxPageNum)
-        {
-            nextPageBtn.interactable = false;
-        }
-        // 현재 페이지가 최소 페이지였다가 다음 페이지로 이동한 상태라면 이전 페이지로 갈 수 있게 설정
-        else if (nowPageNum == MIN_PAGE_NUM + 1)
-        {
-            prevPageBtn.interactable = true;
-        }
+        // 페이지가 바뀌었으므로 슬롯도 갱신
+        UpdateRoomSlot();
     }
 
-    public void UpdateRoomList()
+    public void UpdateRoomSlot()
     {
+        maxPageNum = roomInfos.Count / roomSlots.Count;
+        if (roomInfos.Count % roomSlots.Count != 0)
+        {
+            maxPageNum++;
+        }
 
+        // 룸이 업데이트되면서 현재 페이지가 최대 페이지보다 커질 경우 최대를 넘지 않도록 갱신
+        if (maxPageNum != 0)
+        {
+            nowPageNum = Mathf.Min(nowPageNum, maxPageNum);
+        }
+
+        prevPageBtn.interactable = nowPageNum > MIN_PAGE_NUM;
+        nextPageBtn.interactable = nowPageNum < maxPageNum;
+
+        int startRoomInfoIdxPerPage = roomSlots.Count * (nowPageNum - 1);
+        for (int slotIdx = 0; slotIdx < roomSlots.Count; slotIdx++)
+        {
+            int nowRoomIdx = startRoomInfoIdxPerPage + slotIdx;
+            bool existRoomInfo = nowRoomIdx < roomInfos.Count;
+
+            roomSlots[slotIdx].slotBtn.interactable = existRoomInfo;
+            roomSlots[slotIdx].SetSlot(existRoomInfo ? roomInfos[nowRoomIdx] : null);
+        }
     }
 }

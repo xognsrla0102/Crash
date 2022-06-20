@@ -30,6 +30,9 @@ public abstract class Popup : MonoBehaviour
             case EPopupType.GAME_NAME_POPUP:
                 obj = Resources.Load<GameNamePopup>("Prefabs/GameNamePopup");
                 break;
+            case EPopupType.MAKE_ROOM_POPUP:
+                obj = Resources.Load<MakeRoomPopup>("Prefabs/MakeRoomPopup");
+                break;
             default:
                 Debug.Assert(false);
                 obj = null;

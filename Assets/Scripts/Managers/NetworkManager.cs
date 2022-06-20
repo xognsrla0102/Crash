@@ -39,7 +39,7 @@ public class NetworkManager : Singleton<NetworkManager>
     {
         CanvasGroup.interactable = false;
 
-        // 이벤트 호출하기 전, ui를 다시 활성화 시켜줌
+        // 이벤트를 호출하기 전, ui를 다시 활성화 시켜줌
         Action<ResultType> ResultTypeActiveUI = (result) => { CanvasGroup.interactable = true; };
         Action<PlayFabError> ErrorActiveUI = (error) => { CanvasGroup.interactable = true; };
 
@@ -123,9 +123,16 @@ public class NetworkManager : Singleton<NetworkManager>
     public override void OnConnectedToMaster()
     {
         print("마스터 서버에 연결 완료");
-        PhotonNetwork.NickName = UserManager.userName;
+        CanvasGroup.interactable = true;
 
-        // 로비 서버 접속
+        PhotonNetwork.NickName = UserManager.userName;
+        LoadingManager.LoadScene(ESceneName.LOBBY_SCENE);
+    }
+
+    // 로비 서버 접속
+    public void JoinLobby()
+    {
+        CanvasGroup.interactable = false;
         PhotonNetwork.JoinLobby();
     }
 
@@ -133,7 +140,6 @@ public class NetworkManager : Singleton<NetworkManager>
     {
         print("로비 서버 접속 완료");
         CanvasGroup.interactable = true;
-        LoadingManager.LoadScene(ESceneName.LOBBY_SCENE);
     }
 
     public void LeaveLobby()
@@ -150,50 +156,62 @@ public class NetworkManager : Singleton<NetworkManager>
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
+        print("방 리스트 업데이트");
         LobbyScene lobbyScene = FindObjectOfType<LobbyScene>();
         int roomCnt = roomList.Count;
 
         for (int roomIdx = 0; roomIdx < roomCnt; roomIdx++)
         {
+            print($"방[{roomIdx}] : {roomList[roomIdx]}");
+
+            int findRoomIdx = lobbyScene.roomInfos.IndexOf(roomList[roomIdx]);
+
             // 해당 방이 존재하는 경우
             if (roomList[roomIdx].RemovedFromList == false)
             {
-                // 내 실제 방 리스트에도 존재한다면 방 정보 갱신
+                // 실제 리스트에 존재한다면 갱신
                 if (lobbyScene.roomInfos.Contains(roomList[roomIdx]))
                 {
-                    int findRoomIdx = lobbyScene.roomInfos.IndexOf(roomList[roomIdx]);
                     lobbyScene.roomInfos[findRoomIdx] = roomList[roomIdx];
                 }
-                // 내 실제 방 리스트에 존재하지 않으면 추가
+                // 실제 리스트에 존재하지 않으면 추가
                 else
                 {
                     lobbyScene.roomInfos.Add(roomList[roomIdx]);
                 }
             }
-            // 해당 방이 삭제됐지만(removedFromList == true), 내 방의 리스트에서 제거되지 않은 경우
-            else if (true)
+            // 해당 방이 삭제 처리됐지만(removedFromList == true), 실제 리스트에는 제거되지 않은 경우 제거
+            else if (findRoomIdx != -1)
             {
-
+                lobbyScene.roomInfos.RemoveAt(findRoomIdx);
             }
         }
 
-        lobbyScene.UpdateRoomList();
+        // 방 슬롯도 갱신
+        lobbyScene.UpdateRoomSlot();
     }
 
-    public void CreateRoom()
+    public void CreateRoom(string roomName, byte maxPlayerNum)
     {
-
+        PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = maxPlayerNum });
     }
 
-    public override void OnCreatedRoom()
-    {
-        
-    }
+    public override void OnCreatedRoom() => MoveRoomScene();
 
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
         Popup.CreateErrorPopup("Failed CreateRoom", $"Error Code : {returnCode}\nMessage : {message}");
         Debug.Log($"방 생성 실패 :\n코드 : {returnCode}\n메세지 : {message}");
+    }
+
+    public void JoinRoom(string roomName) => PhotonNetwork.JoinRoom(roomName);
+
+    public override void OnJoinedRoom() => MoveRoomScene();
+
+    public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        Popup.CreateErrorPopup("Failed Join Room", $"Error Code : {returnCode}\nMessage : {message}");
+        Debug.Log($"방 참가 실패 :\n코드 : {returnCode}\n메세지 : {message}");
     }
 
     public void JoinRandomRoom()
@@ -206,6 +224,28 @@ public class NetworkManager : Singleton<NetworkManager>
     {
         Popup.CreateErrorPopup("Failed Join Random Room", $"Error Code : {returnCode}\nMessage : {message}");
         Debug.Log($"랜덤으로 방 참가 실패 :\n코드 : {returnCode}\n메세지 : {message}");
+    }
+
+    private void MoveRoomScene() => LoadingManager.LoadScene(ESceneName.ROOM_SCENE);
+
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        
+    }
+
+    public void LeaveRoom()
+    {
+        PhotonNetwork.LeaveRoom();
+    }
+
+    public override void OnLeftRoom()
+    {
+        
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        
     }
 
     public override void OnDisconnected(DisconnectCause cause)

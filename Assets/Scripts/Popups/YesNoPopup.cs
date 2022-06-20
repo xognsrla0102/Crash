@@ -12,23 +12,9 @@ public class YesNoPopup : Popup
         noBtn.onClick.AddListener(ClosePopup);
     }
 
-    protected virtual void OnDestroy()
+    private void OnDestroy()
     {
         yesBtn.onClick.RemoveAllListeners();
         noBtn.onClick.RemoveAllListeners();
-    }
-
-    public void SetYesBtnAction(UnityEngine.Events.UnityAction action)
-    {
-        // 기존 기본 리스너 삭제
-        yesBtn.onClick.RemoveAllListeners();
-        yesBtn.onClick.AddListener(action);
-    }
-
-    public void SetNoBtnAction(UnityEngine.Events.UnityAction action)
-    {
-        // 기존 기본 리스너 삭제
-        noBtn.onClick.RemoveAllListeners();
-        noBtn.onClick.AddListener(action);
     }
 }
