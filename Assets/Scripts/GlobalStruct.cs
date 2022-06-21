@@ -1,4 +1,4 @@
-﻿public struct ESceneName
+﻿public struct SSceneName
 {
     public const string INIT_SCENE = "InitScene";
     public const string LOADING_SCENE = "LoadingScene";
@@ -8,7 +8,7 @@
 }
 
 // PlayerPrefs에 사용되는 키들
-public struct PrefsKeys
+public struct SPrefsKey
 {
     public const string IS_AUTO_LOGIN = "IsAutoLogin";
     public const string USER_NAME = "UserName";
@@ -21,14 +21,33 @@ public struct PrefsKeys
     public const string IS_SFX_MUTE = "IsSfxMute";
 }
 
-public struct EBgmName
+public struct SBgmName
 {
     public const string TITLE_BGM = "Title";
     public const string LOBBY_BGM = "Lobby";
 }
 
-public struct ESfxName
+public struct SSfxName
 {
     public const string BUTTON_OVER_SFX = "BtnOver";
     public const string BUTTON_CLICK_SFX = "BtnClick";
+}
+
+public struct SMapName
+{
+    public const string STADIUM = "No.6 Stadium";
+}
+
+public struct SRoomStatus
+{
+    public const string PENDING = "Pending";
+    public const string INGAME = "InGame";
+}
+
+// 방 만들 때 사용되는 룸 속성 키들
+public struct SRoomPropertyKey
+{
+    public const string MASTER_CLIENT = "MasterClient";
+    public const string MAP_NAME = "MapName";
+    public const string ROOM_STATE = "RoomState";
 }

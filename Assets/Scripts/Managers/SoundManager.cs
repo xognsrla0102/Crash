@@ -35,6 +35,13 @@ public class SoundManager : Singleton<SoundManager>
     {
         AudioSource bgmSource = BgmSource;
 
+        // 해당 BGM이 이미 재생 중이라면 무시 
+        if (bgmSource.clip == clips[name])
+        {
+            return;
+        }
+
+        // 다른 BGM일 경우 중지
         if (bgmSource.isPlaying)
         {
             bgmSource.Stop();

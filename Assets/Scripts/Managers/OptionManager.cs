@@ -17,7 +17,7 @@ public class OptionManager : Singleton<OptionManager>
                 return;
             }
 
-            EncryptPlayerPrefs.SetFloat(PrefsKeys.BGM_VOLUME, value);
+            EncryptPlayerPrefs.SetFloat(SPrefsKey.BGM_VOLUME, value);
             SoundManager.Instance.BgmSource.volume = value;
             bgmVolume = value;
         }
@@ -34,7 +34,7 @@ public class OptionManager : Singleton<OptionManager>
                 return;
             }
 
-            EncryptPlayerPrefs.SetFloat(PrefsKeys.SOUND_VOLUME, value);
+            EncryptPlayerPrefs.SetFloat(SPrefsKey.SOUND_VOLUME, value);
             SoundManager.Instance.SfxSource.volume = value;
             sfxVolume = value;
         }
@@ -46,7 +46,7 @@ public class OptionManager : Singleton<OptionManager>
         get => isMuteBgm;
         set
         {
-            EncryptPlayerPrefs.SetBool(PrefsKeys.IS_BGM_MUTE, value);
+            EncryptPlayerPrefs.SetBool(SPrefsKey.IS_BGM_MUTE, value);
             SoundManager.Instance.BgmSource.mute = value;
             isMuteBgm = value;
         }
@@ -58,7 +58,7 @@ public class OptionManager : Singleton<OptionManager>
         get => isMuteSfx;
         set
         {
-            EncryptPlayerPrefs.SetBool(PrefsKeys.IS_SFX_MUTE, value);
+            EncryptPlayerPrefs.SetBool(SPrefsKey.IS_SFX_MUTE, value);
             SoundManager.Instance.SfxSource.mute = value;
             isMuteSfx = value;
         }
@@ -67,12 +67,12 @@ public class OptionManager : Singleton<OptionManager>
     private void Start()
     {
         // 볼륨 값들 로드
-        BgmVolume = EncryptPlayerPrefs.GetFloat(PrefsKeys.BGM_VOLUME, DEFAULT_BGM_VOLUME);
-        SfxVolume = EncryptPlayerPrefs.GetFloat(PrefsKeys.SOUND_VOLUME, DEFAULT_SFX_VOLUME);
+        BgmVolume = EncryptPlayerPrefs.GetFloat(SPrefsKey.BGM_VOLUME, DEFAULT_BGM_VOLUME);
+        SfxVolume = EncryptPlayerPrefs.GetFloat(SPrefsKey.SOUND_VOLUME, DEFAULT_SFX_VOLUME);
 
         // 무음 여부 로드
-        IsMuteBgm = EncryptPlayerPrefs.GetBool(PrefsKeys.IS_BGM_MUTE);
-        IsMuteSfx = EncryptPlayerPrefs.GetBool(PrefsKeys.IS_SFX_MUTE);
+        IsMuteBgm = EncryptPlayerPrefs.GetBool(SPrefsKey.IS_BGM_MUTE);
+        IsMuteSfx = EncryptPlayerPrefs.GetBool(SPrefsKey.IS_SFX_MUTE);
     }
 
     private void Update()
@@ -88,7 +88,7 @@ public class OptionManager : Singleton<OptionManager>
     {
         // 현재 씬이 Init, Loading 씬이라면 무시
         Scene scene = SceneManager.GetActiveScene();
-        if (scene.name.Equals(ESceneName.INIT_SCENE) || scene.name.Equals(ESceneName.LOADING_SCENE))
+        if (scene.name.Equals(SSceneName.INIT_SCENE) || scene.name.Equals(SSceneName.LOADING_SCENE))
         {
             return;
         }

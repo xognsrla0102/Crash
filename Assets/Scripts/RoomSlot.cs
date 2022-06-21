@@ -3,6 +3,8 @@ using UnityEngine.UI;
 using Photon.Realtime;
 using TMPro;
 
+using Hashtable = ExitGames.Client.Photon.Hashtable;
+
 public class RoomSlot : MonoBehaviour
 {
     [HideInInspector] public Button slotBtn;
@@ -29,7 +31,11 @@ public class RoomSlot : MonoBehaviour
 
         if (roomInfo != null)
         {
+            Hashtable roomProperty = roomInfo.CustomProperties;
+
             roomNameText.text = roomInfo.Name;
+            mapNameText.text = $"{roomProperty[SRoomPropertyKey.MAP_NAME]}";
+            roomStateText.text = $"{roomProperty[SRoomPropertyKey.ROOM_STATE]}";
             playerNumText.text = $"{roomInfo.PlayerCount} / {roomInfo.MaxPlayers}";
         }
         else

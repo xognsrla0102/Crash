@@ -13,7 +13,7 @@ public class TitleScene : MonoBehaviour
         lobbyBtn.onClick.AddListener(OnClickLobbyBtn);
         gameExitBtn.onClick.AddListener(OnClickGameExitBtn);
 
-        SoundManager.Instance.PlayBGM(EBgmName.TITLE_BGM);
+        SoundManager.Instance.PlayBGM(SBgmName.TITLE_BGM);
     }
 
     private void OnDestroy()

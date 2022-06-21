@@ -5,11 +5,11 @@ public class ButtonSoundTrigger : MonoBehaviour, IPointerEnterHandler, IPointerC
 {
     public void OnPointerEnter(PointerEventData eventData)
     {
-        SoundManager.Instance.PlaySND(ESfxName.BUTTON_OVER_SFX);
+        SoundManager.Instance.PlaySND(SSfxName.BUTTON_OVER_SFX);
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        SoundManager.Instance.PlaySND(ESfxName.BUTTON_CLICK_SFX);
+        SoundManager.Instance.PlaySND(SSfxName.BUTTON_CLICK_SFX);
     }
 }

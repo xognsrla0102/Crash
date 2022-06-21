@@ -44,7 +44,7 @@ public class LoginManager : MonoBehaviour
         loginToggle.onValueChanged.AddListener(OnClickLoginToggle);
 
         // 이전에 로그인 한 적 있으면 자동 로그인
-        isAutoLogin = EncryptPlayerPrefs.GetBool(PrefsKeys.IS_AUTO_LOGIN);
+        isAutoLogin = EncryptPlayerPrefs.GetBool(SPrefsKey.IS_AUTO_LOGIN);
         if (isAutoLogin)
         {
             AutoLogin();
@@ -59,8 +59,8 @@ public class LoginManager : MonoBehaviour
         loginToggle.isOn = true;
 
         // 이전에 입력한 계정 정보 받음
-        loginUserNameInputField.text = EncryptPlayerPrefs.GetString(PrefsKeys.USER_NAME);
-        loginPwInputField.text = EncryptPlayerPrefs.GetString(PrefsKeys.PW);
+        loginUserNameInputField.text = EncryptPlayerPrefs.GetString(SPrefsKey.USER_NAME);
+        loginPwInputField.text = EncryptPlayerPrefs.GetString(SPrefsKey.PW);
 
         // 로그인 시도
         OnClickLoginBtn();
@@ -247,13 +247,13 @@ public class LoginManager : MonoBehaviour
     {
         if (isAutoLogin == false)
         {
-            EncryptPlayerPrefs.SetBool(PrefsKeys.IS_AUTO_LOGIN, true);
+            EncryptPlayerPrefs.SetBool(SPrefsKey.IS_AUTO_LOGIN, true);
             isAutoLogin = true;
             print("자동 로그인 세팅");
         }
 
-        EncryptPlayerPrefs.SetString(PrefsKeys.USER_NAME, loginUserNameInputField.text);
-        EncryptPlayerPrefs.SetString(PrefsKeys.PW, loginPwInputField.text);
+        EncryptPlayerPrefs.SetString(SPrefsKey.USER_NAME, loginUserNameInputField.text);
+        EncryptPlayerPrefs.SetString(SPrefsKey.PW, loginPwInputField.text);
 
         // 타이틀 UI 활성화
         tabUI.SetActive(false);
@@ -267,7 +267,7 @@ public class LoginManager : MonoBehaviour
         // 자동 로그인 키가 활성화되어서 자동로그인 했지만 실패한 경우, 계정 정보가 바뀌었다는 뜻이므로 취소
         if (isAutoLogin)
         {
-            EncryptPlayerPrefs.DeleteKey(PrefsKeys.IS_AUTO_LOGIN);
+            EncryptPlayerPrefs.DeleteKey(SPrefsKey.IS_AUTO_LOGIN);
             isAutoLogin = false;
             print("자동 로그인 실패했으므로 키 삭제");
         }
@@ -282,7 +282,7 @@ public class LoginManager : MonoBehaviour
         tabUI.SetActive(true);
 
         // 로그아웃 시에는 자동 로그인 해제
-        EncryptPlayerPrefs.DeleteKey(PrefsKeys.IS_AUTO_LOGIN);
+        EncryptPlayerPrefs.DeleteKey(SPrefsKey.IS_AUTO_LOGIN);
         isAutoLogin = false;
         print("로그아웃으로 인한 자동 로그인 키 삭제");
     }

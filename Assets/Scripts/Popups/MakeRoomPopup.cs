@@ -14,7 +14,7 @@ public class MakeRoomPopup : YesNoPopup
 
     private void OnClickMakeRoomBtn()
     {
-        byte maxPlayerNum = byte.Parse(maxPlayerNumInputField.text);
+        byte maxPlayerNum;
 
         #region 인풋 필드 유효성 검사
         if (string.IsNullOrWhiteSpace(roomNameInputField.text))
@@ -22,6 +22,14 @@ public class MakeRoomPopup : YesNoPopup
             CreateErrorPopup("Failed Make Room", "Room Name is Essential.");
             return;
         }
+
+        if (string.IsNullOrWhiteSpace(maxPlayerNumInputField.text))
+        {
+            CreateErrorPopup("Failed Make Room", "Player Num is Essential.");
+            return;
+        }
+
+        maxPlayerNum = byte.Parse(maxPlayerNumInputField.text);
 
         if (2 > maxPlayerNum || 4 < maxPlayerNum)
         {

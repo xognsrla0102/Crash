@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class InitScene : MonoBehaviour
 {
-    public static string loadSceneName = ESceneName.TITLE_SCENE;
+    public static string loadSceneName = SSceneName.TITLE_SCENE;
 
     [SerializeField] private GameObject[] dontdestroyObjs;
 

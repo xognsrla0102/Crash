@@ -6,8 +6,11 @@ using PlayFab;
 using PlayFab.ClientModels;
 using System.Collections.Generic;
 
+using Hashtable = ExitGames.Client.Photon.Hashtable;
+
 public class NetworkManager : Singleton<NetworkManager>
 {
+    #region 멤버 변수 및 MonoBehaviour 함수
     private CanvasGroup canvasGroup;
     public CanvasGroup CanvasGroup
     {
@@ -30,6 +33,7 @@ public class NetworkManager : Singleton<NetworkManager>
         // (서로 씬이 달라서 같은 포톤 뷰 개체를 못 찾아서 RPC함수 호출이 씹히는 문제를 막을 수 있음[RPC 손실 방지])
         PhotonNetwork.AutomaticallySyncScene = true;
     }
+    #endregion
 
     #region 플레이팹 코드
     private void SendRequest<RequestType, ResultType>(
@@ -89,7 +93,7 @@ public class NetworkManager : Singleton<NetworkManager>
     // 디스플레이 이름 존재 유무 확인
     public void CheckUserGameName()
     {
-        var request = new GetAccountInfoRequest() { Username = EncryptPlayerPrefs.GetString(PrefsKeys.USER_NAME) };
+        var request = new GetAccountInfoRequest() { Username = EncryptPlayerPrefs.GetString(SPrefsKey.USER_NAME) };
 
         SendRequest<GetAccountInfoRequest, GetAccountInfoResult>(
             PlayFabClientAPI.GetAccountInfo, request,
@@ -110,10 +114,11 @@ public class NetworkManager : Singleton<NetworkManager>
 
     // 로그인 API 사용을 허용하는 클라이언트 세션 토큰 삭제
     public void LogoutAccount() => PlayFabClientAPI.ForgetAllCredentials();
-
     #endregion
 
     #region 포톤 코드
+
+    #region 서버 연결 코드
     public void ConnectMasterServer()
     {
         CanvasGroup.interactable = false;
@@ -126,9 +131,29 @@ public class NetworkManager : Singleton<NetworkManager>
         CanvasGroup.interactable = true;
 
         PhotonNetwork.NickName = UserManager.userName;
-        LoadingManager.LoadScene(ESceneName.LOBBY_SCENE);
+        LoadingManager.LoadScene(SSceneName.LOBBY_SCENE);
     }
 
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        print($"연결 끊김. 이유[{cause}]");
+
+        CanvasGroup.interactable = true;
+
+        switch (cause)
+        {
+            case DisconnectCause.DisconnectByClientLogic:
+                print("타이틀로 이동");
+                LoadingManager.LoadScene(SSceneName.TITLE_SCENE);
+                break;
+            default:
+                Popup.CreateErrorPopup("Server Disconnected", $"{cause}");
+                break;
+        }
+    }
+    #endregion
+
+    #region 로비 관련 코드
     // 로비 서버 접속
     public void JoinLobby()
     {
@@ -190,10 +215,21 @@ public class NetworkManager : Singleton<NetworkManager>
         // 방 슬롯도 갱신
         lobbyScene.UpdateRoomSlot();
     }
+    #endregion
 
+    #region 방 관련 코드
     public void CreateRoom(string roomName, byte maxPlayerNum)
     {
-        PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = maxPlayerNum });
+        RoomOptions roomOption = new RoomOptions();
+        roomOption.MaxPlayers = maxPlayerNum;
+        roomOption.CustomRoomProperties = new Hashtable()
+        {
+            { SRoomPropertyKey.MASTER_CLIENT, PhotonNetwork.NickName },
+            { SRoomPropertyKey.MAP_NAME, SMapName.STADIUM },
+            { SRoomPropertyKey.ROOM_STATE, SRoomStatus.PENDING }
+        };
+
+        PhotonNetwork.CreateRoom(roomName, roomOption);
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
@@ -224,7 +260,7 @@ public class NetworkManager : Singleton<NetworkManager>
         Debug.Log($"랜덤으로 방 참가 실패 :\n코드 : {returnCode}\n메세지 : {message}");
     }
 
-    private void MoveRoomScene() => LoadingManager.LoadScene(ESceneName.ROOM_SCENE);
+    private void MoveRoomScene() => LoadingManager.LoadScene(SSceneName.ROOM_SCENE);
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
@@ -233,35 +269,52 @@ public class NetworkManager : Singleton<NetworkManager>
 
     public void LeaveRoom()
     {
+        CanvasGroup.interactable = false;
         PhotonNetwork.LeaveRoom();
     }
 
     public override void OnLeftRoom()
     {
-        
+        CanvasGroup.interactable = true;
+        print("방 떠남");
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        
+    }
+    #endregion
+
+    #region 방 설정 관련 코드
+    // 새 방장 설정
+    public void SetMasterClient(Player player)
+    {
+        PhotonNetwork.SetMasterClient(player);
     }
 
-    public override void OnDisconnected(DisconnectCause cause)
+    // 방장 바뀌었을 때
+    public override void OnMasterClientSwitched(Player newMasterClient)
     {
-        print($"연결 끊김. 이유[{cause}]");
+        print($"방장이 {newMasterClient}로 변경되었습니다.");
+    }
 
-        CanvasGroup.interactable = true;
-
-        switch (cause)
+    public void SetRoomProperties(Hashtable roomProperty)
+    {
+        if (PhotonNetwork.IsMasterClient)
         {
-            case DisconnectCause.DisconnectByClientLogic:
-                print("타이틀로 이동");
-                LoadingManager.LoadScene(ESceneName.TITLE_SCENE);
-                break;
-            default:
-                Popup.CreateErrorPopup("Server Disconnected", $"{cause}");
-                break;
+            PhotonNetwork.CurrentRoom.SetCustomProperties(roomProperty);
+        }
+        else
+        {
+            print("방장이 아닙니다.");
         }
     }
+
+    // 룸 프로퍼티 변경되었을 때
+    public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
+    {
+        print($"방 정보가 변경되었습니다. {propertiesThatChanged}");
+    }
+    #endregion
+
     #endregion
 }

@@ -36,7 +36,7 @@ public class LobbyScene : MonoBehaviour
             roomSlots[slotIdx].slotBtn.onClick.AddListener(() => OnClickRoomSlotBtn(param));
         }
 
-        SoundManager.Instance.PlayBGM(EBgmName.LOBBY_BGM);
+        SoundManager.Instance.PlayBGM(SBgmName.LOBBY_BGM);
     }
 
     private void OnDestroy()
