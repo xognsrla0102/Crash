@@ -18,20 +18,23 @@ public abstract class Popup : MonoBehaviour
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI bodyText;
 
-    public static Popup CreatePopup(EPopupType popupType)
+    [HideInInspector] public bool isNormalPopup;
+
+    #region 팝업 생성
+    public static Popup CreateSpecialPopup(EPopupType popupType)
     {
         Popup obj;
 
         switch (popupType)
         {
             case EPopupType.OPTION_POPUP:
-                obj = Resources.Load<OptionPopup>("Prefabs/OptionPopup");
+                obj = Resources.Load<OptionPopup>($"{SResourceLoadPath.POPUP}OptionPopup");
                 break;
             case EPopupType.GAME_NAME_POPUP:
-                obj = Resources.Load<GameNamePopup>("Prefabs/GameNamePopup");
+                obj = Resources.Load<GameNamePopup>($"{SResourceLoadPath.POPUP}GameNamePopup");
                 break;
             case EPopupType.MAKE_ROOM_POPUP:
-                obj = Resources.Load<MakeRoomPopup>("Prefabs/MakeRoomPopup");
+                obj = Resources.Load<MakeRoomPopup>($"{SResourceLoadPath.POPUP}MakeRoomPopup");
                 break;
             default:
                 Debug.Assert(false);
@@ -42,23 +45,30 @@ public abstract class Popup : MonoBehaviour
         return Instantiate(obj, GameObject.Find("UI").transform);
     }
 
-    public static void CreateInfoPopup(string titleText, string bodyText, EPopupType popupType = EPopupType.OK_POPUP)
+    public static void CreateNormalPopup(string titleText, string bodyText, EPopupType popupType = EPopupType.OK_POPUP)
     {
         Popup obj;
 
         switch (popupType)
         {
-            case EPopupType.OK_POPUP:     obj = Resources.Load<OKPopup>("Prefabs/OKPopup"); break;
-            case EPopupType.YES_NO_POPUP: obj = Resources.Load<YesNoPopup>("Prefabs/YesNoPopup"); break;
+            case EPopupType.OK_POPUP: obj = Resources.Load<OKPopup>($"{SResourceLoadPath.POPUP}OKPopup"); break;
+            case EPopupType.YES_NO_POPUP: obj = Resources.Load<YesNoPopup>($"{SResourceLoadPath.POPUP}YesNoPopup"); break;
             default: Debug.Assert(false); obj = null; break;
         }
 
         Popup popup = Instantiate(obj, GameObject.Find("UI").transform);
-        popup.InitInfoPopup(titleText, bodyText);
+        popup.InitNormalPopup(titleText, bodyText);
+    }
+
+    public void InitNormalPopup(string titleText, string bodyText)
+    {
+        this.titleText.text = titleText;
+        this.bodyText.text = bodyText;
+        isNormalPopup = true;
     }
 
     public static void CreateErrorPopup(string titleText, string bodyText, EPopupType popupType = EPopupType.OK_POPUP)
-        => CreateInfoPopup(titleText, bodyText, popupType);
+        => CreateNormalPopup(titleText, bodyText, popupType);
 
     public static void CreateErrorPopup(string titleText, PlayFabError error, EPopupType popupType = EPopupType.OK_POPUP)
         => CreateErrorPopup(titleText, SetBodyTextPlayFabErrorString(error), popupType);
@@ -87,7 +97,9 @@ public abstract class Popup : MonoBehaviour
 
         return $"Failed Reason\n{sb}";
     }
+    #endregion
 
+    #region 팝업 관련 유틸리티 기능
     public static Popup GetPopup(EPopupType popupType)
     {
         switch (popupType)
@@ -101,14 +113,8 @@ public abstract class Popup : MonoBehaviour
         return null;
     }
 
-    public static bool Exists(EPopupType popupType)
-        => GetPopup(popupType) != null;
-
-    public void InitInfoPopup(string titleText, string bodyText)
-    {
-        this.titleText.text = titleText;
-        this.bodyText.text = bodyText;
-    }
-
+    public static bool Exists(EPopupType popupType) => GetPopup(popupType) != null;
+    
     public void ClosePopup() => Destroy(gameObject);
+    #endregion
 }

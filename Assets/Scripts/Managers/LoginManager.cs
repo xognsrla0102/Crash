@@ -27,10 +27,37 @@ public class LoginManager : MonoBehaviour
     [SerializeField] private GameObject loginUI;
     [SerializeField] private GameObject titleUI;
 
+    private InputFieldUtility movementInputField;
+
     private bool isAutoLogin;
 
     private void Start()
     {
+        movementInputField = GetComponent<InputFieldUtility>();
+
+        // Enter 키로 회원가입이나 로그인 버튼 작동하도록 설정
+        movementInputField.EnterAction = () =>
+        {
+            // 타이틀 UI가 켜져있으면 무시
+            if (titleUI.activeInHierarchy)
+            {
+                return;
+            }
+
+            if (registerUI.activeInHierarchy)
+            {
+                OnClickRegisterBtn();
+            }
+            else if (loginUI.activeInHierarchy)
+            {
+                OnClickLoginBtn();
+            }
+            else
+            {
+                Debug.Assert(false);
+            }
+        };
+
         // 회원가입/로그인 탭 활성화
         titleUI.SetActive(false);
         tabUI.SetActive(true);
@@ -75,54 +102,6 @@ public class LoginManager : MonoBehaviour
 
         registerToggle.onValueChanged.RemoveAllListeners();
         loginToggle.onValueChanged.RemoveAllListeners();
-    }
-
-    private void Update()
-    {
-        InputKeyboard();
-    }
-
-    private void InputKeyboard()
-    {
-        // 팝업 활성화된 상태라면 입력 무시
-        if (FindObjectOfType<Popup>() != null)
-        {
-            return;
-        }
-
-        // Tab 키로 현재 인풋필드에서 다음 인풋필드로 넘어가도록 설정
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            if (EventSystem.current.currentSelectedGameObject != null)
-            {
-                Selectable nowSelectedObj = EventSystem.current.currentSelectedGameObject.GetComponent<Selectable>();
-                if (nowSelectedObj != null)
-                {
-                    Selectable nextSelectedObj = nowSelectedObj.FindSelectableOnDown();
-                    if (nextSelectedObj != null)
-                    {
-                        nextSelectedObj.Select();
-                    }
-                }
-            }
-        }
-
-        // Enter 키로 회원가입이나 로그인 버튼 작동하도록 설정
-        if (Input.GetKeyDown(KeyCode.Return))
-        {
-            if (registerUI.activeInHierarchy)
-            {
-                OnClickRegisterBtn();
-            }
-            else if (loginUI.activeInHierarchy)
-            {
-                OnClickLoginBtn();
-            }
-            else
-            {
-                Debug.Assert(false);
-            }
-        }
     }
 
     private void OnClickRegisterToggle(bool isOn)
@@ -189,8 +168,6 @@ public class LoginManager : MonoBehaviour
         if (CheckRegisterInputField() == false)
         {
             print("회원가입 인풋필드 유효성 검사 실패");
-            // 현재 활성화된 인풋 모듈(버튼, 인풋 필드) 비활성화
-            EventSystem.current.currentInputModule.DeactivateModule();
             return;
         }
 
@@ -234,9 +211,7 @@ public class LoginManager : MonoBehaviour
         // 인풋필드 유효성 검사
         if (CheckLoginInputField() == false)
         {
-            print("로그인 인풋필드 유효성 검사 실패");
-            // 현재 활성화된 인풋 모듈(버튼, 인풋 필드) 비활성화
-            EventSystem.current.currentInputModule.DeactivateModule();
+            print("로그인 인풋필드 유효성 검사 실패"); 
             return;
         }
 

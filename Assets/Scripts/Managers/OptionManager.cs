@@ -101,6 +101,6 @@ public class OptionManager : Singleton<OptionManager>
         }
 
         // 없다면 띄움
-        Popup.CreatePopup(EPopupType.OPTION_POPUP);
+        Popup.CreateSpecialPopup(EPopupType.OPTION_POPUP);
     }
 }

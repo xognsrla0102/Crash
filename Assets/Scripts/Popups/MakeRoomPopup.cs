@@ -6,8 +6,15 @@ public class MakeRoomPopup : YesNoPopup
     [SerializeField] private InputField roomNameInputField;
     [SerializeField] private InputField maxPlayerNumInputField;
 
+    private InputFieldUtility inputFieldUtility;
+
     protected override void Start()
     {
+        inputFieldUtility = GetComponent<InputFieldUtility>();
+        inputFieldUtility.EnterAction = OnClickMakeRoomBtn;
+
+        roomNameInputField.ActivateInputField();
+
         yesBtn.onClick.AddListener(OnClickMakeRoomBtn);
         noBtn.onClick.AddListener(ClosePopup);
     }
@@ -31,9 +38,9 @@ public class MakeRoomPopup : YesNoPopup
 
         maxPlayerNum = byte.Parse(maxPlayerNumInputField.text);
 
-        if (2 > maxPlayerNum || 4 < maxPlayerNum)
+        if (1 > maxPlayerNum || 4 < maxPlayerNum)
         {
-            CreateErrorPopup("Failed Make Room", "Player Num must be between 2 and 4");
+            CreateErrorPopup("Failed Make Room", "Player Num must be between 1 and 4");
             return;
         }
         #endregion

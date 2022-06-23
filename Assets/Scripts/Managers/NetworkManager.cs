@@ -5,6 +5,7 @@ using Photon.Realtime;
 using PlayFab;
 using PlayFab.ClientModels;
 using System.Collections.Generic;
+using TMPro;
 
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
@@ -22,6 +23,20 @@ public class NetworkManager : Singleton<NetworkManager>
                 Debug.Assert(canvasGroup != null, "캔버스 그룹을 찾지 못했습니다.");
             }
             return canvasGroup;
+        }
+    }
+
+    private Transform chatContent;
+    private Transform ChatContent
+    {
+        get
+        {
+            if (chatContent == null)
+            {
+                chatContent = GameObject.Find("UI").transform.Find("ChatField")
+                    .Find("ScrollView").Find("Viewport").Find("Content");
+            }
+            return chatContent;
         }
     }
 
@@ -102,7 +117,12 @@ public class NetworkManager : Singleton<NetworkManager>
                 string displayName = accountResult.AccountInfo.TitleInfo.DisplayName;
                 if (string.IsNullOrEmpty(displayName))
                 {
-                    var popup = Popup.CreatePopup(EPopupType.GAME_NAME_POPUP);
+                    var popup = Popup.CreateSpecialPopup(EPopupType.GAME_NAME_POPUP);
+                }
+                else
+                {
+                    // 유저 네임[게임에서 표시되는 이름] 캐싱
+                    UserManager.userName = displayName;
                 }
             },
             (error) =>
@@ -248,11 +268,7 @@ public class NetworkManager : Singleton<NetworkManager>
         Debug.Log($"방 참가 실패 :\n코드 : {returnCode}\n메세지 : {message}");
     }
 
-    public void JoinRandomRoom()
-    {
-        // 아무 방 참가, 없으면 방 생성
-        // PhotonNetwork.JoinRandomOrCreateRoom();
-    }
+    public void JoinRandomRoom() => PhotonNetwork.JoinRandomRoom();
 
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
@@ -263,9 +279,7 @@ public class NetworkManager : Singleton<NetworkManager>
     private void MoveRoomScene() => LoadingManager.LoadScene(SSceneName.ROOM_SCENE);
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
-    {
-        
-    }
+        => AddChatBox($"<color=yellow>{newPlayer.NickName}님이 참가하였습니다.</color>");
 
     public void LeaveRoom()
     {
@@ -280,7 +294,20 @@ public class NetworkManager : Singleton<NetworkManager>
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
+        => AddChatBox($"<color=yellow>{otherPlayer.NickName}님이 떠났습니다.</color>");
+
+    public void SendChat(string inputFieldText)
     {
+        string chatMsg = $"[{PhotonNetwork.NickName}] : {inputFieldText}";
+        photonView.RPC("AddChatBoxRPC", RpcTarget.All, chatMsg);
+    }
+
+    [PunRPC] private void AddChatBoxRPC(string msg) => AddChatBox(msg);
+
+    private void AddChatBox(string msg)
+    {
+        GameObject chatBox = ObjectPoolManager.Instance.Pop(ChatContent);
+        chatBox.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = msg;
     }
     #endregion
 

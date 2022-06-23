@@ -51,3 +51,9 @@ public struct SRoomPropertyKey
     public const string MAP_NAME = "MapName";
     public const string ROOM_STATE = "RoomState";
 }
+
+// 리소스 로드 시 사용되는 경로
+public struct SResourceLoadPath
+{
+    public const string POPUP = "Prefabs/Popups/";
+}

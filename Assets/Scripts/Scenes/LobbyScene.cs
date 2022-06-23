@@ -55,7 +55,7 @@ public class LobbyScene : MonoBehaviour
 
     private void OnClickTitleBtn() => NetworkManager.Instance.LeaveLobby();
 
-    private void OnClickMakeRoomBtn() => Popup.CreatePopup(EPopupType.MAKE_ROOM_POPUP);
+    private void OnClickMakeRoomBtn() => Popup.CreateSpecialPopup(EPopupType.MAKE_ROOM_POPUP);
 
     private void OnClickJoinRandomRoomBtn() => NetworkManager.Instance.JoinRandomRoom();
 
