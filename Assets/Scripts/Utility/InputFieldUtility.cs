@@ -38,6 +38,15 @@ public class InputFieldUtility : MonoBehaviour
         // Enter 키로 특정 기능 작동
         if (canEnter && Input.GetKeyDown(KeyCode.Return))
         {
+            Popup normalPopup = FindObjectOfType<Popup>();
+
+            // 이미 일반 팝업이 활성화 되어있다면 무시
+            if (normalPopup != null && normalPopup.isNormalPopup)
+            {
+                print($"일반 팝업 [{normalPopup.name}]이 이미 화면에 있습니다.");
+                return;
+            }
+
             EnterAction();
         }
     }

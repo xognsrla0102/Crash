@@ -1,11 +1,11 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using PlayFab;
 using PlayFab.ClientModels;
 using System.Collections.Generic;
-using TMPro;
 
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
@@ -306,8 +306,8 @@ public class NetworkManager : Singleton<NetworkManager>
 
     private void AddChatBox(string msg)
     {
-        GameObject chatBox = ObjectPoolManager.Instance.Pop(ChatContent);
-        chatBox.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = msg;
+        GameObject chatBox = ChatBoxPoolManager.Instance.Pop(ChatContent);
+        chatBox.transform.Find("Text").GetComponent<Text>().text = msg;
     }
     #endregion
 

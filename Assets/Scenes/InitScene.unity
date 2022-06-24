@@ -180,7 +180,7 @@ GameObject:
   - component: {fileID: 452288078}
   - component: {fileID: 452288077}
   m_Layer: 0
-  m_Name: ObjectPoolManager
+  m_Name: ChatBoxPoolManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -199,7 +199,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   addPoolObjCnt: 10
-  poolObj: {fileID: 5161283938981098321, guid: f60a25600ba12ca45989fd825d67ff39, type: 3}
+  chatBoxObj: {fileID: 5161283938981098321, guid: f60a25600ba12ca45989fd825d67ff39,
+    type: 3}
 --- !u!4 &452288078
 Transform:
   m_ObjectHideFlags: 0

@@ -27,23 +27,17 @@ public class LoginManager : MonoBehaviour
     [SerializeField] private GameObject loginUI;
     [SerializeField] private GameObject titleUI;
 
-    private InputFieldUtility movementInputField;
+    private InputFieldUtility inputFieldUtility;
 
     private bool isAutoLogin;
 
     private void Start()
     {
-        movementInputField = GetComponent<InputFieldUtility>();
+        inputFieldUtility = GetComponent<InputFieldUtility>();
 
         // Enter 키로 회원가입이나 로그인 버튼 작동하도록 설정
-        movementInputField.EnterAction = () =>
+        inputFieldUtility.EnterAction = () =>
         {
-            // 타이틀 UI가 켜져있으면 무시
-            if (titleUI.activeInHierarchy)
-            {
-                return;
-            }
-
             if (registerUI.activeInHierarchy)
             {
                 OnClickRegisterBtn();
@@ -234,6 +228,9 @@ public class LoginManager : MonoBehaviour
         tabUI.SetActive(false);
         titleUI.SetActive(true);
 
+        // 인풋필드 유틸리티 컴포넌트 비활성화
+        inputFieldUtility.enabled = false;
+
         NetworkManager.Instance.CheckUserGameName();
     }
 
@@ -255,6 +252,9 @@ public class LoginManager : MonoBehaviour
         // 로그인 UI 활성화
         titleUI.SetActive(false);
         tabUI.SetActive(true);
+
+        // 인풋필드 유틸리티 컴포넌트 활성화
+        inputFieldUtility.enabled = true;
 
         // 로그아웃 시에는 자동 로그인 해제
         EncryptPlayerPrefs.DeleteKey(SPrefsKey.IS_AUTO_LOGIN);

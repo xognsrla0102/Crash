@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectPoolManager : Singleton<ObjectPoolManager>
+public class ChatBoxPoolManager : Singleton<ChatBoxPoolManager>
 {
     [SerializeField] private int addPoolObjCnt;
-    [SerializeField] private GameObject poolObj;
+    [SerializeField] private GameObject chatBoxObj;
 
     private Queue<GameObject> poolObjQueue = new Queue<GameObject>();
 
@@ -24,7 +23,7 @@ public class ObjectPoolManager : Singleton<ObjectPoolManager>
 
     private GameObject CreatePoolObj()
     {
-        var obj = Instantiate(poolObj, transform);
+        var obj = Instantiate(chatBoxObj, transform);
         obj.SetActive(false);
         return obj;
     }
