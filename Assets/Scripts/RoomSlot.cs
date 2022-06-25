@@ -11,8 +11,9 @@ public class RoomSlot : MonoBehaviour
     [HideInInspector] public RoomInfo roomInfo;
 
     [SerializeField] private TextMeshProUGUI roomNameText;
-    [SerializeField] private TextMeshProUGUI mapNameText;
     [SerializeField] private TextMeshProUGUI roomStateText;
+    [SerializeField] private TextMeshProUGUI masterUserNameText;
+    [SerializeField] private TextMeshProUGUI mapNameText;
     [SerializeField] private TextMeshProUGUI playerNumText;
 
     public void InitSlot()
@@ -34,16 +35,20 @@ public class RoomSlot : MonoBehaviour
             Hashtable roomProperty = roomInfo.CustomProperties;
 
             roomNameText.text = roomInfo.Name;
-            mapNameText.text = $"{roomProperty[SRoomPropertyKey.MAP_NAME]}";
             roomStateText.text = $"{roomProperty[SRoomPropertyKey.ROOM_STATE]}";
+
+            masterUserNameText.text = $"({roomProperty[SRoomPropertyKey.MASTER_CLIENT]})";
+
+            mapNameText.text = $"{roomProperty[SRoomPropertyKey.MAP_NAME]}";
             playerNumText.text = $"{roomInfo.PlayerCount} / {roomInfo.MaxPlayers}";
         }
         else
         {
             roomNameText.text = "None";
 
-            mapNameText.text =
             roomStateText.text =
+            masterUserNameText.text = 
+            mapNameText.text =
             playerNumText.text = string.Empty;
         }
     }

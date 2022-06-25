@@ -240,13 +240,15 @@ public class NetworkManager : Singleton<NetworkManager>
     #region 방 관련 코드
     public void CreateRoom(string roomName, byte maxPlayerNum)
     {
-        RoomOptions roomOption = new RoomOptions();
-        roomOption.MaxPlayers = maxPlayerNum;
-        roomOption.CustomRoomProperties = new Hashtable()
+        RoomOptions roomOption = new RoomOptions
         {
-            { SRoomPropertyKey.MASTER_CLIENT, PhotonNetwork.NickName },
-            { SRoomPropertyKey.MAP_NAME, SMapName.STADIUM },
-            { SRoomPropertyKey.ROOM_STATE, SRoomStatus.PENDING }
+            MaxPlayers = maxPlayerNum,
+            CustomRoomProperties = new Hashtable()
+            {
+                { SRoomPropertyKey.MASTER_CLIENT, UserManager.userName },
+                { SRoomPropertyKey.MAP_NAME, SMapName.STADIUM },
+                { SRoomPropertyKey.ROOM_STATE, SRoomStatus.PREPARING_GAME }
+            }
         };
 
         PhotonNetwork.CreateRoom(roomName, roomOption);

@@ -1,15 +1,24 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class RoomScene : MonoBehaviour
 {
     [SerializeField] private Button lobbyBtn;
     [SerializeField] private InputField chatInputField;
 
+    [SerializeField] private TextMeshProUGUI userNameText;
+    [SerializeField] private TextMeshProUGUI roomNameText;
+
     private InputFieldUtility inputFieldUtility;
 
     private void Start()
     {
+        MyRoomManager.SetRoomManager();
+
+        userNameText.text = UserManager.userName;
+        roomNameText.text = MyRoomManager.roomName;
+
         inputFieldUtility = GetComponent<InputFieldUtility>();
         inputFieldUtility.EnterAction = () =>
         {

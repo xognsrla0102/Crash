@@ -40,8 +40,8 @@ public struct SMapName
 
 public struct SRoomStatus
 {
-    public const string PENDING = "Pending";
-    public const string INGAME = "InGame";
+    public const string PREPARING_GAME = "Preparing for the game";
+    public const string IN_GAME = "InGame";
 }
 
 // 방 만들 때 사용되는 룸 속성 키들
