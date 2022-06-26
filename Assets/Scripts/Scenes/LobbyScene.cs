@@ -57,9 +57,18 @@ public class LobbyScene : MonoBehaviour
 
     private void OnClickMakeRoomBtn() => Popup.CreateSpecialPopup(EPopupType.MAKE_ROOM_POPUP);
 
-    private void OnClickJoinRandomRoomBtn() => NetworkManager.Instance.JoinRandomRoom();
+    private void OnClickJoinRandomRoomBtn()
+    {
+        MyRoomManager.entryRoomState = EEntryRoomState.JOIN_RANDOM_ROOM;
+        LoadingManager.LoadScene(SSceneName.ROOM_SCENE);
+    }
 
-    private void OnClickRoomSlotBtn(int slotIdx) => NetworkManager.Instance.JoinRoom(roomSlots[slotIdx].roomInfo.Name);
+    private void OnClickRoomSlotBtn(int slotIdx)
+    {
+        MyRoomManager.entryRoomState = EEntryRoomState.JOIN_ROOM;
+        MyRoomManager.roomName = roomSlots[slotIdx].roomInfo.Name;
+        LoadingManager.LoadScene(SSceneName.ROOM_SCENE);
+    }
 
     private void OnClickPrevPageBtn()
     {

@@ -1,30 +1,45 @@
-﻿using Photon.Pun;
+﻿using Photon;
+using Photon.Pun;
 using Photon.Realtime;
 
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
+public enum EEntryRoomState
+{
+    NONE,
+    CREATE_ROOM,
+    JOIN_ROOM,
+    JOIN_RANDOM_ROOM
+}
+
 public static class MyRoomManager
 {
-    public static RoomInfo RoomInfo => PhotonNetwork.CurrentRoom;
+    public static EEntryRoomState entryRoomState;
+
+    public static RoomInfo roomInfo;
 
     public static string roomName;
     public static string roomState;
 
+    public static string masterName;
     public static string mapName;
 
     public static int nowPlayerNum;
-    public static int maxPlayerNum;
+    public static byte maxPlayerNum;
 
     public static void SetRoomManager()
     {
-        Hashtable roomProperty = RoomInfo.CustomProperties;
+        roomInfo = PhotonNetwork.CurrentRoom;
 
-        roomName = RoomInfo.Name;
+        Hashtable roomProperty = roomInfo.CustomProperties;
+
+        roomName = roomInfo.Name;
         roomState= $"{roomProperty[SRoomPropertyKey.ROOM_STATE]}";
 
+        masterName = $"{roomProperty[SRoomPropertyKey.MASTER_CLIENT]}";
         mapName = $"{roomProperty[SRoomPropertyKey.MAP_NAME]}";
 
-        nowPlayerNum = RoomInfo.PlayerCount;
-        maxPlayerNum = RoomInfo.MaxPlayers;
+        nowPlayerNum = roomInfo.PlayerCount;
+        maxPlayerNum = roomInfo.MaxPlayers;
     }
 }

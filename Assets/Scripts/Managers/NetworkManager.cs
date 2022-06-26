@@ -238,11 +238,16 @@ public class NetworkManager : Singleton<NetworkManager>
     #endregion
 
     #region 방 관련 코드
-    public void CreateRoom(string roomName, byte maxPlayerNum)
+
+    // 주의 사항
+    // 방 생성 및 조인은 룸 씬으로 먼저 이동한 후에 Photon.CreateRoom, JoinRoom 시도를 함
+    // 포톤에서 먼저 CreateRoom, JoinRoom 처리를 하게 되면, 룸 씬 이동 전에, 로딩 씬에서 룸 관련 이벤트 메시지를 제대로 처리할 수 없기 때문
+
+    public void CreateRoom()
     {
         RoomOptions roomOption = new RoomOptions
         {
-            MaxPlayers = maxPlayerNum,
+            MaxPlayers = MyRoomManager.maxPlayerNum,
             CustomRoomProperties = new Hashtable()
             {
                 { SRoomPropertyKey.MASTER_CLIENT, UserManager.userName },
@@ -251,7 +256,7 @@ public class NetworkManager : Singleton<NetworkManager>
             }
         };
 
-        PhotonNetwork.CreateRoom(roomName, roomOption);
+        PhotonNetwork.CreateRoom(MyRoomManager.roomName, roomOption);
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
@@ -260,9 +265,16 @@ public class NetworkManager : Singleton<NetworkManager>
         Debug.Log($"방 생성 실패 :\n코드 : {returnCode}\n메세지 : {message}");
     }
 
-    public void JoinRoom(string roomName) => PhotonNetwork.JoinRoom(roomName);
+    public void JoinRoom() => PhotonNetwork.JoinRoom(MyRoomManager.roomName);
 
-    public override void OnJoinedRoom() => MoveRoomScene();
+    // CreateRoom 함수 호출 시에도 OnCreateRoom 함수 호출 뒤 이곳으로 들어옴
+    public override void OnJoinedRoom()
+    {
+        print($"방 [{MyRoomManager.roomName}] 참가 완료");
+
+        RoomScene roomScene = FindObjectOfType<RoomScene>();
+        roomScene.InitRoomScene();
+    }
 
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
@@ -277,8 +289,6 @@ public class NetworkManager : Singleton<NetworkManager>
         Popup.CreateErrorPopup("Failed Join Random Room", $"Error Code : {returnCode}\nMessage : {message}");
         Debug.Log($"랜덤으로 방 참가 실패 :\n코드 : {returnCode}\n메세지 : {message}");
     }
-
-    private void MoveRoomScene() => LoadingManager.LoadScene(SSceneName.ROOM_SCENE);
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
         => AddChatBox($"<color=yellow>{newPlayer.NickName}님이 참가하였습니다.</color>");

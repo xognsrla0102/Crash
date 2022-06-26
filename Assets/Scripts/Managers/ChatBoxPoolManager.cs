@@ -45,6 +45,7 @@ public class ChatBoxPoolManager : Singleton<ChatBoxPoolManager>
 
         GameObject retObj = poolObjQueue.Dequeue();
         retObj.transform.SetParent(parent);
+        retObj.transform.localScale = Vector3.one;
         retObj.gameObject.SetActive(true);
         return retObj;
     }

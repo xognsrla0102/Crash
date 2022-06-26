@@ -45,7 +45,12 @@ public class MakeRoomPopup : YesNoPopup
         }
         #endregion
 
-        NetworkManager.Instance.CreateRoom(roomNameInputField.text, maxPlayerNum);
+        MyRoomManager.entryRoomState = EEntryRoomState.CREATE_ROOM;
+        MyRoomManager.roomName = roomNameInputField.text;
+        MyRoomManager.maxPlayerNum = maxPlayerNum;
+
+        LoadingManager.LoadScene(SSceneName.ROOM_SCENE);
+
         ClosePopup();
     }
 }

@@ -14,10 +14,26 @@ public class RoomScene : MonoBehaviour
 
     private void Start()
     {
-        MyRoomManager.SetRoomManager();
+        switch (MyRoomManager.entryRoomState)
+        {
+            case EEntryRoomState.CREATE_ROOM:
+                NetworkManager.Instance.CreateRoom();
+                break;
+            case EEntryRoomState.JOIN_ROOM:
+                NetworkManager.Instance.JoinRoom();
+                break;
+            case EEntryRoomState.JOIN_RANDOM_ROOM:
+                NetworkManager.Instance.JoinRandomRoom();
+                break;
+            default:
+                Debug.Assert(false);
+                break;
+        }
+    }
 
-        userNameText.text = UserManager.userName;
-        roomNameText.text = MyRoomManager.roomName;
+    public void InitRoomScene()
+    {
+        MyRoomManager.SetRoomManager();
 
         inputFieldUtility = GetComponent<InputFieldUtility>();
         inputFieldUtility.EnterAction = () =>
@@ -37,6 +53,9 @@ public class RoomScene : MonoBehaviour
 
         // 채팅 인풋필드 활성화
         chatInputField.ActivateInputField();
+
+        userNameText.text = UserManager.userName;
+        roomNameText.text = MyRoomManager.roomName;
     }
 
     private void OnDestroy()
