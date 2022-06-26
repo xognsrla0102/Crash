@@ -291,7 +291,7 @@ public class NetworkManager : Singleton<NetworkManager>
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
-        => AddChatBox($"<color=yellow>{newPlayer.NickName}님이 참가하였습니다.</color>");
+        => AddChatBox($"<color=red>{newPlayer.NickName}님이 참가하였습니다.</color>");
 
     public void LeaveRoom()
     {
@@ -306,7 +306,7 @@ public class NetworkManager : Singleton<NetworkManager>
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
-        => AddChatBox($"<color=yellow>{otherPlayer.NickName}님이 떠났습니다.</color>");
+        => AddChatBox($"<color=red>{otherPlayer.NickName}님이 떠났습니다.</color>");
 
     public void SendChat(string inputFieldText)
     {
@@ -318,6 +318,13 @@ public class NetworkManager : Singleton<NetworkManager>
 
     private void AddChatBox(string msg)
     {
+        // 이미 채팅 슬롯이 보여줄 슬롯만큼 생성되었다면
+        if (ChatContent.childCount == ChatBoxPoolManager.SHOW_CHAT_BOX_CNT)
+        {
+            // 가장 위에 있던 채팅 슬롯을 풀링 오브젝트에 다시 넣음
+            ChatBoxPoolManager.Instance.Push(ChatContent.GetChild(0).gameObject);
+        }
+
         GameObject chatBox = ChatBoxPoolManager.Instance.Pop(ChatContent);
         chatBox.transform.Find("Text").GetComponent<Text>().text = msg;
     }
