@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Photon.Pun;
+using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
@@ -9,6 +10,9 @@ public class RoomScene : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI userNameText;
     [SerializeField] private TextMeshProUGUI roomNameText;
+
+    [SerializeField] private Button gameStartBtn;
+    [SerializeField] private Button gameReadyBtn;
 
     private InputFieldUtility inputFieldUtility;
 
@@ -56,11 +60,25 @@ public class RoomScene : MonoBehaviour
 
         userNameText.text = UserManager.userName;
         roomNameText.text = MyRoomManager.roomName;
+
+        UpdateRoom();
     }
 
     private void OnDestroy()
     {
         lobbyBtn.onClick.RemoveAllListeners();
+
+        gameStartBtn.onClick.RemoveAllListeners();
+        gameReadyBtn.onClick.RemoveAllListeners();
+    }
+
+    // 방 요소 갱신
+    public void UpdateRoom()
+    {
+        gameStartBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient);
+        gameReadyBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient == false);
+
+        roomNameText.text = MyRoomManager.roomName;
     }
 
     private void OnClickLobbyBtn() => NetworkManager.Instance.LeaveRoom();

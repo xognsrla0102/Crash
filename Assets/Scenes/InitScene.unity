@@ -198,7 +198,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07c9398dd8cb70e4d8bf18a2b24039a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  addPoolObjCnt: 10
   chatBoxObj: {fileID: 5161283938981098321, guid: f60a25600ba12ca45989fd825d67ff39,
     type: 3}
 --- !u!4 &452288078

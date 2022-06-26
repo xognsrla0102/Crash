@@ -253,6 +253,12 @@ public class NetworkManager : Singleton<NetworkManager>
                 { SRoomPropertyKey.MASTER_CLIENT, UserManager.userName },
                 { SRoomPropertyKey.MAP_NAME, SMapName.STADIUM },
                 { SRoomPropertyKey.ROOM_STATE, SRoomStatus.PREPARING_GAME }
+            },
+            CustomRoomPropertiesForLobby = new string[]
+            {
+                SRoomPropertyKey.MASTER_CLIENT,
+                SRoomPropertyKey.MAP_NAME,
+                SRoomPropertyKey.ROOM_STATE
             }
         };
 
@@ -291,7 +297,12 @@ public class NetworkManager : Singleton<NetworkManager>
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
-        => AddChatBox($"<color=red>{newPlayer.NickName}님이 참가하였습니다.</color>");
+    {
+        AddChatBox($"<color=red>{newPlayer.NickName}님이 참가하였습니다.</color>");
+
+        RoomScene roomScene = FindObjectOfType<RoomScene>();
+        roomScene.UpdateRoom();
+    }
 
     public void LeaveRoom()
     {
@@ -302,11 +313,16 @@ public class NetworkManager : Singleton<NetworkManager>
     public override void OnLeftRoom()
     {
         CanvasGroup.interactable = true;
-        print("방 떠남");
+        print("방 떠남, 게임 서버 연결 해제 후 마스터 서버 접속 시도..");
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
-        => AddChatBox($"<color=red>{otherPlayer.NickName}님이 떠났습니다.</color>");
+    {
+        AddChatBox($"<color=red>{otherPlayer.NickName}님이 떠났습니다.</color>");
+
+        RoomScene roomScene = FindObjectOfType<RoomScene>();
+        roomScene.UpdateRoom();
+    }
 
     public void SendChat(string inputFieldText)
     {

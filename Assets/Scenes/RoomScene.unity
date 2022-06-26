@@ -2997,8 +2997,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1245935694}
   - {fileID: 1559200130}
+  - {fileID: 1245935694}
   - {fileID: 1623905356}
   - {fileID: 697991312}
   m_Father: {fileID: 88783324}
@@ -3998,7 +3998,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1245935694
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4012,7 +4012,7 @@ RectTransform:
   m_Children:
   - {fileID: 1189666716}
   m_Father: {fileID: 961416089}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4327,6 +4327,8 @@ MonoBehaviour:
   chatInputField: {fileID: 697991313}
   userNameText: {fileID: 1997470834}
   roomNameText: {fileID: 346531417}
+  gameStartBtn: {fileID: 1559200131}
+  gameReadyBtn: {fileID: 1245935696}
 --- !u!4 &1297519596
 Transform:
   m_ObjectHideFlags: 0
@@ -4663,7 +4665,7 @@ RectTransform:
   m_Children:
   - {fileID: 484303458}
   m_Father: {fileID: 961416089}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
