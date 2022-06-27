@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
@@ -253,7 +254,7 @@ public class NetworkManager : Singleton<NetworkManager>
                 { SRoomPropertyKey.ROOM_NAME, MyRoomManager.roomName },
                 { SRoomPropertyKey.MASTER_CLIENT, UserManager.userName },
                 { SRoomPropertyKey.MAP_NAME, SMapName.STADIUM },
-                { SRoomPropertyKey.ROOM_STATE, SRoomStatus.PREPARING_GAME }
+                { SRoomPropertyKey.ROOM_STATE, SRoomState.PREPARING_GAME }
             },
             CustomRoomPropertiesForLobby = new string[]
             {
@@ -304,7 +305,7 @@ public class NetworkManager : Singleton<NetworkManager>
         AddChatBox($"<color=red>{newPlayer.NickName}님이 참가하였습니다.</color>");
 
         RoomScene roomScene = FindObjectOfType<RoomScene>();
-        roomScene.UpdateRoom();
+        roomScene.UpdateRoomUntilUpdateCustomProperties();
     }
 
     public void LeaveRoom()
@@ -324,7 +325,7 @@ public class NetworkManager : Singleton<NetworkManager>
         AddChatBox($"<color=red>{otherPlayer.NickName}님이 떠났습니다.</color>");
 
         RoomScene roomScene = FindObjectOfType<RoomScene>();
-        roomScene.UpdateRoom();
+        roomScene.UpdateRoomUntilUpdateCustomProperties();
     }
 
     public void SendChat(string inputFieldText)
@@ -377,7 +378,13 @@ public class NetworkManager : Singleton<NetworkManager>
     // 룸 프로퍼티 변경되었을 때
     public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
     {
-        print($"방 정보가 변경되었습니다. {propertiesThatChanged}");
+        StringBuilder sb = new StringBuilder(256);
+
+        foreach (var property in propertiesThatChanged)
+        {
+            sb.AppendLine($"key : {property.Key}, value : {property.Value}");
+        }
+        print($"방 정보가 변경되었습니다.\n{sb}");
     }
     #endregion
 

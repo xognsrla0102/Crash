@@ -65,8 +65,25 @@ public class LobbyScene : MonoBehaviour
 
     private void OnClickRoomSlotBtn(int slotIdx)
     {
+        #region 해당 슬롯의 방 정보 유효 검사
+        RoomSlot roomSlot = roomSlots[slotIdx];
+        if (roomSlot.playerNumText.text.Contains("FULL"))
+        {
+            Popup.CreateErrorPopup("Failed Join Room", "The Room is FULL");
+            print("방 유저 가득 차서 참가 실패");
+            return;
+        }
+
+        if (roomSlot.roomStateText.text.Contains(SRoomState.IN_GAME))
+        {
+            Popup.CreateErrorPopup("Failed Join Room", "The Room is Playing Game now.");
+            print("게임 진행 중이라 참가 실패");
+            return;
+        }
+        #endregion
+
         MyRoomManager.entryRoomState = EEntryRoomState.JOIN_ROOM;
-        MyRoomManager.roomName = roomSlots[slotIdx].roomInfo.Name;
+        MyRoomManager.roomName = roomSlot.roomInfo.Name;
         LoadingManager.LoadScene(SSceneName.ROOM_SCENE);
     }
 

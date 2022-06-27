@@ -38,7 +38,7 @@ public struct SMapName
     public const string STADIUM = "No.6 Stadium";
 }
 
-public struct SRoomStatus
+public struct SRoomState
 {
     public const string PREPARING_GAME = "Preparing for the game";
     public const string IN_GAME = "InGame";
@@ -53,8 +53,15 @@ public struct SRoomPropertyKey
     public const string ROOM_STATE = "RoomState";
 }
 
+// 방에 참가한 유저에 대한 속성 키들
+public struct SPlayerPropertyKey
+{
+    public const string COLOR_TYPE = "ColorType";
+}
+
 // 리소스 로드 시 사용되는 경로
 public struct SResourceLoadPath
 {
     public const string POPUP = "Prefabs/Popups/";
+    public const string IMAGE = "Images/";
 }

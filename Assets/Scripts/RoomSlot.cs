@@ -7,14 +7,15 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class RoomSlot : MonoBehaviour
 {
-    [HideInInspector] public Button slotBtn;
-    [HideInInspector] public RoomInfo roomInfo;
+    public TextMeshProUGUI playerNumText;
+    public TextMeshProUGUI roomStateText;
 
     [SerializeField] private TextMeshProUGUI roomNameText;
-    [SerializeField] private TextMeshProUGUI roomStateText;
     [SerializeField] private TextMeshProUGUI masterUserNameText;
     [SerializeField] private TextMeshProUGUI mapNameText;
-    [SerializeField] private TextMeshProUGUI playerNumText;
+
+    [HideInInspector] public Button slotBtn;
+    [HideInInspector] public RoomInfo roomInfo;
 
     public void InitSlot()
     {
@@ -40,7 +41,7 @@ public class RoomSlot : MonoBehaviour
             masterUserNameText.text = $"Master User(<color=red>\"{roomProperty[SRoomPropertyKey.MASTER_CLIENT]}\"</color>)";
 
             mapNameText.text = $"MAP [<color=blue>\"{roomProperty[SRoomPropertyKey.MAP_NAME]}\"</color>]";
-            playerNumText.text = $"{roomInfo.PlayerCount} / {roomInfo.MaxPlayers}";
+            playerNumText.text = roomInfo.PlayerCount == roomInfo.MaxPlayers ? "<color=red>FULL</color>" : $"{roomInfo.PlayerCount} / {roomInfo.MaxPlayers}";
         }
         else
         {

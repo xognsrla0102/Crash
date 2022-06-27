@@ -15,6 +15,7 @@ public enum EEntryRoomState
 public static class MyRoomManager
 {
     public static EEntryRoomState entryRoomState;
+    public static EUserColorType userColorType;
 
     public static RoomInfo roomInfo;
 
@@ -30,6 +31,11 @@ public static class MyRoomManager
     public static void SetRoomManager()
     {
         roomInfo = PhotonNetwork.CurrentRoom;
+
+        userColorType = (EUserColorType)(PhotonNetwork.PlayerList.Length - 1);
+
+        // 방에 참가한 유저에 대해 컬러 속성을 저장함
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { { SPlayerPropertyKey.COLOR_TYPE, $"{userColorType}" } });
 
         Hashtable roomProperty = roomInfo.CustomProperties;
 

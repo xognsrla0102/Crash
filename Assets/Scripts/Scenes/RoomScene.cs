@@ -1,4 +1,6 @@
-﻿using Photon.Pun;
+﻿using System;
+using System.Collections;
+using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,8 +22,9 @@ public class RoomScene : MonoBehaviour
     [SerializeField] private TextMeshProUGUI userNameText;
     [SerializeField] private TextMeshProUGUI roomNameText;
 
-    [Header("유저 슬롯")]
+    [Header("슬롯들")]
     [SerializeField] private UserSlot[] userSlots;
+    [SerializeField] private MapSlot mapSlot;
 
     private InputFieldUtility inputFieldUtility;
 
@@ -63,6 +66,7 @@ public class RoomScene : MonoBehaviour
         };
 
         lobbyBtn.onClick.AddListener(OnClickLobbyBtn);
+        gameStartBtn.onClick.AddListener(OnClickGameStartBtn);
         roomOptionBtn.onClick.AddListener(OnClickRoomOptionBtn);
 
         // 채팅 인풋필드 활성화
@@ -70,7 +74,9 @@ public class RoomScene : MonoBehaviour
 
         roomNameText.text = MyRoomManager.roomName;
 
-        UpdateRoom();
+        mapSlot.InitSlot(MyRoomManager.mapName);
+
+        UpdateRoomUntilUpdateCustomProperties();
     }
 
     private void OnDestroy()
@@ -85,9 +91,18 @@ public class RoomScene : MonoBehaviour
         roomOptionBtn.onClick.RemoveAllListeners();
     }
 
-    // 방 요소 갱신
-    public void UpdateRoom()
+    // 방 갱신 (누군가 떠나거나, 들어왔을 때 호출)
+    public void UpdateRoomUntilUpdateCustomProperties()
     {
+        Invoke("UpdateRoom", 0.1f);
+    }
+
+    private void UpdateRoom()
+    {
+        // 커스텀 프로퍼티 갱신을 위해 대기
+
+        roomNameText.text = MyRoomManager.roomName;
+
         #region 방장인지 아닌지에 따라 보이는 버튼 구분
         gameStartBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient);
         gameReadyBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient == false);
@@ -97,16 +112,53 @@ public class RoomScene : MonoBehaviour
         roomOptionBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient);
         #endregion
 
-        roomNameText.text = MyRoomManager.roomName;
+        #region 슬롯 세팅
+        // 나를 제외한 나머지 방 유저들
+        Player[] otherUsers = PhotonNetwork.PlayerListOthers;
 
-        Player[] players = PhotonNetwork.PlayerList;
-        for (int i = 0; i < players.Length; i++)
+        // 유저 범퍼카 색상 대입
+        EUserColorType[] userColorTypes = new EUserColorType[4] { EUserColorType.NONE, EUserColorType.NONE, EUserColorType.NONE, EUserColorType.NONE };
+        userColorTypes[0] = (EUserColorType)Enum.Parse(typeof(EUserColorType), $"{PhotonNetwork.LocalPlayer.CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}");
+
+        for (int i = 0; i < otherUsers.Length; i++)
         {
-
+            userColorTypes[i + 1] = (EUserColorType)Enum.Parse(typeof(EUserColorType), $"{otherUsers[i].CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}");
         }
+
+        // 자기 자신 슬롯 세팅
+        userSlots[0].InitSlot(PhotonNetwork.LocalPlayer.NickName, userColorTypes[0]);
+
+        // 방에 있는 다른 사람 슬롯 세팅
+        int otherUserIdx;
+        for (otherUserIdx = 0; otherUserIdx < otherUsers.Length; otherUserIdx++)
+        {
+            // 자기 자신은 이미 했으므로 1번째 슬롯부터 시작
+            userSlots[otherUserIdx + 1].InitSlot(otherUsers[otherUserIdx].NickName, userColorTypes[otherUserIdx + 1]);
+        }
+
+        // 빈 슬롯 세팅
+        for (int emptySlotIdx = PhotonNetwork.PlayerList.Length; emptySlotIdx < userSlots.Length; emptySlotIdx++)
+        {
+            userSlots[emptySlotIdx].InitEmptySlot();
+        }
+        #endregion
     }
 
     private void OnClickLobbyBtn() => NetworkManager.Instance.LeaveRoom();
+
+    private void OnClickGameStartBtn()
+    {
+        if (PhotonNetwork.IsMasterClient == false)
+        {
+            Debug.Assert(false, "마스터 클라이언트가 아닙니다");
+            return;
+        }
+
+        // 게임이 시작되므로 참여 못 하게 막음..
+        PhotonNetwork.CurrentRoom.IsOpen = false;
+
+        // 룸 상태 변경해야 함
+    }
 
     private void OnClickRoomOptionBtn() => Popup.CreateSpecialPopup(EPopupType.ROOM_OPTION_POPUP);
 }
