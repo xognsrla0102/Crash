@@ -3,11 +3,12 @@ using TMPro;
 
 public enum EUserColorType
 {
+    NONE,
     RED,
     YELLOW,
     GREEN,
     BLUE,
-    NONE
+    NUMS
 }
 
 public class UserSlot : MonoBehaviour
@@ -37,7 +38,7 @@ public class UserSlot : MonoBehaviour
         userNameText.text = userName;
 
         // ColorType에 해당하는 모델링만 활성화
-        int userColorNum = (int)userColorType;
+        int userColorNum = (int)userColorType - 1;
         for (int i = 0; i < modelParent.childCount; i++)
         {
             modelParent.GetChild(i).gameObject.SetActive(i == userColorNum);
@@ -46,6 +47,6 @@ public class UserSlot : MonoBehaviour
 
     public void ActiveUserChatBox(string msg)
     {
-        // userChatBox.
+        // userChatBox.ActiveChatBox(msg);
     }
 }

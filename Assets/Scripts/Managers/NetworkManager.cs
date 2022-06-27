@@ -317,6 +317,7 @@ public class NetworkManager : Singleton<NetworkManager>
     public override void OnLeftRoom()
     {
         CanvasGroup.interactable = true;
+        MyRoomManager.ClearRoomManager();
         print("방 떠남, 게임 서버 연결 해제 후 마스터 서버 접속 시도..");
     }
 

@@ -49,8 +49,6 @@ public class RoomScene : MonoBehaviour
 
     public void InitRoomScene()
     {
-        MyRoomManager.SetRoomManager();
-
         inputFieldUtility = GetComponent<InputFieldUtility>();
         inputFieldUtility.EnterAction = () =>
         {
@@ -72,10 +70,6 @@ public class RoomScene : MonoBehaviour
         // 채팅 인풋필드 활성화
         chatInputField.ActivateInputField();
 
-        roomNameText.text = MyRoomManager.roomName;
-
-        mapSlot.InitSlot(MyRoomManager.mapName);
-
         UpdateRoomUntilUpdateCustomProperties();
     }
 
@@ -94,13 +88,15 @@ public class RoomScene : MonoBehaviour
     // 방 갱신 (누군가 떠나거나, 들어왔을 때 호출)
     public void UpdateRoomUntilUpdateCustomProperties()
     {
+        // 방 매니저 정보 갱신하고
+        MyRoomManager.SetRoomManager();
+
+        // 커스텀 프로퍼티 갱신을 위해 대기
         Invoke("UpdateRoom", 0.1f);
     }
 
     private void UpdateRoom()
     {
-        // 커스텀 프로퍼티 갱신을 위해 대기
-
         roomNameText.text = MyRoomManager.roomName;
 
         #region 방장인지 아닌지에 따라 보이는 버튼 구분
@@ -113,11 +109,14 @@ public class RoomScene : MonoBehaviour
         #endregion
 
         #region 슬롯 세팅
+
+        mapSlot.InitSlot(MyRoomManager.mapName);
+
         // 나를 제외한 나머지 방 유저들
         Player[] otherUsers = PhotonNetwork.PlayerListOthers;
 
         // 유저 범퍼카 색상 대입
-        EUserColorType[] userColorTypes = new EUserColorType[4] { EUserColorType.NONE, EUserColorType.NONE, EUserColorType.NONE, EUserColorType.NONE };
+        EUserColorType[] userColorTypes = new EUserColorType[4];
         userColorTypes[0] = (EUserColorType)Enum.Parse(typeof(EUserColorType), $"{PhotonNetwork.LocalPlayer.CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}");
 
         for (int i = 0; i < otherUsers.Length; i++)
@@ -137,7 +136,8 @@ public class RoomScene : MonoBehaviour
         }
 
         // 빈 슬롯 세팅
-        for (int emptySlotIdx = PhotonNetwork.PlayerList.Length; emptySlotIdx < userSlots.Length; emptySlotIdx++)
+        int playerCnt = PhotonNetwork.PlayerList.Length;
+        for (int emptySlotIdx = playerCnt; emptySlotIdx < userSlots.Length; emptySlotIdx++)
         {
             userSlots[emptySlotIdx].InitEmptySlot();
         }

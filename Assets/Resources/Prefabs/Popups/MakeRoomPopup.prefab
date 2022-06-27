@@ -67,7 +67,7 @@ MonoBehaviour:
   m_text: 'Max Player Num : '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e039b27da0e0e6641bf4dbf6202e74b4, type: 2}
-  m_sharedMaterial: {fileID: 9003382773408800607, guid: e039b27da0e0e6641bf4dbf6202e74b4,
+  m_sharedMaterial: {fileID: 6286683155389093088, guid: e039b27da0e0e6641bf4dbf6202e74b4,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -201,7 +201,7 @@ MonoBehaviour:
   m_text: 'Room Name :'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e039b27da0e0e6641bf4dbf6202e74b4, type: 2}
-  m_sharedMaterial: {fileID: 9003382773408800607, guid: e039b27da0e0e6641bf4dbf6202e74b4,
+  m_sharedMaterial: {fileID: 6286683155389093088, guid: e039b27da0e0e6641bf4dbf6202e74b4,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -412,7 +412,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 0f4127ffdcf2c9349946a23ba20c3e1e, type: 3}
-    m_FontSize: 25
+    m_FontSize: 45
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
@@ -423,7 +423,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Input Max Player Num...
+  m_Text: Player Num...
 --- !u!1 &1866197185672209751
 GameObject:
   m_ObjectHideFlags: 0
@@ -647,11 +647,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   titleText: {fileID: 4429894530814321222}
   bodyText: {fileID: 0}
+  isNormalPopup: 0
   yesBtn: {fileID: 6899141388639917017}
   noBtn: {fileID: 450647916664365647}
   roomNameInputField: {fileID: 6100407097498044040}
   maxPlayerNumInputField: {fileID: 4725362998839306058}
-  inputFieldUtility: {fileID: 0}
 --- !u!114 &4465448950739563246
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -874,7 +874,7 @@ MonoBehaviour:
   m_text: Make Room
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e039b27da0e0e6641bf4dbf6202e74b4, type: 2}
-  m_sharedMaterial: {fileID: 9003382773408800607, guid: e039b27da0e0e6641bf4dbf6202e74b4,
+  m_sharedMaterial: {fileID: 6286683155389093088, guid: e039b27da0e0e6641bf4dbf6202e74b4,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1383,7 +1383,7 @@ MonoBehaviour:
   m_text: Make
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e039b27da0e0e6641bf4dbf6202e74b4, type: 2}
-  m_sharedMaterial: {fileID: 9003382773408800607, guid: e039b27da0e0e6641bf4dbf6202e74b4,
+  m_sharedMaterial: {fileID: 6286683155389093088, guid: e039b27da0e0e6641bf4dbf6202e74b4,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1649,7 +1649,7 @@ MonoBehaviour:
   m_text: Cancel
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e039b27da0e0e6641bf4dbf6202e74b4, type: 2}
-  m_sharedMaterial: {fileID: 9003382773408800607, guid: e039b27da0e0e6641bf4dbf6202e74b4,
+  m_sharedMaterial: {fileID: 6286683155389093088, guid: e039b27da0e0e6641bf4dbf6202e74b4,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
