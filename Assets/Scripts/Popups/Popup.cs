@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using UnityEngine;
+using UnityEngine.Events;
 using TMPro;
 using PlayFab;
 
@@ -10,6 +11,7 @@ public enum EPopupType
     OPTION_POPUP,
     GAME_NAME_POPUP,
     MAKE_ROOM_POPUP,
+    ROOM_OPTION_POPUP,
     NUMS
 }
 
@@ -36,6 +38,9 @@ public abstract class Popup : MonoBehaviour
             case EPopupType.MAKE_ROOM_POPUP:
                 obj = Resources.Load<MakeRoomPopup>($"{SResourceLoadPath.POPUP}MakeRoomPopup");
                 break;
+            case EPopupType.ROOM_OPTION_POPUP:
+                obj = Resources.Load<RoomOptionPopup>($"{SResourceLoadPath.POPUP}RoomOptionPopup");
+                break;
             default:
                 Debug.Assert(false);
                 obj = null;
@@ -45,18 +50,43 @@ public abstract class Popup : MonoBehaviour
         return Instantiate(obj, GameObject.Find("UI").transform);
     }
 
-    public static void CreateNormalPopup(string titleText, string bodyText, EPopupType popupType = EPopupType.OK_POPUP)
+    public static void CreateNormalPopup(string titleText, string bodyText, UnityAction okAction = null, EPopupType popupType = EPopupType.OK_POPUP)
     {
         Popup obj;
 
         switch (popupType)
         {
-            case EPopupType.OK_POPUP: obj = Resources.Load<OKPopup>($"{SResourceLoadPath.POPUP}OKPopup"); break;
-            case EPopupType.YES_NO_POPUP: obj = Resources.Load<YesNoPopup>($"{SResourceLoadPath.POPUP}YesNoPopup"); break;
-            default: Debug.Assert(false); obj = null; break;
+            case EPopupType.OK_POPUP:
+                obj = Resources.Load<OKPopup>($"{SResourceLoadPath.POPUP}OKPopup");
+                break;
+            case EPopupType.YES_NO_POPUP:
+                obj = Resources.Load<YesNoPopup>($"{SResourceLoadPath.POPUP}YesNoPopup");
+                break;
+            default:
+                Debug.Assert(false);
+                obj = null;
+                break;
         }
 
         Popup popup = Instantiate(obj, GameObject.Find("UI").transform);
+
+        if (okAction != null)
+        {
+            switch (popupType)
+            {
+                case EPopupType.OK_POPUP:
+                    (popup as OKPopup).SetOKBtnAction(okAction);
+                    break;
+                // 아직 쓸 일 없으므로 주석처리
+                case EPopupType.YES_NO_POPUP:
+                    // (popup as YesNoPopup).setac
+                    break;
+                default:
+                    Debug.Assert(false);
+                    break;
+            }
+        }
+
         popup.InitNormalPopup(titleText, bodyText);
     }
 
@@ -67,11 +97,11 @@ public abstract class Popup : MonoBehaviour
         isNormalPopup = true;
     }
 
-    public static void CreateErrorPopup(string titleText, string bodyText, EPopupType popupType = EPopupType.OK_POPUP)
-        => CreateNormalPopup(titleText, bodyText, popupType);
+    public static void CreateErrorPopup(string titleText, string bodyText, UnityAction okAction = null, EPopupType popupType = EPopupType.OK_POPUP)
+        => CreateNormalPopup(titleText, bodyText, okAction, popupType);
 
-    public static void CreateErrorPopup(string titleText, PlayFabError error, EPopupType popupType = EPopupType.OK_POPUP)
-        => CreateErrorPopup(titleText, SetBodyTextPlayFabErrorString(error), popupType);
+    public static void CreateErrorPopup(string titleText, PlayFabError error, UnityAction okAction = null, EPopupType popupType = EPopupType.OK_POPUP)
+        => CreateErrorPopup(titleText, SetBodyTextPlayFabErrorString(error), okAction, popupType);
 
     private static string SetBodyTextPlayFabErrorString(PlayFabError error)
     {

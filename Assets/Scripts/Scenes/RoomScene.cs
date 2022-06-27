@@ -1,18 +1,27 @@
 ﻿using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
 public class RoomScene : MonoBehaviour
 {
+    [Header("방 버튼들")]
     [SerializeField] private Button lobbyBtn;
+    [SerializeField] private Button roomOptionBtn;
+
+    [SerializeField] private Button gameStartBtn;
+    [SerializeField] private Button gameReadyBtn;
+    [SerializeField] private Button changeMapBtn;
+
+    [Header("인풋필드, 텍스트들")]
     [SerializeField] private InputField chatInputField;
 
     [SerializeField] private TextMeshProUGUI userNameText;
     [SerializeField] private TextMeshProUGUI roomNameText;
 
-    [SerializeField] private Button gameStartBtn;
-    [SerializeField] private Button gameReadyBtn;
+    [Header("유저 슬롯")]
+    [SerializeField] private UserSlot[] userSlots;
 
     private InputFieldUtility inputFieldUtility;
 
@@ -54,11 +63,11 @@ public class RoomScene : MonoBehaviour
         };
 
         lobbyBtn.onClick.AddListener(OnClickLobbyBtn);
+        roomOptionBtn.onClick.AddListener(OnClickRoomOptionBtn);
 
         // 채팅 인풋필드 활성화
         chatInputField.ActivateInputField();
 
-        userNameText.text = UserManager.userName;
         roomNameText.text = MyRoomManager.roomName;
 
         UpdateRoom();
@@ -70,16 +79,34 @@ public class RoomScene : MonoBehaviour
 
         gameStartBtn.onClick.RemoveAllListeners();
         gameReadyBtn.onClick.RemoveAllListeners();
+
+        changeMapBtn.onClick.RemoveAllListeners();
+
+        roomOptionBtn.onClick.RemoveAllListeners();
     }
 
     // 방 요소 갱신
     public void UpdateRoom()
     {
+        #region 방장인지 아닌지에 따라 보이는 버튼 구분
         gameStartBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient);
         gameReadyBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient == false);
 
+        changeMapBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient);
+
+        roomOptionBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient);
+        #endregion
+
         roomNameText.text = MyRoomManager.roomName;
+
+        Player[] players = PhotonNetwork.PlayerList;
+        for (int i = 0; i < players.Length; i++)
+        {
+
+        }
     }
 
     private void OnClickLobbyBtn() => NetworkManager.Instance.LeaveRoom();
+
+    private void OnClickRoomOptionBtn() => Popup.CreateSpecialPopup(EPopupType.ROOM_OPTION_POPUP);
 }

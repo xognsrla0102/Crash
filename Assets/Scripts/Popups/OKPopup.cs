@@ -19,6 +19,6 @@ public class OKPopup : Popup
     {
         // 기존 기본 리스너 삭제
         okBtn.onClick.RemoveAllListeners();
-        okBtn.onClick.AddListener(action);
+        okBtn.onClick.AddListener(action + ClosePopup);
     }
 }

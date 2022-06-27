@@ -47,6 +47,7 @@ public struct SRoomStatus
 // 방 만들 때 사용되는 룸 속성 키들
 public struct SRoomPropertyKey
 {
+    public const string ROOM_NAME = "RoomName";
     public const string MASTER_CLIENT = "MasterClient";
     public const string MAP_NAME = "MapName";
     public const string ROOM_STATE = "RoomState";

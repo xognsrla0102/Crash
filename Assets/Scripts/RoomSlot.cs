@@ -34,12 +34,12 @@ public class RoomSlot : MonoBehaviour
         {
             Hashtable roomProperty = roomInfo.CustomProperties;
 
-            roomNameText.text = $"Room Name[{roomInfo.Name}]";
-            roomStateText.text = $"Room State[{roomProperty[SRoomPropertyKey.ROOM_STATE]}]";
+            roomNameText.text = $"Room Name [{roomProperty[SRoomPropertyKey.ROOM_NAME]}]";
+            roomStateText.text = $"Room State [<color=#ff00ffff>{roomProperty[SRoomPropertyKey.ROOM_STATE]}</color>]";
 
-            masterUserNameText.text = $"Master User [<color=red>{roomProperty[SRoomPropertyKey.MASTER_CLIENT]}</color>]";
+            masterUserNameText.text = $"Master User(<color=red>\"{roomProperty[SRoomPropertyKey.MASTER_CLIENT]}\"</color>)";
 
-            mapNameText.text = $"Map Name[{roomProperty[SRoomPropertyKey.MAP_NAME]}]";
+            mapNameText.text = $"MAP [<color=blue>\"{roomProperty[SRoomPropertyKey.MAP_NAME]}\"</color>]";
             playerNumText.text = $"{roomInfo.PlayerCount} / {roomInfo.MaxPlayers}";
         }
         else

@@ -33,7 +33,7 @@ public static class MyRoomManager
 
         Hashtable roomProperty = roomInfo.CustomProperties;
 
-        roomName = roomInfo.Name;
+        roomName = $"{roomProperty[SRoomPropertyKey.ROOM_NAME]}";
         roomState= $"{roomProperty[SRoomPropertyKey.ROOM_STATE]}";
 
         masterName = $"{roomProperty[SRoomPropertyKey.MASTER_CLIENT]}";

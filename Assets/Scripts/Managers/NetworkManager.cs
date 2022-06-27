@@ -250,24 +250,27 @@ public class NetworkManager : Singleton<NetworkManager>
             MaxPlayers = MyRoomManager.maxPlayerNum,
             CustomRoomProperties = new Hashtable()
             {
+                { SRoomPropertyKey.ROOM_NAME, MyRoomManager.roomName },
                 { SRoomPropertyKey.MASTER_CLIENT, UserManager.userName },
                 { SRoomPropertyKey.MAP_NAME, SMapName.STADIUM },
                 { SRoomPropertyKey.ROOM_STATE, SRoomStatus.PREPARING_GAME }
             },
             CustomRoomPropertiesForLobby = new string[]
             {
+                SRoomPropertyKey.ROOM_NAME,
                 SRoomPropertyKey.MASTER_CLIENT,
                 SRoomPropertyKey.MAP_NAME,
                 SRoomPropertyKey.ROOM_STATE
             }
         };
 
-        PhotonNetwork.CreateRoom(MyRoomManager.roomName, roomOption);
+        // 이름은 도중에 바뀔 수 있으므로 실제로 보여지는 이름과 포톤에서 쓰이는 방 이름을 구별함.
+        PhotonNetwork.CreateRoom($"PhotonRoom{MyRoomManager.roomName}", roomOption);
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
-        Popup.CreateErrorPopup("Failed CreateRoom", $"Error Code : {returnCode}\nMessage : {message}");
+        Popup.CreateErrorPopup("Failed CreateRoom", $"Error Code : {returnCode}\nMessage : {message}", () => LoadingManager.LoadScene(SSceneName.LOBBY_SCENE));
         Debug.Log($"방 생성 실패 :\n코드 : {returnCode}\n메세지 : {message}");
     }
 
@@ -284,7 +287,7 @@ public class NetworkManager : Singleton<NetworkManager>
 
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
-        Popup.CreateErrorPopup("Failed Join Room", $"Error Code : {returnCode}\nMessage : {message}");
+        Popup.CreateErrorPopup("Failed Join Room", $"Error Code : {returnCode}\nMessage : {message}", () => LoadingManager.LoadScene(SSceneName.LOBBY_SCENE));
         Debug.Log($"방 참가 실패 :\n코드 : {returnCode}\n메세지 : {message}");
     }
 
@@ -292,7 +295,7 @@ public class NetworkManager : Singleton<NetworkManager>
 
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
-        Popup.CreateErrorPopup("Failed Join Random Room", $"Error Code : {returnCode}\nMessage : {message}");
+        Popup.CreateErrorPopup("Failed Join Random Room", $"Error Code : {returnCode}\nMessage : {message}", () => LoadingManager.LoadScene(SSceneName.LOBBY_SCENE));
         Debug.Log($"랜덤으로 방 참가 실패 :\n코드 : {returnCode}\n메세지 : {message}");
     }
 
