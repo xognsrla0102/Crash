@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using UnityEngine;
-using UnityEngine.Events;
 using TMPro;
 using PlayFab;
 
@@ -50,7 +49,7 @@ public abstract class Popup : MonoBehaviour
         return Instantiate(obj, GameObject.Find("UI").transform);
     }
 
-    public static void CreateNormalPopup(string titleText, string bodyText, UnityAction okAction = null, EPopupType popupType = EPopupType.OK_POPUP)
+    public static Popup CreateNormalPopup(string titleText, string bodyText, EPopupType popupType = EPopupType.OK_POPUP)
     {
         Popup obj;
 
@@ -69,25 +68,8 @@ public abstract class Popup : MonoBehaviour
         }
 
         Popup popup = Instantiate(obj, GameObject.Find("UI").transform);
-
-        if (okAction != null)
-        {
-            switch (popupType)
-            {
-                case EPopupType.OK_POPUP:
-                    (popup as OKPopup).SetOKBtnAction(okAction);
-                    break;
-                // 아직 쓸 일 없으므로 주석처리
-                case EPopupType.YES_NO_POPUP:
-                    // (popup as YesNoPopup).setac
-                    break;
-                default:
-                    Debug.Assert(false);
-                    break;
-            }
-        }
-
         popup.InitNormalPopup(titleText, bodyText);
+        return popup;
     }
 
     public void InitNormalPopup(string titleText, string bodyText)
@@ -97,11 +79,11 @@ public abstract class Popup : MonoBehaviour
         isNormalPopup = true;
     }
 
-    public static void CreateErrorPopup(string titleText, string bodyText, UnityAction okAction = null, EPopupType popupType = EPopupType.OK_POPUP)
-        => CreateNormalPopup(titleText, bodyText, okAction, popupType);
+    public static Popup CreateErrorPopup(string titleText, string bodyText, EPopupType popupType = EPopupType.OK_POPUP)
+        => CreateNormalPopup(titleText, bodyText, popupType);
 
-    public static void CreateErrorPopup(string titleText, PlayFabError error, UnityAction okAction = null, EPopupType popupType = EPopupType.OK_POPUP)
-        => CreateErrorPopup(titleText, SetBodyTextPlayFabErrorString(error), okAction, popupType);
+    public static Popup CreateErrorPopup(string titleText, PlayFabError error, EPopupType popupType = EPopupType.OK_POPUP)
+        => CreateErrorPopup(titleText, SetBodyTextPlayFabErrorString(error), popupType);
 
     private static string SetBodyTextPlayFabErrorString(PlayFabError error)
     {

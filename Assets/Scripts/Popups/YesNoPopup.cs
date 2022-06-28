@@ -17,4 +17,11 @@ public class YesNoPopup : Popup
         yesBtn.onClick.RemoveAllListeners();
         noBtn.onClick.RemoveAllListeners();
     }
+
+    public void SetYesBtnAction(UnityEngine.Events.UnityAction action)
+    {
+        // 기존 기본 리스너 삭제
+        yesBtn.onClick.RemoveAllListeners();
+        yesBtn.onClick.AddListener(action);
+    }
 }

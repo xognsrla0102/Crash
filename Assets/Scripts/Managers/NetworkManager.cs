@@ -270,7 +270,8 @@ public class NetworkManager : Singleton<NetworkManager>
 
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
-        Popup.CreateErrorPopup("Failed CreateRoom", $"Error Code : {returnCode}\nMessage : {message}", () => LoadingManager.LoadScene(SSceneName.LOBBY_SCENE));
+        OKPopup popup = Popup.CreateErrorPopup("Failed CreateRoom", $"Error Code : {returnCode}\nMessage : {message}") as OKPopup;
+        popup.SetOKBtnAction(() => LoadingManager.LoadScene(SSceneName.LOBBY_SCENE));
         Debug.Log($"방 생성 실패 :\n코드 : {returnCode}\n메세지 : {message}");
     }
 
@@ -287,7 +288,8 @@ public class NetworkManager : Singleton<NetworkManager>
 
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
-        Popup.CreateErrorPopup("Failed Join Room", $"Error Code : {returnCode}\nMessage : {message}", () => LoadingManager.LoadScene(SSceneName.LOBBY_SCENE));
+        OKPopup popup = Popup.CreateErrorPopup("Failed Join Room", $"Error Code : {returnCode}\nMessage : {message}") as OKPopup;
+        popup.SetOKBtnAction(() => LoadingManager.LoadScene(SSceneName.LOBBY_SCENE));
         Debug.Log($"방 참가 실패 :\n코드 : {returnCode}\n메세지 : {message}");
     }
 
@@ -295,7 +297,8 @@ public class NetworkManager : Singleton<NetworkManager>
 
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
-        Popup.CreateErrorPopup("Failed Join Random Room", $"Error Code : {returnCode}\nMessage : {message}", () => LoadingManager.LoadScene(SSceneName.LOBBY_SCENE));
+        OKPopup popup = Popup.CreateErrorPopup("Failed Join Random Room", $"Error Code : {returnCode}\nMessage : {message}") as OKPopup;
+        popup.SetOKBtnAction(() => LoadingManager.LoadScene(SSceneName.LOBBY_SCENE));
         Debug.Log($"랜덤으로 방 참가 실패 :\n코드 : {returnCode}\n메세지 : {message}");
     }
 
@@ -374,6 +377,8 @@ public class NetworkManager : Singleton<NetworkManager>
     // 새 방장 설정
     public void SetMasterClient(Player player)
     {
+        Debug.Assert(PhotonNetwork.IsMasterClient, "방장이 아닙니다.");
+        print($"방장을 [\"{player.NickName}\"] 유저로 변경 시도");
         PhotonNetwork.SetMasterClient(player);
     }
 
@@ -381,18 +386,14 @@ public class NetworkManager : Singleton<NetworkManager>
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
         print($"방장이 {newMasterClient}로 변경되었습니다.");
+        RoomScene roomScene = FindObjectOfType<RoomScene>();
+        roomScene.UpdateRoomUntilUpdateCustomProperties();
     }
 
     public void SetRoomProperties(Hashtable roomProperty)
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            PhotonNetwork.CurrentRoom.SetCustomProperties(roomProperty);
-        }
-        else
-        {
-            print("방장이 아닙니다.");
-        }
+        Debug.Assert(PhotonNetwork.IsMasterClient, "방장이 아닙니다.");
+        PhotonNetwork.CurrentRoom.SetCustomProperties(roomProperty);
     }
 
     // 룸 프로퍼티 변경되었을 때
@@ -405,6 +406,23 @@ public class NetworkManager : Singleton<NetworkManager>
             sb.AppendLine($"key : {property.Key}, value : {property.Value}");
         }
         print($"방 정보가 변경되었습니다.\n{sb}");
+
+        RoomScene roomScene = FindObjectOfType<RoomScene>();
+        roomScene.UpdateRoomUntilUpdateCustomProperties();
+    }
+
+    public void KickUser(string userName)
+    {
+        photonView.RPC("KickUserRPC", RpcTarget.All, userName);
+    }
+
+    [PunRPC] private void KickUserRPC(string userName)
+    {
+        // 강퇴 당할 플레이어가 나라면 방을 나감
+        if (PhotonNetwork.LocalPlayer.NickName.Equals(userName))
+        {
+            LeaveRoom();
+        }
     }
     #endregion
 
