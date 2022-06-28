@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
@@ -23,7 +22,7 @@ public class RoomScene : MonoBehaviour
     [SerializeField] private TextMeshProUGUI roomNameText;
 
     [Header("슬롯들")]
-    [SerializeField] private UserSlot[] userSlots;
+    public UserSlot[] userSlots;
     [SerializeField] private MapSlot mapSlot;
 
     private InputFieldUtility inputFieldUtility;
@@ -155,7 +154,7 @@ public class RoomScene : MonoBehaviour
         }
 
         // 게임이 시작되므로 참여 못 하게 막음..
-        PhotonNetwork.CurrentRoom.IsOpen = false;
+        //PhotonNetwork.CurrentRoom.IsOpen = false;
 
         // 룸 상태 변경해야 함
     }

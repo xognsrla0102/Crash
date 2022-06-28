@@ -13,18 +13,16 @@ public enum EUserColorType
 
 public class UserSlot : MonoBehaviour
 {
+    [HideInInspector] public EUserColorType userColorType;
+
     [SerializeField] private Transform modelParent;
     [SerializeField] private TextMeshProUGUI userNameText;
-    [SerializeField] private GameObject userChatBox;
-
-    private void Awake()
-    {
-        userChatBox.SetActive(false);
-    }
+    [SerializeField] private ChatBox userChatBox;
 
     public void InitEmptySlot()
     {
         userNameText.text = "Empty";
+        userColorType = EUserColorType.NONE;
 
         // 모델링 비활성화
         for (int i = 0; i < modelParent.childCount; i++)
@@ -36,6 +34,7 @@ public class UserSlot : MonoBehaviour
     public void InitSlot(string userName, EUserColorType userColorType)
     {
         userNameText.text = userName;
+        this.userColorType = userColorType;
 
         // ColorType에 해당하는 모델링만 활성화
         int userColorNum = (int)userColorType - 1;
@@ -45,8 +44,5 @@ public class UserSlot : MonoBehaviour
         }
     }
 
-    public void ActiveUserChatBox(string msg)
-    {
-        // userChatBox.ActiveChatBox(msg);
-    }
+    public void ShowChatEffect(string msg) => userChatBox.ShowChatEffect(msg);
 }

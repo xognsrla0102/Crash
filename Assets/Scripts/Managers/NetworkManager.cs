@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Text;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using PlayFab;
 using PlayFab.ClientModels;
-using System.Collections.Generic;
 
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
@@ -266,7 +265,7 @@ public class NetworkManager : Singleton<NetworkManager>
         };
 
         // 이름은 도중에 바뀔 수 있으므로 실제로 보여지는 이름과 포톤에서 쓰이는 방 이름을 구별함.
-        PhotonNetwork.CreateRoom($"PhotonRoom{MyRoomManager.roomName}", roomOption);
+        PhotonNetwork.CreateRoom($"PhotonRoom{MyRoomManager.roomName}{PhotonNetwork.LocalPlayer.UserId}", roomOption);
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
@@ -329,25 +328,45 @@ public class NetworkManager : Singleton<NetworkManager>
         roomScene.UpdateRoomUntilUpdateCustomProperties();
     }
 
-    public void SendChat(string inputFieldText)
+    public void SendChat(string msg)
     {
-        string chatMsg = $"[{PhotonNetwork.NickName}] : {inputFieldText}";
-        photonView.RPC("AddChatBoxRPC", RpcTarget.All, chatMsg);
+        photonView.RPC("AddChatBoxRPC", RpcTarget.All,
+            msg,
+            PhotonNetwork.NickName,
+            (EUserColorType)Enum.Parse(typeof(EUserColorType), $"{PhotonNetwork.LocalPlayer.CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}")
+        );
     }
 
-    [PunRPC] private void AddChatBoxRPC(string msg) => AddChatBox(msg);
+    // 채팅 메시지와 말한 유저의 색상 정보를 전달
+    [PunRPC] private void AddChatBoxRPC(string msg, string userName, EUserColorType userColorType) => AddChatBox(msg, userName, userColorType);
 
-    private void AddChatBox(string msg)
+    private void AddChatBox(string msg, string userName = "", EUserColorType userColorType = EUserColorType.NONE)
     {
         // 이미 채팅 슬롯이 보여줄 슬롯만큼 생성되었다면
         if (ChatContent.childCount == ChatBoxPoolManager.SHOW_CHAT_BOX_CNT)
         {
             // 가장 위에 있던 채팅 슬롯을 풀링 오브젝트에 다시 넣음
-            ChatBoxPoolManager.Instance.Push(ChatContent.GetChild(0).gameObject);
+            ChatBoxPoolManager.Instance.Push(ChatContent.GetChild(0).GetComponent<ChatBox>());
         }
 
-        GameObject chatBox = ChatBoxPoolManager.Instance.Pop(ChatContent);
-        chatBox.transform.Find("Text").GetComponent<Text>().text = msg;
+        ChatBox chatBox = ChatBoxPoolManager.Instance.Pop(ChatContent);
+        chatBox.SetText(string.IsNullOrWhiteSpace(userName) ? msg : $"[{userName}] : {msg}");
+
+        if (userColorType == EUserColorType.NONE)
+        {
+            return;
+        }
+
+        // 현재 방에서 말한 유저의 슬롯에 있는 채팅 이펙트를 보여줌
+        RoomScene roomScene = FindObjectOfType<RoomScene>();
+        foreach (var userSlot in roomScene.userSlots)
+        {
+            if (userSlot.userColorType == userColorType)
+            {
+                userSlot.ShowChatEffect(msg);
+                break;
+            }
+        }
     }
     #endregion
 

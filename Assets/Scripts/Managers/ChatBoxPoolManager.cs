@@ -8,9 +8,9 @@ public class ChatBoxPoolManager : Singleton<ChatBoxPoolManager>
     // 만약 풀링 오브젝트를 다 쓸 경우, 추가로 풀링 오브젝트를 할당할 숫자, 나중에 필요해지면 쓸 것
     // [HideInInspector] public const int ADD_POOL_OBJ_CNT = 10;
 
-    [SerializeField] private GameObject chatBoxObj;
+    [SerializeField] private ChatBox chatBoxObj;
 
-    private Queue<GameObject> poolObjQueue = new Queue<GameObject>();
+    private Queue<ChatBox> poolObjQueue = new Queue<ChatBox>();
 
     private void Awake()
     {
@@ -25,21 +25,21 @@ public class ChatBoxPoolManager : Singleton<ChatBoxPoolManager>
         }
     }
 
-    private GameObject CreatePoolObj()
+    private ChatBox CreatePoolObj()
     {
         var obj = Instantiate(chatBoxObj, transform);
-        obj.SetActive(false);
+        obj.gameObject.SetActive(false);
         return obj;
     }
 
-    public void Push(GameObject willPoolObj)
+    public void Push(ChatBox willPoolObj)
     {
         poolObjQueue.Enqueue(willPoolObj);
         willPoolObj.transform.SetParent(transform);
-        willPoolObj.SetActive(false);
+        willPoolObj.gameObject.SetActive(false);
     }
 
-    public GameObject Pop(Transform parent = null)
+    public ChatBox Pop(Transform parent = null)
     {
         // 풀링된 오브젝트를 다 쓴 경우에 Pop을 하는 경우는 버그
         if (poolObjQueue.Count == 0)
@@ -47,7 +47,7 @@ public class ChatBoxPoolManager : Singleton<ChatBoxPoolManager>
             Debug.Assert(false, "풀링 오브젝트를 전부 사용하였습니다.");
         }
 
-        GameObject retObj = poolObjQueue.Dequeue();
+        ChatBox retObj = poolObjQueue.Dequeue();
         retObj.transform.SetParent(parent);
         retObj.transform.localScale = Vector3.one;
         retObj.gameObject.SetActive(true);

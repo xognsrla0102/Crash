@@ -91,6 +91,8 @@ GameObject:
   - component: {fileID: 5161283938981098323}
   - component: {fileID: 6220849654361238348}
   - component: {fileID: 7699576297319490431}
+  - component: {fileID: 9000325343724263580}
+  - component: {fileID: 3597089739992624870}
   m_Layer: 5
   m_Name: ChatBox
   m_TagString: Untagged
@@ -194,3 +196,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 2
+--- !u!225 &9000325343724263580
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5161283938981098321}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &3597089739992624870
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5161283938981098321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 037cb9a0249127d419f39b0c1a730ed6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chatText: {fileID: 7883055025973325927}

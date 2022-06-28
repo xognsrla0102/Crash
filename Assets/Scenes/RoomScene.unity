@@ -884,10 +884,10 @@ RectTransform:
   m_Father: {fileID: 634078420}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 122.5, y: -17.5}
-  m_SizeDelta: {x: 200, y: 35}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &260653783
 MonoBehaviour:
@@ -1901,9 +1901,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b2eb0fb6bc029c4d8aaa7ea949f3a83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  userColorType: 0
   modelParent: {fileID: 1585707119}
   userNameText: {fileID: 832779023}
-  userChatBox: {fileID: 634078419}
+  userChatBox: {fileID: 634078425}
 --- !u!1 &625947694
 GameObject:
   m_ObjectHideFlags: 0
@@ -2000,13 +2001,15 @@ GameObject:
   - component: {fileID: 634078423}
   - component: {fileID: 634078422}
   - component: {fileID: 634078421}
+  - component: {fileID: 634078426}
+  - component: {fileID: 634078425}
   m_Layer: 5
   m_Name: ChatBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &634078420
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2025,7 +2028,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 50, y: 90}
-  m_SizeDelta: {x: 230, y: 40}
+  m_SizeDelta: {x: 230, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &634078421
 MonoBehaviour:
@@ -2103,6 +2106,32 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 634078419}
   m_CullTransparentMesh: 0
+--- !u!114 &634078425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 634078419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 037cb9a0249127d419f39b0c1a730ed6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chatText: {fileID: 260653783}
+  isUserSlotChatBox: 1
+--- !u!225 &634078426
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 634078419}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &653817942
 GameObject:
   m_ObjectHideFlags: 0
@@ -3456,9 +3485,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b2eb0fb6bc029c4d8aaa7ea949f3a83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  userColorType: 0
   modelParent: {fileID: 1180571155}
   userNameText: {fileID: 1747918109}
-  userChatBox: {fileID: 1911236163}
+  userChatBox: {fileID: 1911236169}
 --- !u!1 &960907427
 GameObject:
   m_ObjectHideFlags: 0
@@ -5553,10 +5583,10 @@ RectTransform:
   m_Father: {fileID: 1911236164}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 122.5, y: -17.5}
-  m_SizeDelta: {x: 200, y: 35}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1476265174
 MonoBehaviour:
@@ -5977,10 +6007,10 @@ RectTransform:
   m_Father: {fileID: 2003622772}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 122.5, y: -17.5}
-  m_SizeDelta: {x: 200, y: 35}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1615760075
 MonoBehaviour:
@@ -6319,9 +6349,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b2eb0fb6bc029c4d8aaa7ea949f3a83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  userColorType: 0
   modelParent: {fileID: 1926231068}
   userNameText: {fileID: 282246423}
-  userChatBox: {fileID: 2003622771}
+  userChatBox: {fileID: 2003622777}
 --- !u!1 &1662494829
 GameObject:
   m_ObjectHideFlags: 0
@@ -6529,9 +6560,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b2eb0fb6bc029c4d8aaa7ea949f3a83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  userColorType: 0
   modelParent: {fileID: 174616798}
   userNameText: {fileID: 1997470834}
-  userChatBox: {fileID: 840755972879662734}
+  userChatBox: {fileID: 840755972879662735}
 --- !u!1 &1745370613
 GameObject:
   m_ObjectHideFlags: 0
@@ -7202,13 +7234,15 @@ GameObject:
   - component: {fileID: 1911236167}
   - component: {fileID: 1911236166}
   - component: {fileID: 1911236165}
+  - component: {fileID: 1911236170}
+  - component: {fileID: 1911236169}
   m_Layer: 5
   m_Name: ChatBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1911236164
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7227,7 +7261,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 50, y: 90}
-  m_SizeDelta: {x: 230, y: 40}
+  m_SizeDelta: {x: 230, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1911236165
 MonoBehaviour:
@@ -7305,6 +7339,32 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1911236163}
   m_CullTransparentMesh: 0
+--- !u!114 &1911236169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1911236163}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 037cb9a0249127d419f39b0c1a730ed6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chatText: {fileID: 1476265174}
+  isUserSlotChatBox: 1
+--- !u!225 &1911236170
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1911236163}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1926231067
 GameObject:
   m_ObjectHideFlags: 0
@@ -7807,13 +7867,15 @@ GameObject:
   - component: {fileID: 2003622775}
   - component: {fileID: 2003622774}
   - component: {fileID: 2003622773}
+  - component: {fileID: 2003622778}
+  - component: {fileID: 2003622777}
   m_Layer: 5
   m_Name: ChatBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2003622772
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7832,7 +7894,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 50, y: 90}
-  m_SizeDelta: {x: 230, y: 40}
+  m_SizeDelta: {x: 230, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2003622773
 MonoBehaviour:
@@ -7910,6 +7972,32 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2003622771}
   m_CullTransparentMesh: 0
+--- !u!114 &2003622777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2003622771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 037cb9a0249127d419f39b0c1a730ed6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chatText: {fileID: 1615760075}
+  isUserSlotChatBox: 1
+--- !u!225 &2003622778
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2003622771}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &2057321655
 GameObject:
   m_ObjectHideFlags: 0
@@ -8040,7 +8128,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 125, y: 155}
-  m_SizeDelta: {x: 230, y: 40}
+  m_SizeDelta: {x: 230, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &840755972879662734
 GameObject:
@@ -8055,13 +8143,41 @@ GameObject:
   - component: {fileID: 840755972879662732}
   - component: {fileID: 1900099797519574675}
   - component: {fileID: 2796740483619810976}
+  - component: {fileID: 840755972879662736}
+  - component: {fileID: 840755972879662735}
   m_Layer: 5
   m_Name: ChatBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
+--- !u!114 &840755972879662735
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840755972879662734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 037cb9a0249127d419f39b0c1a730ed6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chatText: {fileID: 2408400748218777016}
+  isUserSlotChatBox: 1
+--- !u!225 &840755972879662736
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840755972879662734}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!222 &840755972879662771
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -8431,10 +8547,10 @@ RectTransform:
   m_Father: {fileID: 840755972879662733}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 122.5, y: -17.5}
-  m_SizeDelta: {x: 215, y: 35}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 215, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &7643536925041032886
 MeshRenderer:

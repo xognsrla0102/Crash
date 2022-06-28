@@ -562,12 +562,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1551dfd7684c16d44a11d33a37d1dd49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slotBtn: {fileID: 0}
-  roomNameText: {fileID: 2093866195}
+  playerNumText: {fileID: 919949100}
   roomStateText: {fileID: 2140756107}
+  roomNameText: {fileID: 2093866195}
   masterUserNameText: {fileID: 498317604}
   mapNameText: {fileID: 84164168}
-  playerNumText: {fileID: 919949100}
+  slotBtn: {fileID: 0}
 --- !u!114 &185502031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -735,8 +735,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 225, y: 18}
-  m_SizeDelta: {x: 345, y: 30}
+  m_AnchoredPosition: {x: 570, y: -40}
+  m_SizeDelta: {x: 300, y: 30}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &230658139
 MonoBehaviour:
@@ -792,7 +792,7 @@ MonoBehaviour:
   m_fontSizeMin: 24
   m_fontSizeMax: 24
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 4
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -1231,7 +1231,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 498317602}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -1240,8 +1240,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 225, y: 18}
-  m_SizeDelta: {x: 345, y: 30}
+  m_AnchoredPosition: {x: 570, y: -40}
+  m_SizeDelta: {x: 300, y: 30}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &498317604
 MonoBehaviour:
@@ -1297,7 +1297,7 @@ MonoBehaviour:
   m_fontSizeMin: 24
   m_fontSizeMax: 24
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 4
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -1998,12 +1998,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1551dfd7684c16d44a11d33a37d1dd49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slotBtn: {fileID: 0}
-  roomNameText: {fileID: 1471150885}
+  playerNumText: {fileID: 962449981}
   roomStateText: {fileID: 899109080}
+  roomNameText: {fileID: 1471150885}
   masterUserNameText: {fileID: 1364071283}
   mapNameText: {fileID: 523972698}
-  playerNumText: {fileID: 962449981}
+  slotBtn: {fileID: 0}
 --- !u!114 &793811109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2488,12 +2488,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1551dfd7684c16d44a11d33a37d1dd49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slotBtn: {fileID: 0}
-  roomNameText: {fileID: 1677450990}
+  playerNumText: {fileID: 1717416284}
   roomStateText: {fileID: 579937969}
+  roomNameText: {fileID: 1677450990}
   masterUserNameText: {fileID: 230658139}
   mapNameText: {fileID: 1300365596}
-  playerNumText: {fileID: 1717416284}
+  slotBtn: {fileID: 0}
 --- !u!1 &962449979
 GameObject:
   m_ObjectHideFlags: 0
@@ -3185,7 +3185,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1164839904}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -3194,8 +3194,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 225, y: 18}
-  m_SizeDelta: {x: 345, y: 30}
+  m_AnchoredPosition: {x: 570, y: -40}
+  m_SizeDelta: {x: 300, y: 30}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1164839906
 MonoBehaviour:
@@ -3251,7 +3251,7 @@ MonoBehaviour:
   m_fontSizeMin: 24
   m_fontSizeMax: 24
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 4
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -3350,12 +3350,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1551dfd7684c16d44a11d33a37d1dd49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slotBtn: {fileID: 0}
-  roomNameText: {fileID: 1524917452}
+  playerNumText: {fileID: 559087014}
   roomStateText: {fileID: 316587750}
+  roomNameText: {fileID: 1524917452}
   masterUserNameText: {fileID: 1164839906}
   mapNameText: {fileID: 2026768578}
-  playerNumText: {fileID: 559087014}
+  slotBtn: {fileID: 0}
 --- !u!114 &1209821550
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4066,7 +4066,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1364071281}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -4075,8 +4075,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 225, y: 18}
-  m_SizeDelta: {x: 345, y: 30}
+  m_AnchoredPosition: {x: 570, y: -40}
+  m_SizeDelta: {x: 300, y: 30}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1364071283
 MonoBehaviour:
@@ -4132,7 +4132,7 @@ MonoBehaviour:
   m_fontSizeMin: 24
   m_fontSizeMax: 24
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 4
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -4344,7 +4344,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 20, y: 20}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 405, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1471150885
 MonoBehaviour:
@@ -4597,7 +4597,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 20, y: 20}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 405, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1524917452
 MonoBehaviour:
@@ -4865,7 +4865,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 20, y: 20}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 405, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1677450990
 MonoBehaviour:
@@ -5370,7 +5370,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 20, y: 20}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 405, y: 50}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &2093866195
 MonoBehaviour:
