@@ -28,7 +28,8 @@ public class RoomOptionPopup : YesNoPopup
         }
         #endregion
 
-        // MyRoomManager.roomName = roomNameInputField.text;
+        MyRoomManager.roomInfo.CustomProperties[SRoomPropertyKey.ROOM_NAME] = roomNameInputField.text;
+        NetworkManager.Instance.SetRoomProperties(MyRoomManager.roomInfo.CustomProperties);
 
         ClosePopup();
     }

@@ -26,6 +26,8 @@ public class UserSlot : MonoBehaviour
     [SerializeField] private ChatBox userChatBox;
 
     [SerializeField] private TextMeshProUGUI userNameText;
+
+    [Header("방장만 컨트롤 가능한 오브젝트들")]
     [SerializeField] private GameObject masterText;
     [SerializeField] private GameObject xText;
     [SerializeField] private GameObject lockedImg;
@@ -55,8 +57,14 @@ public class UserSlot : MonoBehaviour
 
     public void InitEmptySlot()
     {
-        userNameText.text = "Empty";
         userColorType = EUserColorType.NONE;
+
+        userNameText.text = "Empty";
+        masterText.SetActive(false);
+
+        // isLocked = false;
+        // xText.SetActive(false);
+        // lockedImg.SetActive(false);
 
         // 모델링 비활성화
         for (int i = 0; i < modelParent.childCount; i++)
@@ -68,7 +76,11 @@ public class UserSlot : MonoBehaviour
     public void InitSlot(string userName, EUserColorType userColorType)
     {
         // 해당 슬롯의 유저 이름이 마스터 유저와 같을 경우에만 마스터 텍스트 활성화
-        masterText.SetActive(PhotonNetwork.MasterClient.NickName.Equals(userName));
+        bool isMasterUserSlot = PhotonNetwork.MasterClient.NickName.Equals(userName);
+
+        masterText.SetActive(isMasterUserSlot);
+        // xText.SetActive(false);
+        // lockedImg.SetActive(false);
 
         userNameText.text = userName;
         this.userColorType = userColorType;
