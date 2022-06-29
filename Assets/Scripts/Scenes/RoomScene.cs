@@ -69,6 +69,14 @@ public class RoomScene : MonoBehaviour
         // 채팅 인풋필드 활성화
         chatInputField.ActivateInputField();
 
+        // 최대 인원 넘은 슬롯은 잠금 세팅
+        int playerCnt = PhotonNetwork.PlayerList.Length;
+        for (int emptySlotIdx = playerCnt; emptySlotIdx < userSlots.Length; emptySlotIdx++)
+        {
+            // 슬롯이 방 최대 인원을 넘길 경우 잠김 슬롯으로 초기화
+            userSlots[emptySlotIdx].SetLockSlot(emptySlotIdx >= PhotonNetwork.CurrentRoom.MaxPlayers);
+        }
+
         UpdateRoomUntilUpdateCustomProperties();
     }
 
@@ -138,6 +146,7 @@ public class RoomScene : MonoBehaviour
         int playerCnt = PhotonNetwork.PlayerList.Length;
         for (int emptySlotIdx = playerCnt; emptySlotIdx < userSlots.Length; emptySlotIdx++)
         {
+            // 슬롯이 방 최대 인원을 넘길 경우 잠김 슬롯으로 초기화
             userSlots[emptySlotIdx].InitEmptySlot();
         }
         #endregion

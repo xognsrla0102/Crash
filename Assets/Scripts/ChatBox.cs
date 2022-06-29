@@ -4,7 +4,7 @@ using System.Collections;
 
 public class ChatBox : MonoBehaviour
 {
-    private const float CHAT_DURATION_TIME = 2f;
+    private const float CHAT_DURATION_TIME = 4f;
 
     [SerializeField] private Text chatText;
     [SerializeField] private bool isUserSlotChatBox;

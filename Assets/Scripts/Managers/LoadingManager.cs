@@ -10,7 +10,7 @@ public class LoadingManager : MonoBehaviour
     // 로딩 텍스트 애니메이션 반복 주기
     private const float LOADING_TEXT_ANIMATION_TIME = 3f;
     // 로딩이 너무 빨리 끝나는 것을 방지하기 위한 패딩 시간
-    private const float LOADING_PADDING_TIME = LOADING_TEXT_ANIMATION_TIME;
+    private const float LOADING_PADDING_TIME = 0.5f;
     // 밀리 초 단위를 초로 변환 시켜주는 매직넘버
     private const float MILLISEC_TO_SEC = 0.001f;
 
