@@ -77,7 +77,14 @@ public class RoomScene : MonoBehaviour
             userSlots[emptySlotIdx].SetLockSlot(emptySlotIdx >= PhotonNetwork.CurrentRoom.MaxPlayers);
         }
 
-        UpdateRoomUntilUpdateCustomProperties();
+        // 방 매니저 정보 갱신하고
+        MyRoomManager.SetUserColorType();
+
+        // 방 생성 시에는 RoomProperty가 업데이트되면서 이 함수가 자동 호출되므로 호출 안 함
+        if (MyRoomManager.entryRoomState != EEntryRoomState.CREATE_ROOM)
+        {
+            UpdateRoomUntilUpdateCustomProperties();
+        }
     }
 
     private void OnDestroy()
@@ -98,7 +105,7 @@ public class RoomScene : MonoBehaviour
         // 방 매니저 정보 갱신하고
         MyRoomManager.SetRoomManager();
 
-        // 커스텀 프로퍼티 갱신을 위해 대기
+        // 유저 커스텀 프로퍼티 갱신을 위해 대기
         Invoke("UpdateRoom", 0.1f);
     }
 
@@ -132,14 +139,14 @@ public class RoomScene : MonoBehaviour
         }
 
         // 자기 자신 슬롯 세팅
-        userSlots[0].InitSlot(PhotonNetwork.LocalPlayer.NickName, userColorTypes[0]);
+        userSlots[0].InitSlot(PhotonNetwork.LocalPlayer, userColorTypes[0]);
 
         // 방에 있는 다른 사람 슬롯 세팅
         int otherUserIdx;
         for (otherUserIdx = 0; otherUserIdx < otherUsers.Length; otherUserIdx++)
         {
             // 자기 자신은 이미 했으므로 1번째 슬롯부터 시작
-            userSlots[otherUserIdx + 1].InitSlot(otherUsers[otherUserIdx].NickName, userColorTypes[otherUserIdx + 1]);
+            userSlots[otherUserIdx + 1].InitSlot(otherUsers[otherUserIdx], userColorTypes[otherUserIdx + 1]);
         }
 
         // 빈 슬롯 세팅

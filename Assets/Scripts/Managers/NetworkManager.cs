@@ -167,7 +167,12 @@ public class NetworkManager : Singleton<NetworkManager>
                 LoadingManager.LoadScene(SSceneName.TITLE_SCENE);
                 break;
             default:
-                Popup.CreateErrorPopup("Server Disconnected", $"{cause}");
+                OKPopup popup = Popup.CreateErrorPopup("Server Disconnected", $"{cause}") as OKPopup;
+                popup.SetOKBtnAction(() =>
+                {
+                    print("서버 끊김으로 인한 타이틀 씬 이동");
+                    LoadingManager.LoadScene(SSceneName.TITLE_SCENE);
+                });
                 break;
         }
     }
@@ -248,6 +253,7 @@ public class NetworkManager : Singleton<NetworkManager>
         RoomOptions roomOption = new RoomOptions
         {
             MaxPlayers = MyRoomManager.maxPlayerNum,
+            PublishUserId = true,
             CustomRoomProperties = new Hashtable()
             {
                 { SRoomPropertyKey.ROOM_NAME, MyRoomManager.roomName },
@@ -261,11 +267,11 @@ public class NetworkManager : Singleton<NetworkManager>
                 SRoomPropertyKey.MASTER_CLIENT,
                 SRoomPropertyKey.MAP_NAME,
                 SRoomPropertyKey.ROOM_STATE
-            }
+            },
         };
 
-        // 이름은 도중에 바뀔 수 있으므로 실제로 보여지는 이름과 포톤에서 쓰이는 방 이름을 구별함.
-        PhotonNetwork.CreateRoom($"PhotonRoom{MyRoomManager.roomName}{PhotonNetwork.LocalPlayer.UserId}", roomOption);
+        // 룸ID 는 방 생성자의 userID와 생성 시간을 넣음
+        PhotonNetwork.CreateRoom($"{PhotonNetwork.LocalPlayer.UserId}_{DateTime.UtcNow.ToFileTime()}", roomOption);
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
@@ -380,14 +386,16 @@ public class NetworkManager : Singleton<NetworkManager>
         Debug.Assert(PhotonNetwork.IsMasterClient, "방장이 아닙니다.");
         print($"방장을 [\"{player.NickName}\"] 유저로 변경 시도");
         PhotonNetwork.SetMasterClient(player);
+
+        Hashtable roomProperties = PhotonNetwork.CurrentRoom.CustomProperties;
+        roomProperties[SRoomPropertyKey.MASTER_CLIENT] = player.NickName;
+        PhotonNetwork.CurrentRoom.SetCustomProperties(roomProperties);
     }
 
     // 방장 바뀌었을 때
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
         print($"방장이 {newMasterClient}로 변경되었습니다.");
-        RoomScene roomScene = FindObjectOfType<RoomScene>();
-        roomScene.UpdateRoomUntilUpdateCustomProperties();
     }
 
     public void SetRoomProperties(Hashtable roomProperty)
@@ -411,15 +419,15 @@ public class NetworkManager : Singleton<NetworkManager>
         roomScene.UpdateRoomUntilUpdateCustomProperties();
     }
 
-    public void KickUser(string userName)
+    public void KickUser(string userID)
     {
-        photonView.RPC("KickUserRPC", RpcTarget.All, userName);
+        photonView.RPC("KickUserRPC", RpcTarget.All, userID);
     }
 
-    [PunRPC] private void KickUserRPC(string userName)
+    [PunRPC] private void KickUserRPC(string userID)
     {
         // 강퇴 당할 플레이어가 나라면 방을 나감
-        if (PhotonNetwork.LocalPlayer.NickName.Equals(userName))
+        if (PhotonNetwork.LocalPlayer.UserId.Equals(userID))
         {
             LeaveRoom();
         }

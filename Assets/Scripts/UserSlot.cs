@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using Photon.Realtime;
 using Photon.Pun;
 using TMPro;
 
@@ -33,6 +34,7 @@ public class UserSlot : MonoBehaviour
     [SerializeField] private GameObject lockedImg;
 
     private Button userSlotBtn;
+    private Player userInfo;
 
     private void Awake()
     {
@@ -63,6 +65,8 @@ public class UserSlot : MonoBehaviour
         userNameText.text = "Empty";
         masterText.SetActive(false);
 
+        userInfo = null;
+
         // 모델링 비활성화
         for (int i = 0; i < modelParent.childCount; i++)
         {
@@ -70,13 +74,15 @@ public class UserSlot : MonoBehaviour
         }
     }
 
-    public void InitSlot(string userName, EUserColorType userColorType)
+    public void InitSlot(Player user, EUserColorType userColorType)
     {
-        // 해당 슬롯의 유저 이름이 마스터 유저와 같을 경우에만 마스터 텍스트 활성화
-        bool isMasterUserSlot = PhotonNetwork.MasterClient.NickName.Equals(userName);
+        userInfo = user;
+
+        // 해당 슬롯의 유저가 방장 유저라면 마스터 텍스트 활성화
+        bool isMasterUserSlot = PhotonNetwork.MasterClient.UserId.Equals(userInfo.UserId);
         masterText.SetActive(isMasterUserSlot);
 
-        userNameText.text = userName;
+        userNameText.text = userInfo.NickName;
         this.userColorType = userColorType;
 
         // ColorType에 해당하는 모델링만 활성화
@@ -123,10 +129,10 @@ public class UserSlot : MonoBehaviour
         else
         {
             // 유저 강퇴 팝업 생성
-            YesNoPopup popup = Popup.CreateNormalPopup("Kick User Popup", $"Do you want to kick {userNameText.text}?", EPopupType.YES_NO_POPUP) as YesNoPopup;
+            YesNoPopup popup = Popup.CreateNormalPopup("Kick User Popup", $"Do you want to kick [\"{userNameText.text}\"]?", EPopupType.YES_NO_POPUP) as YesNoPopup;
             popup.SetYesBtnAction(() =>
             {
-                NetworkManager.Instance.KickUser(userNameText.text);
+                NetworkManager.Instance.KickUser(userInfo.UserId);
                 popup.ClosePopup();
             });
         }
