@@ -4,8 +4,6 @@ using Photon.Realtime;
 using Photon.Pun;
 using TMPro;
 
-using Hashtable = ExitGames.Client.Photon.Hashtable;
-
 public enum EUserColorType
 {
     NONE,
@@ -18,22 +16,23 @@ public enum EUserColorType
 
 public class UserSlot : MonoBehaviour
 {
+    public bool IsEmptySlot => userInfo == null;
+
     [HideInInspector] public EUserColorType userColorType;
     [HideInInspector] public bool isLocked;
+    [HideInInspector] public Button userSlotBtn;
 
     [SerializeField] private bool isMyUserSlot;
-
     [SerializeField] private Transform modelParent;
     [SerializeField] private ChatBox userChatBox;
-
     [SerializeField] private TextMeshProUGUI userNameText;
 
     [Header("방장만 컨트롤 가능한 오브젝트들")]
+    public Button makeMasterBtn;
     [SerializeField] private GameObject masterText;
     [SerializeField] private GameObject xText;
     [SerializeField] private GameObject lockedImg;
 
-    private Button userSlotBtn;
     private Player userInfo;
 
     private void Awake()
@@ -43,8 +42,11 @@ public class UserSlot : MonoBehaviour
             userSlotBtn = GetComponent<Button>();
             userSlotBtn.onClick.AddListener(OnClickUserSlotBtn);
 
+            makeMasterBtn.onClick.AddListener(OnClickMakeMasterBtn);
+
             xText.SetActive(false);
             lockedImg.SetActive(false);
+            makeMasterBtn.gameObject.SetActive(false);
         }
 
         masterText.SetActive(false);
@@ -55,6 +57,7 @@ public class UserSlot : MonoBehaviour
         if (isMyUserSlot == false)
         {
             userSlotBtn.onClick.RemoveAllListeners();
+            makeMasterBtn.onClick.RemoveAllListeners();
         }
     }
 
@@ -104,16 +107,10 @@ public class UserSlot : MonoBehaviour
 
     private void OnClickUserSlotBtn()
     {
-        // 방장이 아닌 경우 무시
-        if (PhotonNetwork.IsMasterClient == false)
-        {
-            return;
-        }
+        Debug.Assert(PhotonNetwork.IsMasterClient, "방장이 아닙니다.");
 
-        // 유저가 비어있는 슬롯인 경우
         if (userNameText.text.Equals("Empty"))
         {
-            // 현재 잠김 상태를 반전하여 세팅
             SetLockSlot(!isLocked);
 
             // 방 상태 갱신
@@ -129,12 +126,24 @@ public class UserSlot : MonoBehaviour
         else
         {
             // 유저 강퇴 팝업 생성
-            YesNoPopup popup = Popup.CreateNormalPopup("Kick User Popup", $"Do you want to kick [\"{userNameText.text}\"]?", EPopupType.YES_NO_POPUP) as YesNoPopup;
+            YesNoPopup popup = Popup.CreateNormalPopup("Kick User", $"Do you want to <color=red>kick</color> [\"{userNameText.text}\"]?", EPopupType.YES_NO_POPUP) as YesNoPopup;
             popup.SetYesBtnAction(() =>
             {
                 NetworkManager.Instance.KickUser(userInfo.UserId);
                 popup.ClosePopup();
             });
         }
+    }
+
+    private void OnClickMakeMasterBtn()
+    {
+        Debug.Assert(PhotonNetwork.IsMasterClient, "방장이 아닙니다.");
+
+        YesNoPopup popup = Popup.CreateNormalPopup("Make Master", $"Do you want to make [\"{userNameText.text}\"] as <color=green>a Master</color>?", EPopupType.YES_NO_POPUP) as YesNoPopup;
+        popup.SetYesBtnAction(() =>
+        {
+            NetworkManager.Instance.SetMasterClient(userInfo);
+            popup.ClosePopup();
+        });
     }
 }

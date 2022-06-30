@@ -316,7 +316,7 @@ public class NetworkManager : Singleton<NetworkManager>
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        AddChatBox($"<color=red>{newPlayer.NickName}님이 참가하였습니다.</color>");
+        SendSystemChat($"{newPlayer.NickName}님이 참가하였습니다.");
 
         RoomScene roomScene = FindObjectOfType<RoomScene>();
         roomScene.UpdateRoomUntilUpdateCustomProperties();
@@ -343,7 +343,7 @@ public class NetworkManager : Singleton<NetworkManager>
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        AddChatBox($"<color=red>{otherPlayer.NickName}님이 떠났습니다.</color>");
+        SendSystemChat($"{otherPlayer.NickName}님이 떠났습니다.");
 
         RoomScene roomScene = FindObjectOfType<RoomScene>();
         roomScene.UpdateRoomUntilUpdateCustomProperties();
@@ -357,6 +357,8 @@ public class NetworkManager : Singleton<NetworkManager>
             (EUserColorType)Enum.Parse(typeof(EUserColorType), $"{PhotonNetwork.LocalPlayer.CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}")
         );
     }
+
+    public void SendSystemChat(string msg) => AddChatBox($"<color=red>{msg}</color>");
 
     // 채팅 메시지와 말한 유저의 색상 정보를 전달
     [PunRPC] private void AddChatBoxRPC(string msg, string userName, EUserColorType userColorType) => AddChatBox(msg, userName, userColorType);
@@ -392,24 +394,6 @@ public class NetworkManager : Singleton<NetworkManager>
     #endregion
 
     #region 방 설정 관련 코드
-    // 새 방장 설정
-    public void SetMasterClient(Player player)
-    {
-        Debug.Assert(PhotonNetwork.IsMasterClient, "방장이 아닙니다.");
-        print($"방장을 [\"{player.NickName}\"] 유저로 변경 시도");
-        PhotonNetwork.SetMasterClient(player);
-
-        Hashtable roomProperties = PhotonNetwork.CurrentRoom.CustomProperties;
-        roomProperties[SRoomPropertyKey.MASTER_CLIENT] = player.NickName;
-        PhotonNetwork.CurrentRoom.SetCustomProperties(roomProperties);
-    }
-
-    // 방장 바뀌었을 때
-    public override void OnMasterClientSwitched(Player newMasterClient)
-    {
-        print($"방장이 {newMasterClient}로 변경되었습니다.");
-    }
-
     public void SetRoomProperties(Hashtable roomProperty)
     {
         Debug.Assert(PhotonNetwork.IsMasterClient, "방장이 아닙니다.");
@@ -431,18 +415,33 @@ public class NetworkManager : Singleton<NetworkManager>
         roomScene.UpdateRoomUntilUpdateCustomProperties();
     }
 
-    public void KickUser(string userID)
+    public void SetMasterClient(Player player)
     {
-        photonView.RPC("KickUserRPC", RpcTarget.All, userID);
+        Debug.Assert(PhotonNetwork.IsMasterClient, "방장이 아닙니다.");
+        print($"방장을 [\"{player.NickName}\"] 유저로 변경 시도");
+        PhotonNetwork.SetMasterClient(player);
     }
+
+    public override void OnMasterClientSwitched(Player newMasterClient)
+    {
+        print($"방장이 {newMasterClient.NickName}(으)로 변경되었습니다.");
+
+        Hashtable roomProperties = PhotonNetwork.CurrentRoom.CustomProperties;
+        roomProperties[SRoomPropertyKey.MASTER_CLIENT] = newMasterClient.NickName;
+        PhotonNetwork.CurrentRoom.SetCustomProperties(roomProperties);
+        SendSystemChat($"방장이 {newMasterClient.NickName}(으)로 변경되었습니다.");
+    }
+
+    public void KickUser(string userID) => photonView.RPC("KickUserRPC", RpcTarget.All, userID);
 
     [PunRPC] private void KickUserRPC(string userID)
     {
-        // 강퇴 당할 플레이어가 나라면 방을 나감
-        if (PhotonNetwork.LocalPlayer.UserId.Equals(userID))
+        if (PhotonNetwork.LocalPlayer.UserId.Equals(userID) == false)
         {
-            LeaveRoom();
+            return;
         }
+
+        LeaveRoom();
     }
     #endregion
 

@@ -59,15 +59,6 @@ public class RoomScene : MonoBehaviour
 
     public void InitRoomScene()
     {
-        // 방 매니저 정보 갱신하고
-        MyRoomManager.SetUserColorType();
-
-        // 방 생성 시에는 RoomProperty가 업데이트되면서 이 함수가 자동 호출되므로 호출 안 함
-        if (MyRoomManager.entryRoomState != EEntryRoomState.CREATE_ROOM)
-        {
-            UpdateRoomUntilUpdateCustomProperties();
-        }
-
         inputFieldUtility = GetComponent<InputFieldUtility>();
         inputFieldUtility.EnterAction = () =>
         {
@@ -96,6 +87,15 @@ public class RoomScene : MonoBehaviour
             // 슬롯이 방 최대 인원을 넘길 경우 잠김 슬롯으로 초기화
             userSlots[emptySlotIdx].SetLockSlot(emptySlotIdx >= PhotonNetwork.CurrentRoom.MaxPlayers);
         }
+
+        // 방 매니저 정보 갱신하고
+        MyRoomManager.SetUserColorType();
+
+        // 방 생성 시에는 RoomProperty가 업데이트되면서 이 함수가 자동 호출되므로 호출 안 함
+        if (MyRoomManager.entryRoomState != EEntryRoomState.CREATE_ROOM)
+        {
+            UpdateRoomUntilUpdateCustomProperties();
+        }
     }
 
     private void OnDestroy()
@@ -122,17 +122,6 @@ public class RoomScene : MonoBehaviour
 
     private void UpdateRoom()
     {
-        roomNameText.text = MyRoomManager.roomName;
-
-        #region 방장인지 아닌지에 따라 보이는 버튼 구분
-        gameStartBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient);
-        gameReadyBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient == false);
-
-        changeMapBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient);
-
-        roomOptionBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient);
-        #endregion
-
         #region 슬롯 세팅
 
         mapSlot.InitSlot(MyRoomManager.mapName);
@@ -164,8 +153,26 @@ public class RoomScene : MonoBehaviour
         int playerCnt = PhotonNetwork.PlayerList.Length;
         for (int emptySlotIdx = playerCnt; emptySlotIdx < userSlots.Length; emptySlotIdx++)
         {
-            // 슬롯이 방 최대 인원을 넘길 경우 잠김 슬롯으로 초기화
             userSlots[emptySlotIdx].InitEmptySlot();
+        }
+        #endregion
+
+        roomNameText.text = MyRoomManager.roomName;
+
+        #region 자신이 방장인지 아닌지에 따라 보이는 버튼 구분
+        gameStartBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient);
+        gameReadyBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient == false);
+
+        changeMapBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient);
+
+        roomOptionBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient);
+
+        for (int i = 1; i < userSlots.Length; i++)
+        {
+            userSlots[i].userSlotBtn.enabled = PhotonNetwork.IsMasterClient;
+
+            bool visibleMakeMasterBtn = PhotonNetwork.IsMasterClient && userSlots[i].IsEmptySlot == false;
+            userSlots[i].makeMasterBtn.gameObject.SetActive(visibleMakeMasterBtn);
         }
         #endregion
     }
