@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
@@ -29,6 +30,9 @@ public class RoomScene : MonoBehaviour
 
     private void Start()
     {
+        // 서버로부터 방 정보 다 받을 때까지는 UI 비활성화
+        StartCoroutine(SetInteractableUiCoroutine());
+
         switch (MyRoomManager.entryRoomState)
         {
             case EEntryRoomState.CREATE_ROOM:
@@ -46,8 +50,24 @@ public class RoomScene : MonoBehaviour
         }
     }
 
+    private IEnumerator SetInteractableUiCoroutine()
+    {
+        NetworkManager.Instance.CanvasGroup.interactable = false;
+        yield return new WaitForSeconds(0.5f);
+        NetworkManager.Instance.CanvasGroup.interactable = true;
+    }
+
     public void InitRoomScene()
     {
+        // 방 매니저 정보 갱신하고
+        MyRoomManager.SetUserColorType();
+
+        // 방 생성 시에는 RoomProperty가 업데이트되면서 이 함수가 자동 호출되므로 호출 안 함
+        if (MyRoomManager.entryRoomState != EEntryRoomState.CREATE_ROOM)
+        {
+            UpdateRoomUntilUpdateCustomProperties();
+        }
+
         inputFieldUtility = GetComponent<InputFieldUtility>();
         inputFieldUtility.EnterAction = () =>
         {
@@ -75,15 +95,6 @@ public class RoomScene : MonoBehaviour
         {
             // 슬롯이 방 최대 인원을 넘길 경우 잠김 슬롯으로 초기화
             userSlots[emptySlotIdx].SetLockSlot(emptySlotIdx >= PhotonNetwork.CurrentRoom.MaxPlayers);
-        }
-
-        // 방 매니저 정보 갱신하고
-        MyRoomManager.SetUserColorType();
-
-        // 방 생성 시에는 RoomProperty가 업데이트되면서 이 함수가 자동 호출되므로 호출 안 함
-        if (MyRoomManager.entryRoomState != EEntryRoomState.CREATE_ROOM)
-        {
-            UpdateRoomUntilUpdateCustomProperties();
         }
     }
 

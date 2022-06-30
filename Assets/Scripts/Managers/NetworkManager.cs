@@ -206,6 +206,12 @@ public class NetworkManager : Singleton<NetworkManager>
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
+        // 로비가 아닐 경우 무시
+        if (PhotonNetwork.InLobby == false)
+        {
+            return;
+        }
+
         print("방 리스트 업데이트");
         LobbyScene lobbyScene = FindObjectOfType<LobbyScene>();
         int roomCnt = roomList.Count;
@@ -318,6 +324,12 @@ public class NetworkManager : Singleton<NetworkManager>
 
     public void LeaveRoom()
     {
+        // 방이 아니라면 무시
+        if (PhotonNetwork.InRoom == false)
+        {
+            return;
+        }
+
         CanvasGroup.interactable = false;
         PhotonNetwork.LeaveRoom();
     }
