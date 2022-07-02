@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using Photon.Realtime;
 using Photon.Pun;
 using TMPro;
+using System.Collections.Generic;
 
 public enum EUserColorType
 {
@@ -16,11 +17,22 @@ public enum EUserColorType
 
 public class UserSlot : MonoBehaviour
 {
-    public bool IsEmptySlot => userInfo == null;
+    private bool isLocked;
+    public bool IsLocked
+    {
+        get => isLocked;
+        set
+        {
+            isLocked = value;
+            xText.SetActive(isLocked);
+            lockedImg.SetActive(isLocked);
+        }
+    }
 
     [HideInInspector] public EUserColorType userColorType;
-    [HideInInspector] public bool isLocked;
     [HideInInspector] public Button userSlotBtn;
+    [HideInInspector] public Player userInfo;
+    [HideInInspector] public int userNum;
 
     [SerializeField] private bool isMyUserSlot;
     [SerializeField] private Transform modelParent;
@@ -33,7 +45,7 @@ public class UserSlot : MonoBehaviour
     [SerializeField] private GameObject xText;
     [SerializeField] private GameObject lockedImg;
 
-    private Player userInfo;
+    private bool IsEmptySlot => userInfo == null;
 
     private void Awake()
     {
@@ -75,6 +87,9 @@ public class UserSlot : MonoBehaviour
         {
             modelParent.GetChild(i).gameObject.SetActive(false);
         }
+
+        userSlotBtn.enabled = PhotonNetwork.IsMasterClient;
+        makeMasterBtn.gameObject.SetActive(false);
     }
 
     public void InitSlot(Player user, EUserColorType userColorType)
@@ -94,13 +109,15 @@ public class UserSlot : MonoBehaviour
         {
             modelParent.GetChild(i).gameObject.SetActive(i == userColorNum);
         }
-    }
 
-    public void SetLockSlot(bool isLocked)
-    {
-        this.isLocked = isLocked;
-        xText.SetActive(isLocked);
-        lockedImg.SetActive(isLocked);
+        // 자기 슬롯은 무시
+        if (userNum == UserManager.myUserNum)
+        {
+            return;
+        }
+
+        userSlotBtn.enabled = PhotonNetwork.IsMasterClient;
+        makeMasterBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient);
     }
 
     public void ShowChatEffect(string msg) => userChatBox.ShowChatEffect(msg);
@@ -109,13 +126,19 @@ public class UserSlot : MonoBehaviour
     {
         Debug.Assert(PhotonNetwork.IsMasterClient, "방장이 아닙니다.");
 
-        if (userNameText.text.Equals("Empty"))
+        if (IsEmptySlot)
         {
-            SetLockSlot(!isLocked);
+            int[] lockedSlots = PhotonNetwork.CurrentRoom.CustomProperties[SRoomPropertyKey.LOCKED_SLOTS] as int[];
+            if ()
 
-            // 방 상태 갱신
-            if (isLocked) PhotonNetwork.CurrentRoom.MaxPlayers--;
-            else PhotonNetwork.CurrentRoom.MaxPlayers++;
+            if (IsLocked)
+            {
+                PhotonNetwork.CurrentRoom.MaxPlayers++;
+            }
+            else
+            {
+                PhotonNetwork.CurrentRoom.MaxPlayers--;
+            }
         }
         else
         {

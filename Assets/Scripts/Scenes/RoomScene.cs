@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections;
-using Photon.Pun;
+﻿using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
 
 public class RoomScene : MonoBehaviour
 {
@@ -50,7 +49,7 @@ public class RoomScene : MonoBehaviour
 
         chatInputField.ActivateInputField();
 
-        UpdateRoomAfterUpdateCustomProperties();
+        UpdateRoomAfterUpdateCustomProperties(true);
     }
 
     private void OnDestroy()
@@ -65,14 +64,51 @@ public class RoomScene : MonoBehaviour
         roomOptionBtn.onClick.RemoveAllListeners();
     }
 
-    // 방 갱신 (누군가 떠나거나, 들어왔을 때 호출)
-    public void UpdateRoomAfterUpdateCustomProperties()
+    public void UpdateRoomAfterUpdateCustomProperties(bool isInitRoom = false)
     {
-        // 방 매니저 정보 갱신하고
-        MyRoomManager.SetRoomManager();
+        float propertyDelayTime = 0.3f;
 
-        // 유저 커스텀 프로퍼티 갱신을 위해 대기
-        Invoke("UpdateRoom", 0.3f);
+        if (isInitRoom)
+        {
+            MyRoomManager.InitRoomManager();
+            Invoke("InitRoom", propertyDelayTime);
+        }
+        else
+        {
+            MyRoomManager.SetRoomManager();
+            Invoke("UpdateRoom", propertyDelayTime);
+        }
+    }
+
+    private void InitRoom()
+    {
+        // 잠긴 슬롯 세팅
+        int[] lockedSlots = PhotonNetwork.CurrentRoom.CustomProperties[SRoomPropertyKey.LOCKED_SLOTS] as int[];
+        foreach (var lockedSlotUserNum in lockedSlots)
+        {
+            userSlots[lockedSlotUserNum].IsLocked = true;
+        }
+
+        // 유저 번호 세팅
+        userSlots[0].userNum = UserManager.myUserNum;
+        for (int slotIdx = 1, userNum = 0; slotIdx < userSlots.Length; slotIdx++)
+        {
+            if (userSlots[slotIdx].IsLocked)
+            {
+                userSlots[slotIdx].userNum = -1;
+                continue;
+            }
+
+            if (userNum == UserManager.myUserNum)
+            {
+                userNum++;
+            }
+
+            userSlots[slotIdx].userNum = userNum;
+            userNum++;
+        }
+
+        UpdateRoom();
     }
 
     private void UpdateRoom()
@@ -81,36 +117,26 @@ public class RoomScene : MonoBehaviour
 
         mapSlot.InitSlot(MyRoomManager.mapName);
 
-        // 나를 제외한 나머지 방 유저들
-        Player[] otherUsers = PhotonNetwork.PlayerListOthers;
-
-        // 유저 범퍼카 색상 대입
-        EUserColorType[] userColorTypes = new EUserColorType[4];
-        userColorTypes[0] = Utility.StringToEnum<EUserColorType>($"{PhotonNetwork.LocalPlayer.CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}");
-
-        for (int i = 0; i < otherUsers.Length; i++)
+        // 유저 번호에 맞는 색상 세팅
+        Player[] users = PhotonNetwork.PlayerList;
+        EUserColorType[] userColorTypes = new EUserColorType[userSlots.Length];
+        for (int userNum = 0; userNum < users.Length; userNum++)
         {
-            userColorTypes[i + 1] = Utility.StringToEnum<EUserColorType>($"{otherUsers[i].CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}");
+            userColorTypes[userNum] = Utility.StringToEnum<EUserColorType>($"{users[userNum].CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}");
         }
 
-        // 자기 자신 슬롯 세팅
-        userSlots[0].InitSlot(PhotonNetwork.LocalPlayer, userColorTypes[0]);
-
-        // 방에 있는 다른 사람 슬롯 세팅
-        int otherUserIdx;
-        for (otherUserIdx = 0; otherUserIdx < otherUsers.Length; otherUserIdx++)
+        // 유저 번호에 맞게 슬롯 세팅
+        for (int i = 0; i < userSlots.Length; i++)
         {
-            // 자기 자신은 이미 했으므로 1번째 슬롯부터 시작
-            userSlots[otherUserIdx + 1].InitSlot(otherUsers[otherUserIdx], userColorTypes[otherUserIdx + 1]);
-        }
-
-        int playerCnt = PhotonNetwork.PlayerList.Length;
-        for (int emptySlotIdx = playerCnt; emptySlotIdx < userSlots.Length; emptySlotIdx++)
-        {
-            // 빈 슬롯 세팅
-            userSlots[emptySlotIdx].InitEmptySlot();
-            // 슬롯이 방 최대 인원을 넘길 경우 잠김 슬롯으로 초기화
-            userSlots[emptySlotIdx].SetLockSlot(emptySlotIdx >= PhotonNetwork.CurrentRoom.MaxPlayers);
+            int nowUserNum = userSlots[i].userNum;
+            if (nowUserNum != -1)
+            {
+                userSlots[i].InitSlot(users[nowUserNum], userColorTypes[nowUserNum]);
+            }
+            else
+            {
+                userSlots[i].InitEmptySlot();
+            }
         }
         #endregion
 
@@ -123,14 +149,6 @@ public class RoomScene : MonoBehaviour
         changeMapBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient);
 
         roomOptionBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient);
-
-        for (int i = 1; i < userSlots.Length; i++)
-        {
-            userSlots[i].userSlotBtn.enabled = PhotonNetwork.IsMasterClient;
-
-            bool visibleMakeMasterBtn = PhotonNetwork.IsMasterClient && userSlots[i].IsEmptySlot == false;
-            userSlots[i].makeMasterBtn.gameObject.SetActive(visibleMakeMasterBtn);
-        }
         #endregion
     }
 

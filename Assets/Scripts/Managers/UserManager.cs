@@ -7,6 +7,8 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 public static class UserManager
 {
     public static string userName;
+    // 룸에서 쓰이는 유저 번호
+    public static int myUserNum = -1;
 
     private static EUserColorType userColorType;
     public static EUserColorType UserColorType
@@ -15,7 +17,13 @@ public static class UserManager
         set { userColorType = value; }
     }
 
-    public static void InitUserColorType()
+    public static void InitUserSlot()
+    {
+        InitUserColorType();
+        myUserNum = PhotonNetwork.PlayerList.Length - 1;
+    }
+
+    private static void InitUserColorType()
     {
         // 어떤 유저 색깔이 있는지 체크
         bool[] checkUserColorType = new bool[4];
@@ -41,5 +49,13 @@ public static class UserManager
 
         // 방에 참가한 유저에 대해 컬러 속성을 저장함
         PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { { SPlayerPropertyKey.COLOR_TYPE, $"{userColorType}" } });
+    }
+
+    public static void ClearUserSlot()
+    {
+        UserColorType = EUserColorType.NONE;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { { SPlayerPropertyKey.COLOR_TYPE, $"{UserColorType}" } });
+
+        myUserNum = -1;
     }
 }

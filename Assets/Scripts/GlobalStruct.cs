@@ -51,6 +51,7 @@ public struct SRoomPropertyKey
     public const string MASTER_CLIENT = "MasterClient";
     public const string MAP_NAME = "MapName";
     public const string ROOM_STATE = "RoomState";
+    public const string LOCKED_SLOTS = "LockedSlots";
 }
 
 // 방에 참가한 유저에 대한 속성 키들

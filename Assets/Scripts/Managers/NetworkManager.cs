@@ -316,21 +316,14 @@ public class NetworkManager : Singleton<NetworkManager>
         roomScene.UpdateRoomAfterUpdateCustomProperties();
     }
 
-    public void SendChat(string msg)
-    {
-        photonView.RPC("AddChatBoxRPC", RpcTarget.All,
-            msg,
-            PhotonNetwork.NickName,
-            Utility.StringToEnum<EUserColorType>($"{PhotonNetwork.LocalPlayer.CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}")
-        );
-    }
+    public void SendChat(string msg) => photonView.RPC("AddChatBoxRPC", RpcTarget.All, msg, PhotonNetwork.LocalPlayer);
 
     public void SendSystemChat(string msg) => AddChatBox($"<color=red>{msg}</color>");
 
     // 채팅 메시지와 말한 유저의 색상 정보를 전달
-    [PunRPC] private void AddChatBoxRPC(string msg, string userName, EUserColorType userColorType) => AddChatBox(msg, userName, userColorType);
+    [PunRPC] private void AddChatBoxRPC(string msg, Player user) => AddChatBox(msg);
 
-    private void AddChatBox(string msg, string userName = "", EUserColorType userColorType = EUserColorType.NONE)
+    private void AddChatBox(string msg, Player user = null)
     {
         // 이미 채팅 슬롯이 보여줄 슬롯만큼 생성되었다면
         if (ChatContent.childCount == ChatBoxPoolManager.SHOW_CHAT_BOX_CNT)
@@ -340,9 +333,9 @@ public class NetworkManager : Singleton<NetworkManager>
         }
 
         ChatBox chatBox = ChatBoxPoolManager.Instance.Pop(ChatContent);
-        chatBox.SetText(string.IsNullOrWhiteSpace(userName) ? msg : $"[{userName}] : {msg}");
+        chatBox.SetText(user == null ? msg : $"[{user.NickName}] : {msg}");
 
-        if (userColorType == EUserColorType.NONE)
+        if (user == null)
         {
             return;
         }
@@ -351,7 +344,7 @@ public class NetworkManager : Singleton<NetworkManager>
         RoomScene roomScene = FindObjectOfType<RoomScene>();
         foreach (var userSlot in roomScene.userSlots)
         {
-            if (userSlot.userColorType == userColorType)
+            if (userSlot.userInfo.UserId == user.UserId)
             {
                 userSlot.ShowChatEffect(msg);
                 break;

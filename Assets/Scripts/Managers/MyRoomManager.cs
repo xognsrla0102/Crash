@@ -16,13 +16,10 @@ public static class MyRoomManager
     public static int nowPlayerNum;
     public static byte maxPlayerNum;
 
-    private static EUserColorType UserColorType
+    public static void InitRoomManager()
     {
-        set
-        {
-            UserManager.UserColorType = value;
-            PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { { SPlayerPropertyKey.COLOR_TYPE, $"{UserManager.UserColorType}" } });
-        }
+        SetRoomManager();
+        UserManager.InitUserSlot();
     }
 
     public static void SetRoomManager()
@@ -32,19 +29,13 @@ public static class MyRoomManager
         Hashtable roomProperty = roomInfo.CustomProperties;
 
         roomName = $"{roomProperty[SRoomPropertyKey.ROOM_NAME]}";
-        roomState= $"{roomProperty[SRoomPropertyKey.ROOM_STATE]}";
+        roomState = $"{roomProperty[SRoomPropertyKey.ROOM_STATE]}";
 
         masterName = $"{roomProperty[SRoomPropertyKey.MASTER_CLIENT]}";
         mapName = $"{roomProperty[SRoomPropertyKey.MAP_NAME]}";
 
         nowPlayerNum = roomInfo.PlayerCount;
         maxPlayerNum = roomInfo.MaxPlayers;
-
-        // 내 색상이 초기화 되지 않았을 경우
-        if (UserManager.UserColorType == EUserColorType.NONE)
-        {
-            UserManager.InitUserColorType();
-        }
     }
 
     public static void ClearRoomManager()
@@ -59,6 +50,6 @@ public static class MyRoomManager
         nowPlayerNum =
         maxPlayerNum = 0;
 
-        UserColorType = EUserColorType.NONE;
+        UserManager.ClearUserSlot();
     }
 }
