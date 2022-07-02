@@ -57,11 +57,7 @@ public class LobbyScene : MonoBehaviour
 
     private void OnClickMakeRoomBtn() => Popup.CreateSpecialPopup(EPopupType.MAKE_ROOM_POPUP);
 
-    private void OnClickJoinRandomRoomBtn()
-    {
-        MyRoomManager.entryRoomState = EEntryRoomState.JOIN_RANDOM_ROOM;
-        LoadingManager.LoadScene(SSceneName.ROOM_SCENE);
-    }
+    private void OnClickJoinRandomRoomBtn() => NetworkManager.Instance.JoinRandomRoom();
 
     private void OnClickRoomSlotBtn(int slotIdx)
     {
@@ -82,9 +78,7 @@ public class LobbyScene : MonoBehaviour
         }
         #endregion
 
-        MyRoomManager.entryRoomState = EEntryRoomState.JOIN_ROOM;
-        MyRoomManager.roomName = roomSlot.roomInfo.Name;
-        LoadingManager.LoadScene(SSceneName.ROOM_SCENE);
+        NetworkManager.Instance.JoinRoom(roomSlot.roomInfo.Name);
     }
 
     private void OnClickPrevPageBtn()

@@ -114,14 +114,8 @@ public class UserSlot : MonoBehaviour
             SetLockSlot(!isLocked);
 
             // 방 상태 갱신
-            if (isLocked)
-            {
-                PhotonNetwork.CurrentRoom.MaxPlayers--;
-            }
-            else
-            {
-                PhotonNetwork.CurrentRoom.MaxPlayers++;
-            }
+            if (isLocked) PhotonNetwork.CurrentRoom.MaxPlayers--;
+            else PhotonNetwork.CurrentRoom.MaxPlayers++;
         }
         else
         {

@@ -1,23 +1,10 @@
-﻿using System;
-using UnityEngine;
-using Photon.Pun;
+﻿using Photon.Pun;
 using Photon.Realtime;
 
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
-public enum EEntryRoomState
-{
-    NONE,
-    CREATE_ROOM,
-    JOIN_ROOM,
-    JOIN_RANDOM_ROOM
-}
-
 public static class MyRoomManager
 {
-    public static EEntryRoomState entryRoomState;
-    public static EUserColorType userColorType;
-
     public static RoomInfo roomInfo;
 
     public static string roomName;
@@ -28,6 +15,15 @@ public static class MyRoomManager
 
     public static int nowPlayerNum;
     public static byte maxPlayerNum;
+
+    private static EUserColorType UserColorType
+    {
+        set
+        {
+            UserManager.UserColorType = value;
+            PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { { SPlayerPropertyKey.COLOR_TYPE, $"{UserManager.UserColorType}" } });
+        }
+    }
 
     public static void SetRoomManager()
     {
@@ -43,42 +39,16 @@ public static class MyRoomManager
 
         nowPlayerNum = roomInfo.PlayerCount;
         maxPlayerNum = roomInfo.MaxPlayers;
-    }
 
-    public static void SetUserColorType()
-    {
-        // 어떤 유저 색깔이 있는지 체크
-        bool[] checkUserColorType = new bool[4];
-        Player[] otherUsers = PhotonNetwork.PlayerListOthers;
-        for (int i = 0; i < otherUsers.Length; i++)
+        // 내 색상이 초기화 되지 않았을 경우
+        if (UserManager.UserColorType == EUserColorType.NONE)
         {
-            var userColorType = (EUserColorType)Enum.Parse(typeof(EUserColorType), $"{otherUsers[i].CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}");
-            checkUserColorType[(int)userColorType - 1] = true;
+            UserManager.InitUserColorType();
         }
-
-        // 유저 색깔 없는 것 중 처음 것을 내 색깔로 결정
-        for (int i = 0; i < checkUserColorType.Length; i++)
-        {
-            if (checkUserColorType[i] == false)
-            {
-                userColorType = (EUserColorType)(i + 1);
-                break;
-            }
-        }
-
-        Debug.Assert(userColorType != EUserColorType.NONE, "유저 색상이 None입니다.");
-
-        // 방에 참가한 유저에 대해 컬러 속성을 저장함
-        PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { { SPlayerPropertyKey.COLOR_TYPE, $"{userColorType}" } });
     }
 
     public static void ClearRoomManager()
     {
-        entryRoomState = EEntryRoomState.NONE;
-
-        userColorType = EUserColorType.NONE;
-        PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { { SPlayerPropertyKey.COLOR_TYPE, $"{userColorType}" } });
-
         roomInfo = null;
 
         roomName =
@@ -88,5 +58,7 @@ public static class MyRoomManager
 
         nowPlayerNum =
         maxPlayerNum = 0;
+
+        UserColorType = EUserColorType.NONE;
     }
 }

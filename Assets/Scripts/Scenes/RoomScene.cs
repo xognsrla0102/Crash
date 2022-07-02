@@ -28,36 +28,7 @@ public class RoomScene : MonoBehaviour
 
     private InputFieldUtility inputFieldUtility;
 
-    private void Start()
-    {
-        // 서버로부터 방 정보 다 받을 때까지는 UI 비활성화
-        StartCoroutine(SetInteractableUiCoroutine());
-
-        switch (MyRoomManager.entryRoomState)
-        {
-            case EEntryRoomState.CREATE_ROOM:
-                NetworkManager.Instance.CreateRoom();
-                break;
-            case EEntryRoomState.JOIN_ROOM:
-                NetworkManager.Instance.JoinRoom();
-                break;
-            case EEntryRoomState.JOIN_RANDOM_ROOM:
-                NetworkManager.Instance.JoinRandomRoom();
-                break;
-            default:
-                Debug.Assert(false);
-                break;
-        }
-    }
-
-    private IEnumerator SetInteractableUiCoroutine()
-    {
-        NetworkManager.Instance.CanvasGroup.interactable = false;
-        yield return new WaitForSeconds(0.5f);
-        NetworkManager.Instance.CanvasGroup.interactable = true;
-    }
-
-    public void InitRoomScene()
+    public void Start()
     {
         inputFieldUtility = GetComponent<InputFieldUtility>();
         inputFieldUtility.EnterAction = () =>
@@ -77,17 +48,9 @@ public class RoomScene : MonoBehaviour
         gameStartBtn.onClick.AddListener(OnClickGameStartBtn);
         roomOptionBtn.onClick.AddListener(OnClickRoomOptionBtn);
 
-        // 채팅 인풋필드 활성화
         chatInputField.ActivateInputField();
 
-        // 방 매니저 정보 갱신하고
-        MyRoomManager.SetUserColorType();
-
-        // 방 생성 시에는 RoomProperty가 업데이트되면서 이 함수가 자동 호출되므로 호출 안 함
-        if (MyRoomManager.entryRoomState != EEntryRoomState.CREATE_ROOM)
-        {
-            UpdateRoomUntilUpdateCustomProperties();
-        }
+        UpdateRoomAfterUpdateCustomProperties();
     }
 
     private void OnDestroy()
@@ -103,13 +66,13 @@ public class RoomScene : MonoBehaviour
     }
 
     // 방 갱신 (누군가 떠나거나, 들어왔을 때 호출)
-    public void UpdateRoomUntilUpdateCustomProperties()
+    public void UpdateRoomAfterUpdateCustomProperties()
     {
         // 방 매니저 정보 갱신하고
         MyRoomManager.SetRoomManager();
 
         // 유저 커스텀 프로퍼티 갱신을 위해 대기
-        Invoke("UpdateRoom", 0.1f);
+        Invoke("UpdateRoom", 0.3f);
     }
 
     private void UpdateRoom()
@@ -123,11 +86,11 @@ public class RoomScene : MonoBehaviour
 
         // 유저 범퍼카 색상 대입
         EUserColorType[] userColorTypes = new EUserColorType[4];
-        userColorTypes[0] = (EUserColorType)Enum.Parse(typeof(EUserColorType), $"{PhotonNetwork.LocalPlayer.CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}");
+        userColorTypes[0] = Utility.StringToEnum<EUserColorType>($"{PhotonNetwork.LocalPlayer.CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}");
 
         for (int i = 0; i < otherUsers.Length; i++)
         {
-            userColorTypes[i + 1] = (EUserColorType)Enum.Parse(typeof(EUserColorType), $"{otherUsers[i].CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}");
+            userColorTypes[i + 1] = Utility.StringToEnum<EUserColorType>($"{otherUsers[i].CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}");
         }
 
         // 자기 자신 슬롯 세팅

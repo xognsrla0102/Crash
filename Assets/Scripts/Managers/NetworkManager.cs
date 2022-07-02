@@ -254,54 +254,17 @@ public class NetworkManager : Singleton<NetworkManager>
     // 방 생성 및 조인은 룸 씬으로 먼저 이동한 후에 Photon.CreateRoom, JoinRoom 시도를 함
     // 포톤에서 먼저 CreateRoom, JoinRoom 처리를 하게 되면, 룸 씬 이동 전에, 로딩 씬에서 룸 관련 이벤트 메시지를 제대로 처리할 수 없기 때문
 
-    public void CreateRoom()
-    {
-        RoomOptions roomOption = new RoomOptions
-        {
-            MaxPlayers = MyRoomManager.maxPlayerNum,
-            PublishUserId = true,
-            CustomRoomProperties = new Hashtable()
-            {
-                { SRoomPropertyKey.ROOM_NAME, MyRoomManager.roomName },
-                { SRoomPropertyKey.MASTER_CLIENT, UserManager.userName },
-                { SRoomPropertyKey.MAP_NAME, SMapName.STADIUM },
-                { SRoomPropertyKey.ROOM_STATE, SRoomState.PREPARING_GAME }
-            },
-            CustomRoomPropertiesForLobby = new string[]
-            {
-                SRoomPropertyKey.ROOM_NAME,
-                SRoomPropertyKey.MASTER_CLIENT,
-                SRoomPropertyKey.MAP_NAME,
-                SRoomPropertyKey.ROOM_STATE
-            },
-        };
-
-        // 룸ID 는 방 생성자의 userID와 생성 시간을 넣음
-        PhotonNetwork.CreateRoom($"{PhotonNetwork.LocalPlayer.UserId}_{DateTime.UtcNow.ToFileTime()}", roomOption);
-    }
-
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
-        OKPopup popup = Popup.CreateErrorPopup("Failed CreateRoom", $"Error Code : {returnCode}\nMessage : {message}") as OKPopup;
-        popup.SetOKBtnAction(() => LoadingManager.LoadScene(SSceneName.LOBBY_SCENE));
+        Popup.CreateErrorPopup("Failed CreateRoom", $"Error Code : {returnCode}\nMessage : {message}");
         Debug.Log($"방 생성 실패 :\n코드 : {returnCode}\n메세지 : {message}");
     }
 
-    public void JoinRoom() => PhotonNetwork.JoinRoom(MyRoomManager.roomName);
-
-    // CreateRoom 함수 호출 시에도 OnCreateRoom 함수 호출 뒤 이곳으로 들어옴
-    public override void OnJoinedRoom()
-    {
-        print($"방 [{MyRoomManager.roomName}] 참가 완료");
-
-        RoomScene roomScene = FindObjectOfType<RoomScene>();
-        roomScene.InitRoomScene();
-    }
+    public void JoinRoom(string roomName) => PhotonNetwork.JoinRoom(roomName);
 
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
-        OKPopup popup = Popup.CreateErrorPopup("Failed Join Room", $"Error Code : {returnCode}\nMessage : {message}") as OKPopup;
-        popup.SetOKBtnAction(() => LoadingManager.LoadScene(SSceneName.LOBBY_SCENE));
+        Popup.CreateErrorPopup("Failed Join Room", $"Error Code : {returnCode}\nMessage : {message}");
         Debug.Log($"방 참가 실패 :\n코드 : {returnCode}\n메세지 : {message}");
     }
 
@@ -309,17 +272,22 @@ public class NetworkManager : Singleton<NetworkManager>
 
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
-        OKPopup popup = Popup.CreateErrorPopup("Failed Join Random Room", $"Error Code : {returnCode}\nMessage : {message}") as OKPopup;
-        popup.SetOKBtnAction(() => LoadingManager.LoadScene(SSceneName.LOBBY_SCENE));
+        Popup.CreateErrorPopup("Failed Join Random Room", $"Error Code : {returnCode}\nMessage : {message}");
         Debug.Log($"랜덤으로 방 참가 실패 :\n코드 : {returnCode}\n메세지 : {message}");
+    }
+
+    // CreateRoom 함수 호출 시에도 OnCreateRoom 함수 호출 뒤 이곳으로 들어옴
+    public override void OnJoinedRoom()
+    {
+        print($"방 참가 완료");
+        LoadingManager.LoadScene(SSceneName.ROOM_SCENE);
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         SendSystemChat($"{newPlayer.NickName}님이 참가하였습니다.");
-
         RoomScene roomScene = FindObjectOfType<RoomScene>();
-        roomScene.UpdateRoomUntilUpdateCustomProperties();
+        roomScene.UpdateRoomAfterUpdateCustomProperties();
     }
 
     public void LeaveRoom()
@@ -344,9 +312,8 @@ public class NetworkManager : Singleton<NetworkManager>
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         SendSystemChat($"{otherPlayer.NickName}님이 떠났습니다.");
-
         RoomScene roomScene = FindObjectOfType<RoomScene>();
-        roomScene.UpdateRoomUntilUpdateCustomProperties();
+        roomScene.UpdateRoomAfterUpdateCustomProperties();
     }
 
     public void SendChat(string msg)
@@ -354,7 +321,7 @@ public class NetworkManager : Singleton<NetworkManager>
         photonView.RPC("AddChatBoxRPC", RpcTarget.All,
             msg,
             PhotonNetwork.NickName,
-            (EUserColorType)Enum.Parse(typeof(EUserColorType), $"{PhotonNetwork.LocalPlayer.CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}")
+            Utility.StringToEnum<EUserColorType>($"{PhotonNetwork.LocalPlayer.CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}")
         );
     }
 
@@ -404,7 +371,6 @@ public class NetworkManager : Singleton<NetworkManager>
     public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
     {
         StringBuilder sb = new StringBuilder(256);
-
         foreach (var property in propertiesThatChanged)
         {
             sb.AppendLine($"key : {property.Key}, value : {property.Value}");
@@ -412,7 +378,10 @@ public class NetworkManager : Singleton<NetworkManager>
         print($"방 정보가 변경되었습니다.\n{sb}");
 
         RoomScene roomScene = FindObjectOfType<RoomScene>();
-        roomScene.UpdateRoomUntilUpdateCustomProperties();
+        if (roomScene != null)
+        {
+            roomScene.UpdateRoomAfterUpdateCustomProperties();
+        }
     }
 
     public void SetMasterClient(Player player)
