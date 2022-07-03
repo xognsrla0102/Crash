@@ -3,6 +3,7 @@ using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 using System.Collections.Generic;
 
 public class RoomScene : MonoBehaviour
@@ -86,6 +87,11 @@ public class RoomScene : MonoBehaviour
         int[] lockedSlots = PhotonNetwork.CurrentRoom.CustomProperties[SRoomPropertyKey.LOCKED_SLOTS] as int[];
         foreach (var lockedSlotUserNum in lockedSlots)
         {
+            // -1을 만나면 더 이상 잠긴 슬롯이 없다는 의미이므로 종료
+            if (lockedSlotUserNum == -1)
+            {
+                break;
+            }
             userSlots[lockedSlotUserNum].IsLocked = true;
         }
 
