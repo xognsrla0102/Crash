@@ -61,7 +61,7 @@ public class MakeRoomPopup : YesNoPopup
                 { SRoomPropertyKey.MASTER_CLIENT, UserManager.userName },
                 { SRoomPropertyKey.MAP_NAME, SMapName.STADIUM },
                 { SRoomPropertyKey.ROOM_STATE, SRoomState.PREPARING_GAME },
-                { SRoomPropertyKey.LOCKED_SLOTS, new int[4] { -1, -1, -1, -1 } }
+                //{ SRoomPropertyKey.LOCKED_SLOTS,  }
             },
             CustomRoomPropertiesForLobby = new string[]
             {

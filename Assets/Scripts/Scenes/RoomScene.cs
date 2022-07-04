@@ -3,8 +3,6 @@ using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System;
-using System.Collections.Generic;
 
 public class RoomScene : MonoBehaviour
 {
@@ -25,6 +23,8 @@ public class RoomScene : MonoBehaviour
     [Header("슬롯들")]
     public UserSlot[] userSlots;
     [SerializeField] private MapSlot mapSlot;
+
+    [HideInInspector] public bool isDoneInitRoom;
 
     private InputFieldUtility inputFieldUtility;
 
@@ -50,7 +50,7 @@ public class RoomScene : MonoBehaviour
 
         chatInputField.ActivateInputField();
 
-        UpdateRoomAfterUpdateCustomProperties(true);
+        InitRoomAfterUpdateCustomProperties();
     }
 
     private void OnDestroy()
@@ -65,86 +65,69 @@ public class RoomScene : MonoBehaviour
         roomOptionBtn.onClick.RemoveAllListeners();
     }
 
-    public void UpdateRoomAfterUpdateCustomProperties(bool isInitRoom = false)
+    private void InitRoomAfterUpdateCustomProperties()
     {
         float propertyDelayTime = 0.3f;
+        MyRoomManager.SetRoomManager();
+        Invoke("InitRoom", propertyDelayTime);
+    }
 
-        if (isInitRoom)
-        {
-            MyRoomManager.InitRoomManager();
-            Invoke("InitRoom", propertyDelayTime);
-        }
-        else
-        {
-            MyRoomManager.SetRoomManager();
-            Invoke("UpdateRoom", propertyDelayTime);
-        }
+    public void UpdateRoomAfterUpdateCustomProperties()
+    {
+        float propertyDelayTime = 0.3f;
+        MyRoomManager.SetRoomManager();
+        Invoke("UpdateRoom", propertyDelayTime);
     }
 
     private void InitRoom()
     {
-        // 잠긴 슬롯 세팅
-        int[] lockedSlots = PhotonNetwork.CurrentRoom.CustomProperties[SRoomPropertyKey.LOCKED_SLOTS] as int[];
-        foreach (var lockedSlotUserNum in lockedSlots)
-        {
-            // -1을 만나면 더 이상 잠긴 슬롯이 없다는 의미이므로 종료
-            if (lockedSlotUserNum == -1)
-            {
-                break;
-            }
-            userSlots[lockedSlotUserNum].IsLocked = true;
-        }
+        UserManager.InitUserManager();
 
-        // 유저 번호 세팅
-        userSlots[0].userNum = UserManager.myUserNum;
-        for (int slotIdx = 1, userNum = 0; slotIdx < userSlots.Length; slotIdx++)
-        {
-            if (userSlots[slotIdx].IsLocked)
-            {
-                userSlots[slotIdx].userNum = -1;
-                continue;
-            }
+        #region 슬롯 유저 번호 세팅 (자신의 유저 번호가 1일 경우 1 0 2 3 으로 슬롯 유저 번호 세팅)
 
-            if (userNum == UserManager.myUserNum)
+        userSlots[0].slotUserNum = UserManager.slotUserNum;
+        for (int slotIdx = 1, userNum = 0; slotIdx < userSlots.Length; slotIdx++, userNum++)
+        {
+            if (userNum == UserManager.slotUserNum)
             {
                 userNum++;
             }
-
-            userSlots[slotIdx].userNum = userNum;
-            userNum++;
+            userSlots[slotIdx].slotUserNum = userNum;
         }
+        #endregion
 
         UpdateRoom();
+
+        isDoneInitRoom = true;
     }
 
     private void UpdateRoom()
     {
-        #region 슬롯 세팅
-
-        mapSlot.InitSlot(MyRoomManager.mapName);
-
-        // 유저 번호에 맞는 색상 세팅
-        Player[] users = PhotonNetwork.PlayerList;
-        EUserColorType[] userColorTypes = new EUserColorType[userSlots.Length];
-        for (int userNum = 0; userNum < users.Length; userNum++)
-        {
-            userColorTypes[userNum] = Utility.StringToEnum<EUserColorType>($"{users[userNum].CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}");
-        }
-
-        // 유저 번호에 맞게 슬롯 세팅
+        #region 유저 슬롯 세팅
         for (int i = 0; i < userSlots.Length; i++)
         {
-            int nowUserNum = userSlots[i].userNum;
-            if (nowUserNum != -1)
+            userSlots[i].InitEmptySlot();
+        }
+
+        Player[] users = PhotonNetwork.PlayerList;
+        for (int userIdx = 0; userIdx < users.Length; userIdx++)
+        {
+            Player nowUser = users[userIdx];
+            EUserColorType userColorType = Utility.StringToEnum<EUserColorType>($"{nowUser.CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}");
+            int slotUserNum = (int)nowUser.CustomProperties[SPlayerPropertyKey.SLOT_USER_NUM];
+
+            for (int slotIdx = 0; slotIdx < userSlots.Length; slotIdx++)
             {
-                userSlots[i].InitSlot(users[nowUserNum], userColorTypes[nowUserNum]);
-            }
-            else
-            {
-                userSlots[i].InitEmptySlot();
+                if (userSlots[slotIdx].slotUserNum == slotUserNum)
+                {
+                    userSlots[slotIdx].InitSlot(nowUser, userColorType);
+                    break;
+                }
             }
         }
         #endregion
+
+        mapSlot.InitSlot(MyRoomManager.mapName);
 
         roomNameText.text = MyRoomManager.roomName;
 
@@ -171,7 +154,8 @@ public class RoomScene : MonoBehaviour
         // 게임이 시작되므로 참여 못 하게 막음..
         //PhotonNetwork.CurrentRoom.IsOpen = false;
 
-        // 룸 상태 변경해야 함
+        // 룸 상태 변경
+        //NetworkManager.Instance.SetRoomProperties(SRoomPropertyKey.ROOM_STATE, SRoomState.IN_GAME);
     }
 
     private void OnClickRoomOptionBtn() => Popup.CreateSpecialPopup(EPopupType.ROOM_OPTION_POPUP);

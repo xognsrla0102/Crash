@@ -16,12 +16,6 @@ public static class MyRoomManager
     public static int nowPlayerNum;
     public static byte maxPlayerNum;
 
-    public static void InitRoomManager()
-    {
-        SetRoomManager();
-        UserManager.InitUserSlot();
-    }
-
     public static void SetRoomManager()
     {
         roomInfo = PhotonNetwork.CurrentRoom;
@@ -49,7 +43,5 @@ public static class MyRoomManager
 
         nowPlayerNum =
         maxPlayerNum = 0;
-
-        UserManager.ClearUserSlot();
     }
 }

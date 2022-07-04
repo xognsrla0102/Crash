@@ -151,6 +151,13 @@ public class NetworkManager : Singleton<NetworkManager>
         CanvasGroup.interactable = true;
 
         PhotonNetwork.NickName = UserManager.userName;
+
+        // 유저 프로퍼티 초기화
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable {
+            { SPlayerPropertyKey.COLOR_TYPE, $"{EUserColorType.NONE}" },
+            { SPlayerPropertyKey.SLOT_USER_NUM, -1 }
+        });
+
         LoadingManager.LoadScene(SSceneName.LOBBY_SCENE);
     }
 
@@ -260,18 +267,28 @@ public class NetworkManager : Singleton<NetworkManager>
         Debug.Log($"방 생성 실패 :\n코드 : {returnCode}\n메세지 : {message}");
     }
 
-    public void JoinRoom(string roomName) => PhotonNetwork.JoinRoom(roomName);
+    public void JoinRoom(string roomName)
+    {
+        CanvasGroup.interactable = false;
+        PhotonNetwork.JoinRoom(roomName);
+    }
 
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
+        CanvasGroup.interactable = true;
         Popup.CreateErrorPopup("Failed Join Room", $"Error Code : {returnCode}\nMessage : {message}");
         Debug.Log($"방 참가 실패 :\n코드 : {returnCode}\n메세지 : {message}");
     }
 
-    public void JoinRandomRoom() => PhotonNetwork.JoinRandomRoom();
+    public void JoinRandomRoom()
+    {
+        CanvasGroup.interactable = false;
+        PhotonNetwork.JoinRandomRoom();
+    }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
+        CanvasGroup.interactable = true;
         Popup.CreateErrorPopup("Failed Join Random Room", $"Error Code : {returnCode}\nMessage : {message}");
         Debug.Log($"랜덤으로 방 참가 실패 :\n코드 : {returnCode}\n메세지 : {message}");
     }
@@ -279,6 +296,7 @@ public class NetworkManager : Singleton<NetworkManager>
     // CreateRoom 함수 호출 시에도 OnCreateRoom 함수 호출 뒤 이곳으로 들어옴
     public override void OnJoinedRoom()
     {
+        CanvasGroup.interactable = true;
         print($"방 참가 완료");
         LoadingManager.LoadScene(SSceneName.ROOM_SCENE);
     }
@@ -286,7 +304,60 @@ public class NetworkManager : Singleton<NetworkManager>
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         SendSystemChat($"{newPlayer.NickName}님이 참가하였습니다.");
+
         RoomScene roomScene = FindObjectOfType<RoomScene>();
+
+        // 방장이 새로 들어온 유저의 정보 세팅
+        if (PhotonNetwork.IsMasterClient)
+        {
+            #region 유저 색상 초기화
+            // 어떤 유저 색깔이 있는지 체크
+            bool[] checkUserColorType = new bool[(int)EUserColorType.NUMS - 1];
+
+            Player[] users = PhotonNetwork.PlayerList;
+            for (int userIdx = 0; userIdx < users.Length; userIdx++)
+            {
+                Player nowUser = users[userIdx];
+                if (nowUser.NickName == newPlayer.NickName)
+                {
+                    continue;
+                }
+
+                var nowUserColorType = Utility.StringToEnum<EUserColorType>($"{nowUser.CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}");
+                Debug.Log($"userColorType : {nowUserColorType}");
+                checkUserColorType[(int)nowUserColorType - 1] = true;
+            }
+
+            // 유저 색깔 없는 것 중 처음 것을 내 색깔로 결정
+            EUserColorType userColorType = EUserColorType.NONE;
+            for (int i = 0; i < checkUserColorType.Length; i++)
+            {
+                if (checkUserColorType[i] == false)
+                {
+                    userColorType = (EUserColorType)(i + 1);
+                    break;
+                }
+            }
+
+            Debug.Assert(userColorType != EUserColorType.NONE, "유저 색상을 None으로 초기화할 수 없습니다.");
+
+            SetPlayerProperties(newPlayer, SPlayerPropertyKey.COLOR_TYPE, $"{userColorType}");
+            #endregion
+
+            #region 슬롯 유저 번호 초기화
+            UserSlot[] userSlots = roomScene.userSlots;
+            for (int slotIdx = 1; slotIdx < userSlots.Length; slotIdx++)
+            {
+                UserSlot nowUserSlot = userSlots[slotIdx];
+                if (nowUserSlot.IsEmptySlot && nowUserSlot.IsLocked == false)
+                {
+                    SetPlayerProperties(newPlayer, SPlayerPropertyKey.SLOT_USER_NUM, nowUserSlot.slotUserNum);
+                    break;
+                }
+            }
+            #endregion
+        }
+
         roomScene.UpdateRoomAfterUpdateCustomProperties();
     }
 
@@ -306,6 +377,7 @@ public class NetworkManager : Singleton<NetworkManager>
     {
         CanvasGroup.interactable = true;
         MyRoomManager.ClearRoomManager();
+        UserManager.ClearUserManager();
         print("방 떠남, 게임 서버 연결 해제 후 마스터 서버 접속 시도..");
     }
 
@@ -321,7 +393,7 @@ public class NetworkManager : Singleton<NetworkManager>
     public void SendSystemChat(string msg) => AddChatBox($"<color=red>{msg}</color>");
 
     // 채팅 메시지와 말한 유저의 색상 정보를 전달
-    [PunRPC] private void AddChatBoxRPC(string msg, Player user) => AddChatBox(msg);
+    [PunRPC] private void AddChatBoxRPC(string msg, Player user) => AddChatBox(msg, user);
 
     private void AddChatBox(string msg, Player user = null)
     {
@@ -354,9 +426,12 @@ public class NetworkManager : Singleton<NetworkManager>
     #endregion
 
     #region 방 설정 관련 코드
-    public void SetRoomProperties(Hashtable roomProperty)
+    public void SetRoomProperties(object propertyKey, object value)
     {
         Debug.Assert(PhotonNetwork.IsMasterClient, "방장이 아닙니다.");
+
+        Hashtable roomProperty = PhotonNetwork.CurrentRoom.CustomProperties;
+        roomProperty[propertyKey] = value;
         PhotonNetwork.CurrentRoom.SetCustomProperties(roomProperty);
     }
 
@@ -371,10 +446,27 @@ public class NetworkManager : Singleton<NetworkManager>
         print($"방 정보가 변경되었습니다.\n{sb}");
 
         RoomScene roomScene = FindObjectOfType<RoomScene>();
-        if (roomScene != null)
+        if (roomScene != null && roomScene.isDoneInitRoom)
         {
             roomScene.UpdateRoomAfterUpdateCustomProperties();
         }
+    }
+
+    public void SetPlayerProperties(Player player, object propertyKey, object value)
+    {
+        Hashtable playerProperty = player.CustomProperties;
+        playerProperty[propertyKey] = value;
+        player.SetCustomProperties(playerProperty);
+    }
+
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
+    {
+        StringBuilder sb = new StringBuilder(256);
+        foreach (var property in changedProps)
+        {
+            sb.AppendLine($"key : {property.Key}, value : {property.Value}");
+        }
+        print($"플레이어[{targetPlayer.NickName}]의 정보가 변경되었습니다.\n{sb}");
     }
 
     public void SetMasterClient(Player player)

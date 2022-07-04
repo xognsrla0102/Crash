@@ -3,7 +3,6 @@ using UnityEngine.UI;
 using Photon.Realtime;
 using Photon.Pun;
 using TMPro;
-using System.Collections.Generic;
 
 public enum EUserColorType
 {
@@ -32,7 +31,7 @@ public class UserSlot : MonoBehaviour
     [HideInInspector] public EUserColorType userColorType;
     [HideInInspector] public Button userSlotBtn;
     [HideInInspector] public Player userInfo;
-    [HideInInspector] public int userNum;
+    [HideInInspector] public int slotUserNum;
 
     [SerializeField] private bool isMyUserSlot;
     [SerializeField] private Transform modelParent;
@@ -45,7 +44,7 @@ public class UserSlot : MonoBehaviour
     [SerializeField] private GameObject xText;
     [SerializeField] private GameObject lockedImg;
 
-    private bool IsEmptySlot => userInfo == null;
+    public bool IsEmptySlot => userInfo == null;
 
     private void Awake()
     {
@@ -88,12 +87,16 @@ public class UserSlot : MonoBehaviour
             modelParent.GetChild(i).gameObject.SetActive(false);
         }
 
-        userSlotBtn.enabled = PhotonNetwork.IsMasterClient;
-        makeMasterBtn.gameObject.SetActive(false);
+        if (isMyUserSlot == false)
+        {
+            userSlotBtn.enabled = PhotonNetwork.IsMasterClient;
+            makeMasterBtn.gameObject.SetActive(false);
+        }
     }
 
     public void InitSlot(Player user, EUserColorType userColorType)
     {
+        print($"user:{user.NickName}, color:{userColorType}");
         userInfo = user;
 
         // 해당 슬롯의 유저가 방장 유저라면 마스터 텍스트 활성화
@@ -110,14 +113,11 @@ public class UserSlot : MonoBehaviour
             modelParent.GetChild(i).gameObject.SetActive(i == userColorNum);
         }
 
-        // 자기 슬롯은 무시
-        if (userNum == UserManager.myUserNum)
+        if (isMyUserSlot == false)
         {
-            return;
+            userSlotBtn.enabled = PhotonNetwork.IsMasterClient;
+            makeMasterBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient);
         }
-
-        userSlotBtn.enabled = PhotonNetwork.IsMasterClient;
-        makeMasterBtn.gameObject.SetActive(PhotonNetwork.IsMasterClient);
     }
 
     public void ShowChatEffect(string msg) => userChatBox.ShowChatEffect(msg);
@@ -128,8 +128,8 @@ public class UserSlot : MonoBehaviour
 
         if (IsEmptySlot)
         {
-            int[] lockedSlots = PhotonNetwork.CurrentRoom.CustomProperties[SRoomPropertyKey.LOCKED_SLOTS] as int[];
-            if ()
+            //int[] lockedSlots = PhotonNetwork.CurrentRoom.CustomProperties[SRoomPropertyKey.LOCKED_SLOTS] as int[];
+            //if ()
 
             if (IsLocked)
             {

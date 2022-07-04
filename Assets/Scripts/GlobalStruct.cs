@@ -58,6 +58,7 @@ public struct SRoomPropertyKey
 public struct SPlayerPropertyKey
 {
     public const string COLOR_TYPE = "ColorType";
+    public const string SLOT_USER_NUM = "SlotUserNum";
 }
 
 // 리소스 로드 시 사용되는 경로
