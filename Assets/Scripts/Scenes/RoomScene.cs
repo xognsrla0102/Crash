@@ -18,7 +18,9 @@ public class RoomScene : MonoBehaviour
     [SerializeField] private InputField chatInputField;
 
     [SerializeField] private TextMeshProUGUI userNameText;
-    [SerializeField] private TextMeshProUGUI roomNameText;
+
+    // 유저 입력을 TMP로 받다보면 간혹적으로 동적으로 폰트 생성이 안되서 제대로 안 나오는 문제가 있음
+    [SerializeField] private Text roomNameText;
 
     [Header("슬롯들")]
     public UserSlot[] userSlots;
