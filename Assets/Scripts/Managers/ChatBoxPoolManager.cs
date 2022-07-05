@@ -14,8 +14,7 @@ public class ChatBoxPoolManager : Singleton<ChatBoxPoolManager>
 
     private void Awake()
     {
-        // queue가 빈 상태에서 pop되는 경우가 있어서 임시로 하나 더 생성함
-        AddPoolObj(SHOW_CHAT_BOX_CNT + 1);
+        AddPoolObj(SHOW_CHAT_BOX_CNT);
     }
 
     private void AddPoolObj(int addCnt = 1)

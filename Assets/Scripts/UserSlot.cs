@@ -139,7 +139,7 @@ public class UserSlot : MonoBehaviour
             int lockedSlotCnt = 0;
             foreach (var userSlot in userSlots)
             {
-                if (userSlot.isLocked)
+                if (userSlot.IsLocked)
                 {
                     lockedSlotCnt++;
                 }
@@ -150,12 +150,18 @@ public class UserSlot : MonoBehaviour
             {
                 lockedSlotNums = lockedSlotNums.Replace($"{slotUserNum},", "");
                 lockedSlotCnt--;
+
+                xText.SetActive(false);
+                lockedImg.SetActive(false);
             }
             // 안 잠겨있으면 잠금
             else
             {
                 lockedSlotNums += $"{slotUserNum},";
                 lockedSlotCnt++;
+
+                xText.SetActive(true);
+                lockedImg.SetActive(true);
             }
 
             PhotonNetwork.CurrentRoom.MaxPlayers = (byte)(4 - lockedSlotCnt);

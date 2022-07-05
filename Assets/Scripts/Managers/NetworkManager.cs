@@ -378,6 +378,13 @@ public class NetworkManager : Singleton<NetworkManager>
     public override void OnLeftRoom()
     {
         CanvasGroup.interactable = true;
+
+        print("채팅 필드에 있던 채팅 박스 전부 다시 풀링해두고 로비로 이동");
+        while (ChatContent.childCount > 0)
+        {
+            ChatBoxPoolManager.Instance.Push(ChatContent.GetChild(0).GetComponent<ChatBox>());
+        }
+
         MyRoomManager.ClearRoomManager();
         UserManager.ClearUserManager();
         print("방 떠남, 게임 서버 연결 해제 후 마스터 서버 접속 시도..");
@@ -418,6 +425,11 @@ public class NetworkManager : Singleton<NetworkManager>
         RoomScene roomScene = FindObjectOfType<RoomScene>();
         foreach (var userSlot in roomScene.userSlots)
         {
+            if (userSlot.IsEmptySlot)
+            {
+                continue;
+            }
+
             if (userSlot.userInfo.UserId == user.UserId)
             {
                 userSlot.ShowChatEffect(msg);
