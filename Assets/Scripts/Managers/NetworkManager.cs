@@ -276,7 +276,8 @@ public class NetworkManager : Singleton<NetworkManager>
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
         CanvasGroup.interactable = true;
-        Popup.CreateErrorPopup("Failed Join Room", $"Error Code : {returnCode}\nMessage : {message}");
+        OKPopup popup = Popup.CreateErrorPopup("Failed Join Room", $"Error Code : {returnCode}\nMessage : {message}") as OKPopup;
+        popup.SetOKBtnAction(() => LoadingManager.LoadScene(SSceneName.LOBBY_SCENE));
         Debug.Log($"방 참가 실패 :\n코드 : {returnCode}\n메세지 : {message}");
     }
 
@@ -289,7 +290,8 @@ public class NetworkManager : Singleton<NetworkManager>
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
         CanvasGroup.interactable = true;
-        Popup.CreateErrorPopup("Failed Join Random Room", $"Error Code : {returnCode}\nMessage : {message}");
+        OKPopup popup = Popup.CreateErrorPopup("Failed Join Random Room", $"Error Code : {returnCode}\nMessage : {message}") as OKPopup;
+        popup.SetOKBtnAction(() => LoadingManager.LoadScene(SSceneName.LOBBY_SCENE));
         Debug.Log($"랜덤으로 방 참가 실패 :\n코드 : {returnCode}\n메세지 : {message}");
     }
 
@@ -435,7 +437,6 @@ public class NetworkManager : Singleton<NetworkManager>
         PhotonNetwork.CurrentRoom.SetCustomProperties(roomProperty);
     }
 
-    // 룸 프로퍼티 변경되었을 때
     public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
     {
         StringBuilder sb = new StringBuilder(256);
@@ -479,11 +480,12 @@ public class NetworkManager : Singleton<NetworkManager>
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
         print($"방장이 {newMasterClient.NickName}(으)로 변경되었습니다.");
-
-        Hashtable roomProperties = PhotonNetwork.CurrentRoom.CustomProperties;
-        roomProperties[SRoomPropertyKey.MASTER_CLIENT] = newMasterClient.NickName;
-        PhotonNetwork.CurrentRoom.SetCustomProperties(roomProperties);
         SendSystemChat($"방장이 {newMasterClient.NickName}(으)로 변경되었습니다.");
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            SetRoomProperties(SRoomPropertyKey.MASTER_CLIENT, newMasterClient.NickName);
+        }
     }
 
     public void KickUser(string userID) => photonView.RPC("KickUserRPC", RpcTarget.All, userID);

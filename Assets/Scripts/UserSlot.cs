@@ -23,8 +23,12 @@ public class UserSlot : MonoBehaviour
         set
         {
             isLocked = value;
-            xText.SetActive(isLocked);
-            lockedImg.SetActive(isLocked);
+
+            if (isMyUserSlot == false)
+            {
+                xText.SetActive(isLocked);
+                lockedImg.SetActive(isLocked);
+            }
         }
     }
 
@@ -51,7 +55,9 @@ public class UserSlot : MonoBehaviour
         if (isMyUserSlot == false)
         {
             userSlotBtn = GetComponent<Button>();
-            userSlotBtn.onClick.AddListener(OnClickUserSlotBtn);
+
+            UserSlot[] userSlots = FindObjectOfType<RoomScene>().userSlots;
+            userSlotBtn.onClick.AddListener(() => OnClickUserSlotBtn(userSlots));
 
             makeMasterBtn.onClick.AddListener(OnClickMakeMasterBtn);
 
@@ -122,23 +128,38 @@ public class UserSlot : MonoBehaviour
 
     public void ShowChatEffect(string msg) => userChatBox.ShowChatEffect(msg);
 
-    private void OnClickUserSlotBtn()
+    private void OnClickUserSlotBtn(UserSlot[] userSlots)
     {
         Debug.Assert(PhotonNetwork.IsMasterClient, "방장이 아닙니다.");
 
         if (IsEmptySlot)
         {
-            //int[] lockedSlots = PhotonNetwork.CurrentRoom.CustomProperties[SRoomPropertyKey.LOCKED_SLOTS] as int[];
-            //if ()
+            string lockedSlotNums = $"{PhotonNetwork.CurrentRoom.CustomProperties[SRoomPropertyKey.LOCKED_SLOT_NUMS]}";
 
+            int lockedSlotCnt = 0;
+            foreach (var userSlot in userSlots)
+            {
+                if (userSlot.isLocked)
+                {
+                    lockedSlotCnt++;
+                }
+            }
+
+            // 잠겨 있으면 해제
             if (IsLocked)
             {
-                PhotonNetwork.CurrentRoom.MaxPlayers++;
+                lockedSlotNums = lockedSlotNums.Replace($"{slotUserNum},", "");
+                lockedSlotCnt--;
             }
+            // 안 잠겨있으면 잠금
             else
             {
-                PhotonNetwork.CurrentRoom.MaxPlayers--;
+                lockedSlotNums += $"{slotUserNum},";
+                lockedSlotCnt++;
             }
+
+            PhotonNetwork.CurrentRoom.MaxPlayers = (byte)(4 - lockedSlotCnt);
+            NetworkManager.Instance.SetRoomProperties(SRoomPropertyKey.LOCKED_SLOT_NUMS, lockedSlotNums);
         }
         else
         {

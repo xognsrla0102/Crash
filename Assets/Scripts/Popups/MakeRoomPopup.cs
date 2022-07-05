@@ -26,6 +26,7 @@ public class MakeRoomPopup : YesNoPopup
 
     private void OnClickMakeRoomBtn()
     {
+        // 현재 방의 최대 인원 수
         byte maxPlayerNum;
 
         #region 인풋 필드 유효성 검사
@@ -50,6 +51,15 @@ public class MakeRoomPopup : YesNoPopup
         }
         #endregion
 
+        // 최대 방에 있을 수 있는 유저 수
+        int limitPlayerNum = 4;
+
+        // 현재 방에 있을 수 있는 유저 수보다 최대 인원 수가 작다면 그만큼 뒤 슬롯부터 잠금 처리 
+        string lockedSlots = string.Empty;
+        for (int i = 0; i < limitPlayerNum - maxPlayerNum; i++)
+        {
+            lockedSlots += $"{limitPlayerNum - i - 1},"; 
+        }
 
         RoomOptions roomOption = new RoomOptions
         {
@@ -61,7 +71,7 @@ public class MakeRoomPopup : YesNoPopup
                 { SRoomPropertyKey.MASTER_CLIENT, UserManager.userName },
                 { SRoomPropertyKey.MAP_NAME, SMapName.STADIUM },
                 { SRoomPropertyKey.ROOM_STATE, SRoomState.PREPARING_GAME },
-                //{ SRoomPropertyKey.LOCKED_SLOTS,  }
+                { SRoomPropertyKey.LOCKED_SLOT_NUMS, lockedSlots }
             },
             CustomRoomPropertiesForLobby = new string[]
             {

@@ -107,6 +107,26 @@ public class RoomScene : MonoBehaviour
         for (int i = 0; i < userSlots.Length; i++)
         {
             userSlots[i].InitEmptySlot();
+            userSlots[i].IsLocked = false;
+        }
+
+        string[] lockedSlotNums = $"{PhotonNetwork.CurrentRoom.CustomProperties[SRoomPropertyKey.LOCKED_SLOT_NUMS]}".Split(',');
+        foreach (var lockSlotNumText in lockedSlotNums)
+        {
+            int lockedSlotUserNum;
+            if (int.TryParse(lockSlotNumText, out lockedSlotUserNum) == false)
+            {
+                continue;
+            }
+
+            foreach (var userSlot in userSlots)
+            {
+                if (userSlot.slotUserNum == lockedSlotUserNum)
+                {
+                    userSlot.IsLocked = true;
+                    break;
+                }
+            }
         }
 
         Player[] users = PhotonNetwork.PlayerList;
@@ -125,6 +145,7 @@ public class RoomScene : MonoBehaviour
                 }
             }
         }
+
         #endregion
 
         mapSlot.InitSlot(MyRoomManager.mapName);
