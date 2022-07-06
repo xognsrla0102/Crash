@@ -32,6 +32,17 @@ public class UserSlot : MonoBehaviour
         }
     }
 
+    private bool isReady;
+    public bool IsReady
+    {
+        get => isReady;
+        set
+        {
+            isReady = value;
+            readyText.SetActive(isReady);
+        }
+    }
+
     [HideInInspector] public EUserColorType userColorType;
     [HideInInspector] public Button userSlotBtn;
     [HideInInspector] public Player userInfo;
@@ -42,9 +53,11 @@ public class UserSlot : MonoBehaviour
     [SerializeField] private ChatBox userChatBox;
     [SerializeField] private TextMeshProUGUI userNameText;
 
-    [Header("방장만 컨트롤 가능한 오브젝트들")]
-    public Button makeMasterBtn;
     [SerializeField] private GameObject masterText;
+    [SerializeField] private GameObject readyText;
+
+    [Header("자기 슬롯에 없는 오브젝트들")]
+    public Button makeMasterBtn;
     [SerializeField] private GameObject xText;
     [SerializeField] private GameObject lockedImg;
 
@@ -61,12 +74,13 @@ public class UserSlot : MonoBehaviour
 
             makeMasterBtn.onClick.AddListener(OnClickMakeMasterBtn);
 
+            makeMasterBtn.gameObject.SetActive(false);
             xText.SetActive(false);
             lockedImg.SetActive(false);
-            makeMasterBtn.gameObject.SetActive(false);
         }
 
         masterText.SetActive(false);
+        readyText.SetActive(false);
     }
 
     private void OnDestroy()
@@ -86,6 +100,9 @@ public class UserSlot : MonoBehaviour
         masterText.SetActive(false);
 
         userInfo = null;
+
+        IsLocked = false;
+        IsReady = false;
 
         // 모델링 비활성화
         for (int i = 0; i < modelParent.childCount; i++)
@@ -127,6 +144,26 @@ public class UserSlot : MonoBehaviour
     }
 
     public void ShowChatEffect(string msg) => userChatBox.ShowChatEffect(msg);
+
+    public void SetReadySlot()
+    {
+        string readySlotNums = $"{PhotonNetwork.CurrentRoom.CustomProperties[SRoomPropertyKey.READY_SLOT_NUMS]}";
+
+        // 레디일 경우 해제
+        if (IsReady)
+        {
+            readySlotNums = readySlotNums.Replace($"{slotUserNum},", "");
+            readyText.SetActive(false);
+        }
+        // 아닐 경우 레디
+        else
+        {
+            readySlotNums += $"{slotUserNum},";
+            readyText.SetActive(true);
+        }
+
+        NetworkManager.Instance.SetRoomProperties(SRoomPropertyKey.READY_SLOT_NUMS, readySlotNums);
+    }
 
     private void OnClickUserSlotBtn(UserSlot[] userSlots)
     {
@@ -173,6 +210,12 @@ public class UserSlot : MonoBehaviour
             YesNoPopup popup = Popup.CreateNormalPopup("Kick User", $"Do you want to <color=red>kick</color> [\"{userNameText.text}\"]?", EPopupType.YES_NO_POPUP) as YesNoPopup;
             popup.SetYesBtnAction(() =>
             {
+                // 레디 중인 경우 해제
+                if (IsReady)
+                {
+                    SetReadySlot();
+                }
+
                 NetworkManager.Instance.KickUser(userInfo.UserId);
                 popup.ClosePopup();
             });
@@ -186,6 +229,12 @@ public class UserSlot : MonoBehaviour
         YesNoPopup popup = Popup.CreateNormalPopup("Make Master", $"Do you want to make [\"{userNameText.text}\"] as <color=green>a Master</color>?", EPopupType.YES_NO_POPUP) as YesNoPopup;
         popup.SetYesBtnAction(() =>
         {
+            // 레디 중인 경우 해제
+            if (IsReady)
+            {
+                SetReadySlot();
+            }
+
             NetworkManager.Instance.SetMasterClient(userInfo);
             popup.ClosePopup();
         });

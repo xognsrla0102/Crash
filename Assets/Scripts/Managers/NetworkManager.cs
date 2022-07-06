@@ -442,8 +442,6 @@ public class NetworkManager : Singleton<NetworkManager>
     #region 방 설정 관련 코드
     public void SetRoomProperties(object propertyKey, object value)
     {
-        Debug.Assert(PhotonNetwork.IsMasterClient, "방장이 아닙니다.");
-
         Hashtable roomProperty = PhotonNetwork.CurrentRoom.CustomProperties;
         roomProperty[propertyKey] = value;
         PhotonNetwork.CurrentRoom.SetCustomProperties(roomProperty);
@@ -510,6 +508,20 @@ public class NetworkManager : Singleton<NetworkManager>
         }
 
         LeaveRoom();
+    }
+
+    public void StartGame()
+    {
+        CanvasGroup.interactable = false;
+
+        // 게임이 시작되므로 참여 못 하게 막음
+        PhotonNetwork.CurrentRoom.IsOpen = false;
+
+        // 룸 상태 변경
+        SetRoomProperties(SRoomPropertyKey.ROOM_STATE, SRoomState.IN_GAME);
+
+        // 인게임 씬 이동
+        LoadingManager.LoadScene(SSceneName.INGAME_SCENE, true);
     }
     #endregion
 

@@ -48,6 +48,8 @@ public class RoomScene : MonoBehaviour
 
         lobbyBtn.onClick.AddListener(OnClickLobbyBtn);
         gameStartBtn.onClick.AddListener(OnClickGameStartBtn);
+        gameReadyBtn.onClick.AddListener(OnClickGameReadyBtn);
+        // changeMapBtn.onClick.AddListener();
         roomOptionBtn.onClick.AddListener(OnClickRoomOptionBtn);
 
         chatInputField.ActivateInputField();
@@ -86,7 +88,6 @@ public class RoomScene : MonoBehaviour
         UserManager.InitUserManager();
 
         #region 슬롯 유저 번호 세팅 (자신의 유저 번호가 1일 경우 1 0 2 3 으로 슬롯 유저 번호 세팅)
-
         userSlots[0].slotUserNum = UserManager.slotUserNum;
         for (int slotIdx = 1, userNum = 0; slotIdx < userSlots.Length; slotIdx++, userNum++)
         {
@@ -109,9 +110,9 @@ public class RoomScene : MonoBehaviour
         for (int i = 0; i < userSlots.Length; i++)
         {
             userSlots[i].InitEmptySlot();
-            userSlots[i].IsLocked = false;
         }
 
+        // 잠금 슬롯 설정
         string[] lockedSlotNums = $"{PhotonNetwork.CurrentRoom.CustomProperties[SRoomPropertyKey.LOCKED_SLOT_NUMS]}".Split(',');
         foreach (var lockSlotNumText in lockedSlotNums)
         {
@@ -126,6 +127,26 @@ public class RoomScene : MonoBehaviour
                 if (userSlot.slotUserNum == lockedSlotUserNum)
                 {
                     userSlot.IsLocked = true;
+                    break;
+                }
+            }
+        }
+
+        // 레디 슬롯 설정
+        string[] readySlotNums = $"{PhotonNetwork.CurrentRoom.CustomProperties[SRoomPropertyKey.READY_SLOT_NUMS]}".Split(',');
+        foreach (var readySlotNumText in readySlotNums)
+        {
+            int readySlotUserNum;
+            if (int.TryParse(readySlotNumText, out readySlotUserNum) == false)
+            {
+                continue;
+            }
+
+            foreach (var userSlot in userSlots)
+            {
+                if (userSlot.slotUserNum == readySlotUserNum)
+                {
+                    userSlot.IsReady = true;
                     break;
                 }
             }
@@ -164,7 +185,16 @@ public class RoomScene : MonoBehaviour
         #endregion
     }
 
-    private void OnClickLobbyBtn() => NetworkManager.Instance.LeaveRoom();
+    private void OnClickLobbyBtn()
+    {
+        // 레디 중인 경우 해제
+        if (userSlots[0].IsReady)
+        {
+            userSlots[0].SetReadySlot();
+        }
+
+        NetworkManager.Instance.LeaveRoom();
+    }
 
     private void OnClickGameStartBtn()
     {
@@ -173,12 +203,36 @@ public class RoomScene : MonoBehaviour
             Debug.Assert(false, "마스터 클라이언트가 아닙니다");
             return;
         }
+        
+        // 들어온 모든 유저가 준비중인지 확인
+        for (int i = 1; i < userSlots.Length; i++)
+        {
+            // 비어있는 슬롯은 무시
+            if (userSlots[i].IsEmptySlot)
+            {
+                continue;
+            }
 
-        // 게임이 시작되므로 참여 못 하게 막음..
-        //PhotonNetwork.CurrentRoom.IsOpen = false;
+            // 1명이라도 준비가 안되있다면 게임 시작 실패
+            if (userSlots[i].IsReady == false)
+            {
+                Popup.CreateErrorPopup("Game Start Failed", "Someone doesn't ready yet.");
+                return;
+            }
+        }
 
-        // 룸 상태 변경
-        //NetworkManager.Instance.SetRoomProperties(SRoomPropertyKey.ROOM_STATE, SRoomState.IN_GAME);
+        NetworkManager.Instance.StartGame();
+    }
+
+    private void OnClickGameReadyBtn()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            Debug.Assert(false, "마스터 클라이언트일 땐 레디할 수 없습니다.");
+            return;
+        }
+
+        userSlots[0].SetReadySlot();
     }
 
     private void OnClickRoomOptionBtn() => Popup.CreateSpecialPopup(EPopupType.ROOM_OPTION_POPUP);
