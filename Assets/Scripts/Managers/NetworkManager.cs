@@ -33,7 +33,7 @@ public class NetworkManager : Singleton<NetworkManager>
         {
             if (chatContent == null)
             {
-                chatContent = GameObject.Find("UI").transform.Find("ChatField")
+                chatContent = GameObject.Find("UI").transform.Find("RoomUI").Find("ChatField")
                     .Find("ScrollView").Find("Viewport").Find("Content");
             }
             return chatContent;
@@ -520,8 +520,8 @@ public class NetworkManager : Singleton<NetworkManager>
         // 룸 상태 변경
         SetRoomProperties(SRoomPropertyKey.ROOM_STATE, SRoomState.IN_GAME);
 
-        // 인게임 씬 이동
-        LoadingManager.LoadScene(SSceneName.INGAME_SCENE, true);
+        // 인게임으로 이동
+        
     }
     #endregion
 

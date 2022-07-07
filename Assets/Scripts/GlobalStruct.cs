@@ -20,6 +20,9 @@ public struct SPrefsKey
 
     public const string IS_BGM_MUTE = "IsBgmMute";
     public const string IS_SFX_MUTE = "IsSfxMute";
+
+    public const string RESOLUTION_TYPE = "ResolutionType";
+    public const string IS_FULLSCREEN = "IsFullScreen";
 }
 
 public struct SBgmName

@@ -17,8 +17,6 @@ public class LoadingManager : MonoBehaviour
 
     private static string loadSceneName;
 
-    private static bool usePhotonLoadLevel;
-
     [Header("로딩 상태를 보여주는 개체들")]
     [SerializeField] private TextMeshProUGUI loadingText;
     [SerializeField] private Transform loadingObjRoot;
@@ -26,11 +24,9 @@ public class LoadingManager : MonoBehaviour
     // 로딩 패딩 시간을 체크할 타이머
     private readonly Stopwatch stopWatch = new Stopwatch();
 
-    public static void LoadScene(string sceneName, bool usePhotonLoadLevel = false)
+    public static void LoadScene(string sceneName)
     {
         loadSceneName = sceneName;
-        LoadingManager.usePhotonLoadLevel = usePhotonLoadLevel;
-
         SceneManager.LoadScene(SSceneName.LOADING_SCENE);
     }
 
@@ -44,14 +40,7 @@ public class LoadingManager : MonoBehaviour
         DOTween.To(x => loadingText.maxVisibleCharacters = (int)x, 0f, loadingText.text.Length + 1, LOADING_TEXT_ANIMATION_TIME).SetLoops(-1);
         loadingText.transform.DOScale(new Vector3(1.2f, 1.2f, 1f), LOADING_TEXT_ANIMATION_TIME).SetEase(Ease.OutElastic).SetLoops(-1);
 
-        if (usePhotonLoadLevel)
-        {
-            StartCoroutine(LoadScenePhotonCoroutine());
-        }
-        else
-        {
-            StartCoroutine(LoadSceneCoroutine());
-        }
+        StartCoroutine(LoadSceneCoroutine());
     }
 
     private IEnumerator LoadSceneCoroutine()
@@ -76,31 +65,6 @@ public class LoadingManager : MonoBehaviour
                     DOTween.KillAll();
                     // 로드 어느정도 다 했으니 씬 로딩이 끝나면 씬 이동 되도록 코드 변경
                     asyncOperation.allowSceneActivation = true;
-                    yield break;
-                }
-            }
-            yield return null;
-        }
-    }
-
-    private IEnumerator LoadScenePhotonCoroutine()
-    {
-        PhotonNetwork.LoadLevel(loadSceneName);
-
-        // 타이머 시작
-        stopWatch.Restart();
-
-        while (true)
-        {
-            // 90% 이상 로드시에
-            if (PhotonNetwork.LevelLoadingProgress >= 0.9f)
-            {
-                // 타이머가 패딩 시간만큼 지났다면
-                if (stopWatch.ElapsedMilliseconds * MILLISEC_TO_SEC > LOADING_PADDING_TIME)
-                {
-                    stopWatch.Stop();
-                    DOTween.KillAll();
-                    // 로드 어느정도 다 했으니 탈출 
                     yield break;
                 }
             }

@@ -204,6 +204,12 @@ public class RoomScene : MonoBehaviour
             return;
         }
         
+        if (PhotonNetwork.PlayerListOthers.Length == 0)
+        {
+            Popup.CreateErrorPopup("Game Start Failed", "There is no one in the room.\nYou can start the game with a minimum of 2 players.");
+            return;
+        }
+
         // 들어온 모든 유저가 준비중인지 확인
         for (int i = 1; i < userSlots.Length; i++)
         {

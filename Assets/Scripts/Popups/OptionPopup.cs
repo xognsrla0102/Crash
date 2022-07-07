@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class OptionPopup : Popup
 {
@@ -11,6 +12,9 @@ public class OptionPopup : Popup
     [SerializeField] private Slider bgmVolumeSlider;
     [SerializeField] private Slider sfxVolumeSlider;
 
+    [SerializeField] private TMP_Dropdown resolutionDropdown;
+    [SerializeField] private Toggle isFullScreenToggle;
+
     private void Start()
     {
         closeBtn.onClick.AddListener(ClosePopup);
@@ -20,6 +24,9 @@ public class OptionPopup : Popup
 
         bgmVolumeSlider.onValueChanged.AddListener(OnValueChangedBgmSlider);
         sfxVolumeSlider.onValueChanged.AddListener(OnValueChangedSfxSlider);
+
+        resolutionDropdown.onValueChanged.AddListener(OnValueChangedResolutionDropdown);
+        isFullScreenToggle.onValueChanged.AddListener(OnValueChangedIsFullScreenToggle);
 
         LoadOption();
     }
@@ -33,6 +40,10 @@ public class OptionPopup : Popup
         // 무음 여부 로드
         muteBgmToggle.isOn = OptionManager.Instance.IsMuteBgm;
         muteSfxToggle.isOn = OptionManager.Instance.IsMuteSfx;
+
+        // 해상도 로드
+        resolutionDropdown.value = (int)OptionManager.Instance.ResolutionType;
+        isFullScreenToggle.isOn = OptionManager.Instance.IsFullScreen;
     }
 
     private void OnDestroy()
@@ -44,10 +55,15 @@ public class OptionPopup : Popup
 
         bgmVolumeSlider.onValueChanged.RemoveAllListeners();
         sfxVolumeSlider.onValueChanged.RemoveAllListeners();
+
+        resolutionDropdown.onValueChanged.RemoveAllListeners();
+        isFullScreenToggle.onValueChanged.RemoveAllListeners();
     }
     
-    private void OnClickMuteBgmToggle(bool isOn) => OptionManager.Instance.IsMuteBgm = isOn;
-    private void OnClickMuteSfxToggle(bool isOn) => OptionManager.Instance.IsMuteSfx = isOn;
-    private void OnValueChangedBgmSlider(float value) => OptionManager.Instance.BgmVolume = value;
-    private void OnValueChangedSfxSlider(float value) => OptionManager.Instance.SfxVolume = value;
+    private void OnClickMuteBgmToggle(bool isMuteBgm) => OptionManager.Instance.IsMuteBgm = isMuteBgm;
+    private void OnClickMuteSfxToggle(bool isMuteSfx) => OptionManager.Instance.IsMuteSfx = isMuteSfx;
+    private void OnValueChangedBgmSlider(float bgmValue) => OptionManager.Instance.BgmVolume = bgmValue;
+    private void OnValueChangedSfxSlider(float sfxValue) => OptionManager.Instance.SfxVolume = sfxValue;
+    private void OnValueChangedResolutionDropdown(int resolutionType) => OptionManager.Instance.ResolutionType = (EResolutionType)resolutionType;
+    private void OnValueChangedIsFullScreenToggle(bool isFullScreen) => OptionManager.Instance.IsFullScreen = isFullScreen;
 }

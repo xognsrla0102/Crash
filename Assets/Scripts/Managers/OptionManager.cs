@@ -1,10 +1,22 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public enum EResolutionType
+{
+    _3840X2160, //4K
+    _2560X1440, //QHD
+    _1920X1080, //FHD
+    _1600X900, //HD+
+    _1280X720, //HD
+    NUMS
+}
+
 public class OptionManager : Singleton<OptionManager>
 {
     public const float DEFAULT_BGM_VOLUME = 0.4f;
     public const float DEFAULT_SFX_VOLUME = 0.2f;
+
+    public const EResolutionType DEFAULT_RESOLUTION = EResolutionType._1920X1080;
 
     private float bgmVolume;
     public float BgmVolume
@@ -64,6 +76,41 @@ public class OptionManager : Singleton<OptionManager>
         }
     }
 
+    public bool IsFullScreen
+    {
+        get => Screen.fullScreen;
+        set
+        {
+            if (Screen.fullScreen == value)
+            {
+                return;
+            }
+
+            bool isFullScreen = value;
+            EncryptPlayerPrefs.SetBool(SPrefsKey.IS_FULLSCREEN, isFullScreen);
+            Screen.SetResolution(Screen.width, Screen.height, isFullScreen);
+        }
+    }
+
+    private int[] widths = new int[] { 3840, 2560, 1920, 1600, 1280 };
+    private int[] heights = new int[] { 2160, 1440, 1080, 900, 720 };
+    private EResolutionType resolutionType;
+    public EResolutionType ResolutionType
+    {
+        get => resolutionType;
+        set
+        {
+            if (resolutionType == value)
+            {
+                return;
+            }
+
+            resolutionType = value;
+            EncryptPlayerPrefs.SetInt(SPrefsKey.RESOLUTION_TYPE, (int)resolutionType);
+            Screen.SetResolution(widths[(int)resolutionType], heights[(int)resolutionType], IsFullScreen);
+        }
+    }
+
     private void Start()
     {
         // 볼륨 값들 로드
@@ -73,6 +120,10 @@ public class OptionManager : Singleton<OptionManager>
         // 무음 여부 로드
         IsMuteBgm = EncryptPlayerPrefs.GetBool(SPrefsKey.IS_BGM_MUTE);
         IsMuteSfx = EncryptPlayerPrefs.GetBool(SPrefsKey.IS_SFX_MUTE);
+
+        // 해상도 로드
+        ResolutionType = (EResolutionType)EncryptPlayerPrefs.GetInt(SPrefsKey.RESOLUTION_TYPE, (int)DEFAULT_RESOLUTION);
+        Screen.fullScreen = EncryptPlayerPrefs.GetBool(SPrefsKey.IS_FULLSCREEN);
     }
 
     private void Update()
