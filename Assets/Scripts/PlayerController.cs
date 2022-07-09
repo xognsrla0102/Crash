@@ -2,33 +2,21 @@
 using System.Collections;
 using Photon.Pun;
 
-public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
+public class PlayerController : MonoBehaviourPunCallbacks
 {
     [SerializeField] private float spd;
 
     private Rigidbody rigid;
-    private Vector3 nowPos;
-    private bool isCrash;
+    private Rigidbody collisionObjRigidbody;
 
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        if (stream.IsWriting)
-        {
-            stream.SendNext(transform.position);
-            stream.SendNext(transform.rotation);
-        }
-        else
-        {
-            nowPos = (Vector3)stream.ReceiveNext();
-            transform.rotation = (Quaternion)stream.ReceiveNext();
-        }
-    }
+    private bool isCrash;
 
     private void Awake()
     {
         rigid = GetComponent<Rigidbody>();
 
         transform.Find(photonView.IsMine ? "CarBlue" : "CarRed").gameObject.SetActive(true);
+        gameObject.name = photonView.IsMine ? "CarBlue" : "CarRed";
     }
 
     private void FixedUpdate()
@@ -59,36 +47,20 @@ public class PlayerController : MonoBehaviourPunCallbacks, IPunObservable
                 rigid.velocity = Vector3.zero;
             }
         }
-        else if ((transform.position - nowPos).sqrMagnitude >= 50)
-        {
-            transform.position = nowPos;
-        }
-        else
-        {
-            transform.position = Vector3.Lerp(transform.position, nowPos, Time.deltaTime * 10);
-        }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (photonView.IsMine == false)
         {
-            StartCoroutine(CrashCoroutine(collision.gameObject.GetComponent<Rigidbody>().velocity));
+            // 상대방이 충돌 감지할 때 기준
+            if (collision.gameObject.CompareTag("Player") && collision.gameObject.GetComponent<PhotonView>().IsMine)
+            {
+                rigid.AddExplosionForce(50, collision.contacts[0].point, 5);
+                rigid.AddForce(Vector3.up * 5);
+                collision.gameObject.GetComponent<Rigidbody>().AddExplosionForce(50, collision.contacts[0].point, 5);
+                collision.gameObject.GetComponent<Rigidbody>().AddForce(Vector3.up * 5);
+            }
         }
-    }
-
-    private IEnumerator CrashCoroutine(Vector3 enemyVelocity)
-    {
-        print("충돌");
-        isCrash = true;
-        Vector3 oldVelocity = rigid.velocity;
-        rigid.velocity = Vector3.zero;
-
-        yield return new WaitForSeconds(0.5f);
-
-        print("충돌해제 및 충격파");
-        isCrash = false;
-        Vector3 totalVelocity = enemyVelocity + oldVelocity;
-        rigid.AddForce(totalVelocity * 3f, ForceMode.Impulse);
     }
 }

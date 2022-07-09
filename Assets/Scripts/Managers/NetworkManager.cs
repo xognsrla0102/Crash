@@ -47,6 +47,10 @@ public class NetworkManager : Singleton<NetworkManager>
         // 호스트가 씬을 이동할 때, 다른 클라이언트들도 씬을 이동하게 하면서 동시에, 씬을 동기화시켜줌.
         // (서로 씬이 달라서 같은 포톤 뷰 개체를 못 찾아서 RPC함수 호출이 씹히는 문제를 막을 수 있음[RPC 손실 방지])
         PhotonNetwork.AutomaticallySyncScene = true;
+
+        // 동기화 속도 늘려서 유저 이동이 끊어져 보이지 않게 함
+        PhotonNetwork.SendRate = 60;
+        PhotonNetwork.SerializationRate = 30;
     }
     #endregion
 
