@@ -70,6 +70,7 @@ public struct SPlayerPropertyKey
 // 리소스 로드 시 사용되는 경로
 public struct SResourceLoadPath
 {
-    public const string POPUP = "Prefabs/Popups/";
     public const string IMAGE = "Images/";
+    public const string PREFAB = "Prefabs/";
+    public const string POPUP = "Prefabs/Popups/";
 }

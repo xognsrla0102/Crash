@@ -10,17 +10,17 @@ public class CarTest : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
-        //PhotonNetwork.ConnectUsingSettings();
-        PhotonNetwork.Instantiate("Prefabs/Player", spawnPos[Random.Range(0, spawnPos.Length)].transform.position, Quaternion.identity);
+        PhotonNetwork.ConnectUsingSettings();
+        //PhotonNetwork.Instantiate("Prefabs/Player", spawnPos[Random.Range(0, spawnPos.Length)].transform.position, Quaternion.identity);
     }
 
     public override void OnConnectedToMaster()
     {
-        //PhotonNetwork.JoinRandomOrCreateRoom();
+        PhotonNetwork.JoinRandomOrCreateRoom();
     }
 
     public override void OnJoinedRoom()
     {
-        //PhotonNetwork.Instantiate("Prefabs/Player", spawnPos[Random.Range(0, spawnPos.Length)].transform.position, Quaternion.identity);
+        PhotonNetwork.Instantiate("Prefabs/Player", spawnPos[Random.Range(0, spawnPos.Length)].transform.position, Quaternion.identity);
     }
 }

@@ -33,7 +33,7 @@ public class NetworkManager : Singleton<NetworkManager>
         {
             if (chatContent == null)
             {
-                chatContent = GameObject.Find("UI").transform.Find("RoomUI").Find("ChatField")
+                chatContent = GameObject.Find("UI").transform.Find("ChatField")
                     .Find("ScrollView").Find("Viewport").Find("Content");
             }
             return chatContent;
@@ -525,7 +525,7 @@ public class NetworkManager : Singleton<NetworkManager>
         SetRoomProperties(SRoomPropertyKey.ROOM_STATE, SRoomState.IN_GAME);
 
         // 인게임으로 이동
-        PhotonNetwork.LoadLevel(SSceneName.CAR_TEST);
+        PhotonNetwork.LoadLevel(SSceneName.INGAME_SCENE);
     }
     #endregion
 

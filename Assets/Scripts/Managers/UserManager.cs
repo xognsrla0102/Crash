@@ -6,7 +6,7 @@ public static class UserManager
 
     public static int slotUserNum = -1;
 
-    private static EUserColorType userColorType;
+    public static EUserColorType userColorType;
 
     public static void InitUserManager()
     {
