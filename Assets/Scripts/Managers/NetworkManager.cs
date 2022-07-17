@@ -525,7 +525,7 @@ public class NetworkManager : Singleton<NetworkManager>
         SetRoomProperties(SRoomPropertyKey.ROOM_STATE, SRoomState.IN_GAME);
 
         // 인게임으로 이동
-        
+        PhotonNetwork.LoadLevel(SSceneName.CAR_TEST);
     }
     #endregion
 

@@ -6,6 +6,7 @@
     public const string LOBBY_SCENE = "LobbyScene";
     public const string ROOM_SCENE = "RoomScene";
     public const string INGAME_SCENE = "IngameScene";
+    public const string CAR_TEST = "CarTest";
 }
 
 // PlayerPrefs에 사용되는 키들

@@ -51,15 +51,20 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (photonView.IsMine == false)
+        // 방장 PC 기준으로 충돌 검사
+        if (PhotonNetwork.IsMasterClient)
         {
-            // 상대방이 충돌 감지할 때 기준
-            if (collision.gameObject.CompareTag("Player") && collision.gameObject.GetComponent<PhotonView>().IsMine)
+            // 이 플레이어 개체가 내 것이 아니면서
+            if (photonView.IsMine == false)
             {
-                rigid.AddExplosionForce(50, collision.contacts[0].point, 5);
-                rigid.AddForce(Vector3.up * 5);
-                collision.gameObject.GetComponent<Rigidbody>().AddExplosionForce(50, collision.contacts[0].point, 5);
-                collision.gameObject.GetComponent<Rigidbody>().AddForce(Vector3.up * 5);
+                // 충돌체가 플레이어고, 충돌체가 내가 조작하는 플레이어라면
+                if (collision.gameObject.CompareTag("Player") && collision.gameObject.GetComponent<PhotonView>().IsMine)
+                {
+                    rigid.AddExplosionForce(50, collision.contacts[0].point, 5);
+                    rigid.AddForce(Vector3.up * 5);
+                    collision.gameObject.GetComponent<Rigidbody>().AddExplosionForce(50, collision.contacts[0].point, 5);
+                    collision.gameObject.GetComponent<Rigidbody>().AddForce(Vector3.up * 5);
+                }
             }
         }
     }
