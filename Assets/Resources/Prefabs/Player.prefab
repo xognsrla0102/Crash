@@ -76,6 +76,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54f0700f27bcc814b8d28c0fceae9c5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  userSlot: {fileID: 0}
+  userNameText: {fileID: 0}
   spd: 60
 --- !u!54 &1463470100726634053
 Rigidbody:

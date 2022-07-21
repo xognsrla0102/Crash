@@ -26,20 +26,6 @@ public class NetworkManager : Singleton<NetworkManager>
         }
     }
 
-    private Transform chatContent;
-    private Transform ChatContent
-    {
-        get
-        {
-            if (chatContent == null)
-            {
-                chatContent = GameObject.Find("UI").transform.Find("ChatField")
-                    .Find("ScrollView").Find("Viewport").Find("Content");
-            }
-            return chatContent;
-        }
-    }
-
     private LoginManager loginManager => FindObjectOfType<LoginManager>();
 
     private void Start()
@@ -383,11 +369,7 @@ public class NetworkManager : Singleton<NetworkManager>
     {
         CanvasGroup.interactable = true;
 
-        print("채팅 필드에 있던 채팅 박스 전부 다시 풀링해두고 로비로 이동");
-        while (ChatContent.childCount > 0)
-        {
-            ChatBoxPoolManager.Instance.Push(ChatContent.GetChild(0).GetComponent<ChatBox>());
-        }
+        ChatBoxPoolManager.Instance.ResetPoolingChatBox();
 
         MyRoomManager.ClearRoomManager();
         UserManager.ClearUserManager();
@@ -397,8 +379,16 @@ public class NetworkManager : Singleton<NetworkManager>
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         SendSystemChat($"{otherPlayer.NickName}님이 떠났습니다.");
+
         RoomScene roomScene = FindObjectOfType<RoomScene>();
-        roomScene.UpdateRoomAfterUpdateCustomProperties();
+        if (roomScene != null)
+        {
+            roomScene.UpdateRoomAfterUpdateCustomProperties();
+        }
+        else
+        {
+            MyRoomManager.SetRoomManager();
+        }
     }
 
     public void SendChat(string msg) => photonView.RPC("AddChatBoxRPC", RpcTarget.All, msg, PhotonNetwork.LocalPlayer);
@@ -408,39 +398,7 @@ public class NetworkManager : Singleton<NetworkManager>
     // 채팅 메시지와 말한 유저의 색상 정보를 전달
     [PunRPC] private void AddChatBoxRPC(string msg, Player user) => AddChatBox(msg, user);
 
-    private void AddChatBox(string msg, Player user = null)
-    {
-        // 이미 채팅 슬롯이 보여줄 슬롯만큼 생성되었다면
-        if (ChatContent.childCount == ChatBoxPoolManager.SHOW_CHAT_BOX_CNT)
-        {
-            // 가장 위에 있던 채팅 슬롯을 풀링 오브젝트에 다시 넣음
-            ChatBoxPoolManager.Instance.Push(ChatContent.GetChild(0).GetComponent<ChatBox>());
-        }
-
-        ChatBox chatBox = ChatBoxPoolManager.Instance.Pop(ChatContent);
-        chatBox.SetText(user == null ? msg : $"[{user.NickName}] : {msg}");
-
-        if (user == null)
-        {
-            return;
-        }
-
-        // 현재 방에서 말한 유저의 슬롯에 있는 채팅 이펙트를 보여줌
-        RoomScene roomScene = FindObjectOfType<RoomScene>();
-        foreach (var userSlot in roomScene.userSlots)
-        {
-            if (userSlot.IsEmptySlot)
-            {
-                continue;
-            }
-
-            if (userSlot.userInfo.UserId == user.UserId)
-            {
-                userSlot.ShowChatEffect(msg);
-                break;
-            }
-        }
-    }
+    private void AddChatBox(string msg, Player user = null) => ChatBoxPoolManager.Instance.AddChatBox(msg, user);
     #endregion
 
     #region 방 설정 관련 코드
@@ -464,6 +422,10 @@ public class NetworkManager : Singleton<NetworkManager>
         if (roomScene != null && roomScene.isDoneInitRoom)
         {
             roomScene.UpdateRoomAfterUpdateCustomProperties();
+        }
+        else
+        {
+            MyRoomManager.SetRoomManager();
         }
     }
 
@@ -523,6 +485,9 @@ public class NetworkManager : Singleton<NetworkManager>
 
         // 룸 상태 변경
         SetRoomProperties(SRoomPropertyKey.ROOM_STATE, SRoomState.IN_GAME);
+
+        // 채팅 박스 다시 리셋
+        ChatBoxPoolManager.Instance.ResetPoolingChatBox();
 
         // 인게임으로 이동
         PhotonNetwork.LoadLevel(SSceneName.INGAME_SCENE);

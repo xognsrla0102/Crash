@@ -1,16 +1,24 @@
 ﻿using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using Cinemachine;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] private Material[] skyboxMats;
-
-    private Transform[] spawnPos;
+    
+    private CinemachineVirtualCamera playerCam;
+    public Transform[] spawnPos;
 
     private void Start()
     {
-        photonView.RPC("SelectSkyBoxRPC", RpcTarget.All, Random.Range(0, skyboxMats.Length));
+        // 방장이 스카이박스 세팅
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("SelectSkyBoxRPC", RpcTarget.All, Random.Range(0, skyboxMats.Length));
+        }
+
+        playerCam = GameObject.Find("Player Camera").GetComponent<CinemachineVirtualCamera>();
 
         Transform map = GameObject.Find("Map").transform;
         spawnPos = new Transform[map.childCount];
@@ -28,6 +36,9 @@ public class GameManager : MonoBehaviourPunCallbacks
                spawnPos[spawnPosIdx].GetChild(colorIdx).rotation);
 
         user.GetComponent<Rigidbody>().velocity = Vector3.zero;
+
+        playerCam.Follow = user.transform;
+        playerCam.LookAt = user.transform;
     }
 
     [PunRPC] private void SelectSkyBoxRPC(int skyboxIdx) => RenderSettings.skybox = skyboxMats[skyboxIdx];

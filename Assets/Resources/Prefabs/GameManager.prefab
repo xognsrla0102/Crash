@@ -77,3 +77,4 @@ MonoBehaviour:
   - {fileID: 2100000, guid: bdfc475e919710248bf14d75643fefd2, type: 2}
   - {fileID: 2100000, guid: 20e1111adc6498e499e72f734cde4793, type: 2}
   - {fileID: 2100000, guid: 737024f24a4498b4ea58a67c1667a3db, type: 2}
+  spawnPos: []
