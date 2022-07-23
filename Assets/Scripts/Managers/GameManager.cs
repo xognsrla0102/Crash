@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] private Material[] skyboxMats;
     
     private CinemachineVirtualCamera playerCam;
-    public Transform[] spawnPos;
+    private Transform[] spawnPos;
 
     private void Start()
     {

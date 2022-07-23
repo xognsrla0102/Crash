@@ -1,7 +1,6 @@
 ﻿using TMPro;
 using UnityEngine;
 using Photon.Pun;
-using Photon.Realtime;
 
 public class PlayerController : MonoBehaviourPunCallbacks
 {
@@ -18,8 +17,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
         rb = GetComponent<Rigidbody>();
 
         name = photonView.Owner.NickName;
-        //userNameText.text = name;
-        //userSlot.InitUserSlot(name);
+        userNameText.text = name;
+        userSlot.InitUserSlot(name);
 
         int userColorNum = (int)Utility.StringToEnum<EUserColorType>($"{photonView.Owner.CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}");
         transform.GetChild(userColorNum - 1).gameObject.SetActive(true);
@@ -27,30 +26,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     private void FixedUpdate()
     {
-        if (photonView.IsMine)
+        if (photonView.IsMine && isGameOver == false)
         {
             Vector3 moveDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
             transform.LookAt(transform.position + moveDir);
             rb.AddForce(moveDir * spd, ForceMode.Acceleration);
-        }
-    }
-
-    private void Update()
-    {
-        if (photonView.IsMine)
-        {
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                GameManager gm = FindObjectOfType<GameManager>();
-
-                Player[] playerList = PhotonNetwork.PlayerList;
-                int spawnPosIdx = playerList.Length - 2;
-                int colorIdx = (int)UserManager.userColorType - 1;
-
-                rb.velocity = Vector3.zero;
-                transform.position = gm.spawnPos[spawnPosIdx].GetChild(colorIdx).position;
-                transform.rotation = gm.spawnPos[spawnPosIdx].GetChild(colorIdx).rotation;
-            }
         }
     }
 
@@ -86,5 +66,25 @@ public class PlayerController : MonoBehaviourPunCallbacks
     {
         rb.AddForce(contactNormalPoint * 100);
         rb.AddForce(Vector3.up * 80);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (PhotonNetwork.IsMasterClient == false)
+        {
+            return;
+
+        }
+
+        if (other.CompareTag("DeadLine"))
+        {
+            photonView.RPC("GameOverRPC", RpcTarget.All);
+        }
+    }
+
+    [PunRPC] private void GameOverRPC()
+    {
+        isGameOver = true;
+        userSlot.GameOver();
     }
 }

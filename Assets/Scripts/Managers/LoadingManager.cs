@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro; 
 using DG.Tweening;
-using Photon.Pun;
 
 public class LoadingManager : MonoBehaviour
 {
