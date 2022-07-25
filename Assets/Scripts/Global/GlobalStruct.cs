@@ -24,6 +24,8 @@ public struct SPrefsKey
 
     public const string RESOLUTION_TYPE = "ResolutionType";
     public const string IS_FULLSCREEN = "IsFullScreen";
+
+    public const string PROFILE_IMAGE_URL = "ProfileImageUrl";
 }
 
 public struct SBgmName

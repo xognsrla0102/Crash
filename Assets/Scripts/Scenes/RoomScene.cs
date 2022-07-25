@@ -85,13 +85,13 @@ public class RoomScene : MonoBehaviour
 
     private void InitRoom()
     {
-        UserManager.InitUserManager();
+        UserManager.Instance.InitUserManager();
 
         #region 슬롯 유저 번호 세팅 (자신의 유저 번호가 1일 경우 1 0 2 3 으로 슬롯 유저 번호 세팅)
-        userSlots[0].slotUserNum = UserManager.slotUserNum;
+        userSlots[0].slotUserNum = UserManager.Instance.slotUserNum;
         for (int slotIdx = 1, userNum = 0; slotIdx < userSlots.Length; slotIdx++, userNum++)
         {
-            if (userNum == UserManager.slotUserNum)
+            if (userNum == UserManager.Instance.slotUserNum)
             {
                 userNum++;
             }

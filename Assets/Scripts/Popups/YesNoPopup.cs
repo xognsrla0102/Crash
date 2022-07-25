@@ -12,7 +12,7 @@ public class YesNoPopup : Popup
         noBtn.onClick.AddListener(ClosePopup);
     }
 
-    private void OnDestroy()
+    protected virtual void OnDestroy()
     {
         yesBtn.onClick.RemoveAllListeners();
         noBtn.onClick.RemoveAllListeners();

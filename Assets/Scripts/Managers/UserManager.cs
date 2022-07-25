@@ -1,14 +1,17 @@
 ﻿using Photon.Pun;
+using UnityEngine;
 
-public static class UserManager
+public class UserManager : Singleton<UserManager>
 {
-    public static string userName;
+    [HideInInspector] public string userName;
 
-    public static int slotUserNum = -1;
+    [HideInInspector] public string profileImageUrl;
+    [HideInInspector] public Texture profileImage;
 
-    public static EUserColorType userColorType;
+    [HideInInspector] public int slotUserNum = -1;
+    [HideInInspector] public EUserColorType userColorType;
 
-    public static void InitUserManager()
+    public void InitUserManager()
     {
         // 최초 방 생성 시 (방장이 방 초기화 할 때)
         if (PhotonNetwork.IsMasterClient)
@@ -25,7 +28,7 @@ public static class UserManager
         slotUserNum = (int)PhotonNetwork.LocalPlayer.CustomProperties[SPlayerPropertyKey.SLOT_USER_NUM];
     }
 
-    public static void ClearUserManager()
+    public void ClearUserManager()
     {
         userColorType = EUserColorType.NONE;
         NetworkManager.Instance.SetPlayerProperties(PhotonNetwork.LocalPlayer, SPlayerPropertyKey.COLOR_TYPE, $"{userColorType}");

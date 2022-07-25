@@ -11,6 +11,8 @@ public enum EPopupType
     GAME_NAME_POPUP,
     MAKE_ROOM_POPUP,
     ROOM_OPTION_POPUP,
+    SET_PROFILE_IMAGE_POPUP,
+    CHANGE_GAME_NAME_POPUP,
     NUMS
 }
 
@@ -39,6 +41,12 @@ public abstract class Popup : MonoBehaviour
                 break;
             case EPopupType.ROOM_OPTION_POPUP:
                 obj = Resources.Load<RoomOptionPopup>($"{SResourceLoadPath.POPUP}RoomOptionPopup");
+                break;
+            case EPopupType.SET_PROFILE_IMAGE_POPUP:
+                obj = Resources.Load<SetProfileImagePopup>($"{SResourceLoadPath.POPUP}SetProfileImagePopup");
+                break;
+            case EPopupType.CHANGE_GAME_NAME_POPUP:
+                obj = Resources.Load<ChangeGameNamePopup>($"{SResourceLoadPath.POPUP}ChangeGameNamePopup");
                 break;
             default:
                 Debug.Assert(false);

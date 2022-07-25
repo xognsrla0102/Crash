@@ -20,16 +20,16 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         playerCam = GameObject.Find("Player Camera").GetComponent<CinemachineVirtualCamera>();
 
-        Transform map = GameObject.Find("Map").transform;
-        spawnPos = new Transform[map.childCount];
+        Transform spawnPosTransform = GameObject.Find("Map").transform.Find("SpwnPos");
+        spawnPos = new Transform[spawnPosTransform.childCount];
         for (int i = 0; i < spawnPos.Length; i++)
         {
-            spawnPos[i] = map.GetChild(i);
+            spawnPos[i] = spawnPosTransform.GetChild(i);
         }
 
         Player[] playerList = PhotonNetwork.PlayerList;
         int spawnPosIdx = playerList.Length - 2;
-        int colorIdx = (int)UserManager.userColorType - 1;
+        int colorIdx = (int)UserManager.Instance.userColorType - 1;
 
         GameObject user = PhotonNetwork.Instantiate($"{SResourceLoadPath.PREFAB}Player",
                spawnPos[spawnPosIdx].GetChild(colorIdx).position,

@@ -9,9 +9,12 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class MakeRoomPopup : YesNoPopup
 {
     [SerializeField] private InputField roomNameInputField;
-    [SerializeField] private InputField maxPlayerNumInputField;
+    [SerializeField] private Toggle[] playerNumToggles;
 
     private InputFieldUtility inputFieldUtility;
+
+    // 현재 방의 최대 인원 수
+    private byte maxPlayerNum = 2;
 
     protected override void Start()
     {
@@ -20,33 +23,45 @@ public class MakeRoomPopup : YesNoPopup
 
         roomNameInputField.ActivateInputField();
 
+        for (int i = 0; i < 3; i++)
+        {
+            byte toggleNum = (byte)(i + 2);
+            playerNumToggles[i].onValueChanged.AddListener((isOn) =>
+                {
+                    if (isOn == false)
+                    {
+                        return;
+                    }
+                    OnClickPlayerNumToggle(toggleNum);
+                });
+        }
+
         yesBtn.onClick.AddListener(OnClickMakeRoomBtn);
         noBtn.onClick.AddListener(ClosePopup);
     }
 
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+
+        foreach (var toggle in playerNumToggles)
+        {
+            toggle.onValueChanged.RemoveAllListeners();
+        }
+    }
+
+    private void OnClickPlayerNumToggle(byte toggleNum)
+    {
+        maxPlayerNum = toggleNum;
+        print($"방 최대 인원 : {maxPlayerNum}");
+    }
+
     private void OnClickMakeRoomBtn()
     {
-        // 현재 방의 최대 인원 수
-        byte maxPlayerNum;
-
         #region 인풋 필드 유효성 검사
         if (string.IsNullOrWhiteSpace(roomNameInputField.text))
         {
             CreateErrorPopup("Failed Make Room", "Room Name is Essential.");
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(maxPlayerNumInputField.text))
-        {
-            CreateErrorPopup("Failed Make Room", "Player Num is Essential.");
-            return;
-        }
-
-        maxPlayerNum = byte.Parse(maxPlayerNumInputField.text);
-
-        if (1 > maxPlayerNum || 4 < maxPlayerNum)
-        {
-            CreateErrorPopup("Failed Make Room", "Player Num must be between 1 and 4");
             return;
         }
         #endregion
@@ -68,7 +83,7 @@ public class MakeRoomPopup : YesNoPopup
             CustomRoomProperties = new Hashtable()
             {
                 { SRoomPropertyKey.ROOM_NAME, roomNameInputField.text },
-                { SRoomPropertyKey.MASTER_CLIENT, UserManager.userName },
+                { SRoomPropertyKey.MASTER_CLIENT, UserManager.Instance.userName },
                 { SRoomPropertyKey.MAP_NAME, SMapName.STADIUM },
                 { SRoomPropertyKey.ROOM_STATE, SRoomState.PREPARING_GAME },
                 { SRoomPropertyKey.LOCKED_SLOT_NUMS, lockedSlots },

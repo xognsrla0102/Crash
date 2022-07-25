@@ -224,6 +224,12 @@ public class LoginManager : MonoBehaviour
         EncryptPlayerPrefs.SetString(SPrefsKey.USER_NAME, loginUserNameInputField.text);
         EncryptPlayerPrefs.SetString(SPrefsKey.PW, loginPwInputField.text);
 
+        UserManager.Instance.profileImageUrl = EncryptPlayerPrefs.GetString(SPrefsKey.PROFILE_IMAGE_URL);
+        if (string.IsNullOrWhiteSpace(UserManager.Instance.profileImageUrl) == false)
+        {
+            NetworkManager.Instance.SetProfileImage(UserManager.Instance.profileImageUrl);
+        }
+
         // 타이틀 UI 활성화
         tabUI.SetActive(false);
         titleUI.SetActive(true);

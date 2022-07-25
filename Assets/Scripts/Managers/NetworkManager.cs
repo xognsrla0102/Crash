@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Text;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using Photon.Pun;
 using Photon.Realtime;
 using PlayFab;
@@ -37,6 +39,23 @@ public class NetworkManager : Singleton<NetworkManager>
         // 동기화 속도 늘려서 유저 이동이 끊어져 보이지 않게 함
         PhotonNetwork.SendRate = 60;
         PhotonNetwork.SerializationRate = 30;
+    }
+    #endregion
+
+    #region 유니티 네트워크 통신 코드
+    public void SetProfileImage(string imageUrl) => StartCoroutine(SetProfileImageCoroutine(imageUrl));
+    private IEnumerator SetProfileImageCoroutine(string imageUrl)
+    {
+        UnityWebRequest request = UnityWebRequestTexture.GetTexture(imageUrl);
+        yield return request.SendWebRequest();
+
+        if (request.isHttpError || request.isNetworkError)
+        {
+            Debug.LogError(request.error);
+            yield break;
+        }
+
+        UserManager.Instance.profileImage = (request.downloadHandler as DownloadHandlerTexture).texture;
     }
     #endregion
 
@@ -112,7 +131,7 @@ public class NetworkManager : Singleton<NetworkManager>
                 else
                 {
                     // 유저 네임[게임에서 표시되는 이름] 캐싱
-                    UserManager.userName = displayName;
+                    UserManager.Instance.userName = displayName;
                 }
             },
             (error) =>
@@ -140,7 +159,7 @@ public class NetworkManager : Singleton<NetworkManager>
         print("마스터 서버에 연결 완료");
         CanvasGroup.interactable = true;
 
-        PhotonNetwork.NickName = UserManager.userName;
+        PhotonNetwork.NickName = UserManager.Instance.userName;
 
         // 유저 프로퍼티 초기화
         PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable {
@@ -155,7 +174,10 @@ public class NetworkManager : Singleton<NetworkManager>
     {
         print($"연결 끊김. 이유[{cause}]");
 
-        CanvasGroup.interactable = true;
+        if (CanvasGroup != null)
+        {
+            CanvasGroup.interactable = true;
+        }
 
         switch (cause)
         {
@@ -372,7 +394,7 @@ public class NetworkManager : Singleton<NetworkManager>
         ChatBoxPoolManager.Instance.ResetPoolingChatBox();
 
         MyRoomManager.ClearRoomManager();
-        UserManager.ClearUserManager();
+        UserManager.Instance.ClearUserManager();
         print("방 떠남, 게임 서버 연결 해제 후 마스터 서버 접속 시도..");
     }
 

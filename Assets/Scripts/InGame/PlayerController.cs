@@ -1,37 +1,47 @@
 ﻿using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Photon.Pun;
 
 public class PlayerController : MonoBehaviourPunCallbacks
 {
-    [SerializeField] private InGameUserSlot userSlot;
     [SerializeField] private TextMeshProUGUI userNameText;
-
+    [SerializeField] private RawImage profileImage;
     [SerializeField] private float spd;
 
-    private bool isGameOver;
+    private float MAX_SPD = 30;
+    private InGameUserSlot userSlot;
     private Rigidbody rb;
+
+    private bool isGameOver;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
 
+        int userColorNum = (int)Utility.StringToEnum<EUserColorType>($"{photonView.Owner.CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}");
+        transform.GetChild(userColorNum - 1).gameObject.SetActive(true);
+        userSlot = GameObject.Find("UI").transform.Find($"UserSlot{userColorNum}").GetComponent<InGameUserSlot>();
+
         name = photonView.Owner.NickName;
         userNameText.text = name;
         userSlot.InitUserSlot(name);
-
-        int userColorNum = (int)Utility.StringToEnum<EUserColorType>($"{photonView.Owner.CustomProperties[SPlayerPropertyKey.COLOR_TYPE]}");
-        transform.GetChild(userColorNum - 1).gameObject.SetActive(true);
     }
 
     private void FixedUpdate()
     {
-        if (photonView.IsMine && isGameOver == false)
-        {
+        //if (photonView.IsMine && isGameOver == false)
+        //{
             Vector3 moveDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
             transform.LookAt(transform.position + moveDir);
+
             rb.AddForce(moveDir * spd, ForceMode.Acceleration);
-        }
+
+            if (rb.velocity.magnitude > MAX_SPD)
+            {
+                rb.velocity = rb.velocity.normalized * MAX_SPD;
+            }
+        //}
     }
 
     private void OnCollisionEnter(Collision collision)

@@ -2,8 +2,9 @@
 using UnityEngine.UI;
 using PlayFab;
 using PlayFab.ClientModels;
+using Photon.Pun;
 
-public class GameNamePopup : OKPopup
+public class ChangeGameNamePopup : YesNoPopup
 {
     [SerializeField] private InputField gameNameInputField;
 
@@ -16,11 +17,11 @@ public class GameNamePopup : OKPopup
         gameNameInputField.ActivateInputField();
 
         inputFieldUtility = GetComponent<InputFieldUtility>();
-        inputFieldUtility.EnterAction = OkAction;
-        SetOKBtnAction(OkAction);
+        inputFieldUtility.EnterAction = YesAction;
+        SetYesBtnAction(YesAction);
     }
 
-    private void OkAction()
+    private void YesAction()
     {
         // 디스플레이 네임 설정
         var request = new UpdateUserTitleDisplayNameRequest { DisplayName = gameNameInputField.text };
@@ -29,9 +30,10 @@ public class GameNamePopup : OKPopup
             {
                 // 유저 네임[게임에서 표시되는 이름] 캐싱
                 UserManager.Instance.userName = gameNameInputField.text;
+                PhotonNetwork.NickName = gameNameInputField.text;
                 ClosePopup();
             },
-            (error) => CreateErrorPopup("ChangeGameName Failed", error)
+            (error) => CreateErrorPopup("SettingGameName Failed", error)
             );
     }
 }

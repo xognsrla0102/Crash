@@ -11,6 +11,8 @@ public class LobbyScene : MonoBehaviour
     [SerializeField] private Button titleBtn;
     [SerializeField] private Button makeRoomBtn;
     [SerializeField] private Button joinRandomRoomBtn;
+    [SerializeField] private Button setProfileImageBtn;
+    [SerializeField] private Button changeGameNameBtn;
     [SerializeField] private Button prevPageBtn;
     [SerializeField] private Button nextPageBtn;
 
@@ -25,6 +27,8 @@ public class LobbyScene : MonoBehaviour
         titleBtn.onClick.AddListener(OnClickTitleBtn);
         makeRoomBtn.onClick.AddListener(OnClickMakeRoomBtn);
         joinRandomRoomBtn.onClick.AddListener(OnClickJoinRandomRoomBtn);
+        setProfileImageBtn.onClick.AddListener(OnClickSetProfileImageBtn);
+        changeGameNameBtn.onClick.AddListener(OnClickChangeGameNameBtn);
         prevPageBtn.onClick.AddListener(OnClickPrevPageBtn);
         nextPageBtn.onClick.AddListener(OnClickNextPageBtn);
 
@@ -44,6 +48,8 @@ public class LobbyScene : MonoBehaviour
         titleBtn.onClick.RemoveAllListeners();
         makeRoomBtn.onClick.RemoveAllListeners();
         joinRandomRoomBtn.onClick.RemoveAllListeners();
+        setProfileImageBtn.onClick.RemoveAllListeners();
+        changeGameNameBtn.onClick.RemoveAllListeners();
         prevPageBtn.onClick.RemoveAllListeners();
         nextPageBtn.onClick.RemoveAllListeners();
 
@@ -59,6 +65,8 @@ public class LobbyScene : MonoBehaviour
 
     private void OnClickJoinRandomRoomBtn() => NetworkManager.Instance.JoinRandomRoom();
 
+    private void OnClickSetProfileImageBtn() => Popup.CreateSpecialPopup(EPopupType.SET_PROFILE_IMAGE_POPUP);
+    private void OnClickChangeGameNameBtn() => Popup.CreateSpecialPopup(EPopupType.CHANGE_GAME_NAME_POPUP);
     private void OnClickRoomSlotBtn(int slotIdx)
     {
         #region 해당 슬롯의 방 정보 유효 검사
